@@ -1,0 +1,89 @@
+include ./layouts/header.pug
+include ./layouts/nav.pug
+
+main
+  section
+    .container
+      .row
+        .col-md-7
+          h4 Cart
+          if cart
+            for item, index in cart
+              .media.mb-3
+                img.mr-2(src="https://via.placeholder.com/125x125")
+                .media-body.h-100
+                  .d-flex.justify-content-between
+                    p.lead.m-0=item.name
+                    p.text-secondary.m-0= '$' + item.price
+                  .form-inline.text-secondary
+                    .form-group
+                      label(for="size").mr-2 Size:
+                      select.custom-select.custom-select-sm(name="size").mr-3
+                        each size, index in item.sizes
+                          - if(index === item.size) {
+                              option(value=index selected)= size
+                          - }
+                          - else {
+                              option(value=index)= size
+                          - }
+                    .form-group.text-secondary
+                      label(for="quan").mr-2 Quantity:
+                      select.custom-select.custom-select-sm(name="quan").mr-3
+                        -for(let i = 0 ; i < 5 ; i++) {
+                          - if(item.quan = i) {
+                            option(value=i + selected)= (i + 1) +' Pieces'
+                          - }
+                          - else {
+                            option(value=i)= (i + 1) + ' Pieces'
+                          - }
+                        - }
+                  button.btn.btn-danger.btn-sm(onClick=`RemoveItem(${index})`) Remove
+        .col-md-5
+          .card.bg-dark.text-white
+            .card-body
+              h4 Summary
+              .d-flex.justify-content-between
+                p Subtotal
+                if price
+                  p= '$' + price.subtotal
+                else
+                  p= '$' + 0.00
+              .d-flex.justify-content-between
+                p Estimated Shipping & Handling
+                if price
+                  p= '$' + price.shipFee
+                else
+                  p= '$' + 0.00
+              .d-flex.justify-content-between
+                p Estimated Tax
+                if price
+                  p= '$' + price.taxFee
+                else
+                  p= '$' + 0.00
+              .d-flex.justify-content-between
+                p.font-weight-bold Total
+                if price
+                  p= '$' + price.total
+                else
+                  p= '$' + 0.00
+              a.btn.btn-primary PayPal
+              
+include ./layouts/footer.pug
+
+script.
+  const RemoveItem = async (index) =>
+  {
+    const res = await axios({
+      method: 'delete',
+      url: `/cart?remove=${index}`
+    });
+    if(res.data.success)
+    {
+      alert("The item has successfully been deleted");
+      location.reload();
+    }
+    else 
+    {
+      alert("The item has unsuccessfully been deleted");
+    }
+  }

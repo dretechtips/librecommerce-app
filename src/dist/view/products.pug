@@ -1,0 +1,50 @@
+include ./layouts/header.pug
+include ./layouts/nav.pug
+
+main
+  section.p-3.bg-secondary.d-none
+    .row
+      .col-12
+        form(action="")
+          .input-group
+            input.form-control(type="text", name="search" placeholder="Enter a product name...")
+            .input-group-append
+            span.input-group-text
+              i.fas.fa-search
+  
+  section.p3
+    .row
+      .col-12.text-center
+        .btn-group
+          a.btn.btn-primary(href="#") Latest Products
+          a.btn.btn-primary(href="#") Most Popular Products
+          a.btn.btn-primary(href="#") Highest Review
+
+  section
+    .container
+      .d-flex.flex-wrap
+        each item in items
+          .col-md-4
+            .card.text-center
+              img.card-img-top(src="https://isteam.wsimg.com/ip/9b02432e-870d-4cf8-a939-514b86ec717e/ols/1_original/:/rs=w:280,h:280,cg:false,m" alt="placeholder")
+              .card-body
+                h3= item.name
+                .d-flex.align-items-center.justify-content-center
+                  span.mr-2= item.rating
+                  - for(var i = 0 ; i < item.rating.toFixed(0) ; i++)
+                      i.fas.fa-star
+                  - var ratingHalf = item.rating - item.rating.toFixed(0)
+                  if (ratingHalf)
+                    i.fas.fa-star-half
+                a.btn.btn-primary.mt-3(href=`/product?id=${item.uuid}`)
+                  i.fas.fa-eye.mr-2
+                  span See More Detail
+                br
+                a.btn.btn-primary.mt-2(href="#")
+                  i.fas.fa-cart-plus.mr-2
+                  span Add to Cart 
+
+  
+            
+
+include ./layouts/footer.pug

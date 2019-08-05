@@ -1,0 +1,45 @@
+[
+  {
+    "name" : "Magic Mango",
+    "price": 19.20,
+    "sizes": 
+    [
+      "5 pieces",
+      "10 pieces",
+      "15 pieces",
+      "20 pieces"
+    ],
+    "images":
+    [
+      "https://isteam.wsimg.com/ip/9b02432e-870d-4cf8-a939-514b86ec717e/ols/1_original/:/rs=w:280,h:280,cg:false,m",
+      "https://img1.wsimg.com/isteam/ip/9b02432e-870d-4cf8-a939-514b86ec717e/p2.png/:/rs=w:400,h:500,cg:true,m/cr=w:800,h:500,a:cc",
+      "https://img1.wsimg.com/isteam/ip/9b02432e-870d-4cf8-a939-514b86ec717e/p1.png/:/rs=w:400,h:500,cg:true,m/cr=w:800,h:500,a:cc",
+      "https://img1.wsimg.com/isteam/ip/9b02432e-870d-4cf8-a939-514b86ec717e/p2.png/:/rs=w:400,h:500,cg:true,m/cr=w:800,h:500,a:cc"
+    ],
+    "description": "These Herbs grow wild in the jungles of Malaysia and have been used for centuries by the people of Asia and South America to greatly improve sexual health, libido, and overall wellness. The combination of these ingredients produces an awesome effect that can last up to 2 – 3 days.",
+    "brand": "Teariffic",
+    "rating": 4.2,
+    "stock": true,
+    "directions": 
+    [
+      "Add one sachet to 160 oz of water",
+      "Stir until fully disolved"
+    ],
+    "warning": "Do not consume more than one sachet a day",
+    "ingredients": 
+    [
+      "Tonkat Ali",
+      "Meca Root",
+      "Guarana"
+    ],
+    "benefits":
+    [
+      "Enhance your sexual life",
+      "Enhance athletic performance",
+      "Treating erectile dysfunction",
+      "Male infertility",
+      "Enhancing energy and stamina"
+    ],
+    "uuid": "fd52f901-ccad-4190-af74-f60bade71e76"
+  }
+]
