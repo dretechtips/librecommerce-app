@@ -2,29 +2,40 @@ include ./layouts/header.pug
 include ./layouts/nav.pug
 
 main
-  section.p-3.bg-secondary.d-none
-    .row
-      .col-12
-        form(action="")
-          .input-group
-            input.form-control(type="text", name="search" placeholder="Enter a product name...")
-            .input-group-append
-            span.input-group-text
-              i.fas.fa-search
-  
-  section.p3
-    .row
-      .col-12.text-center
-        .btn-group
-          a.btn.btn-primary(href="#") Latest Products
-          a.btn.btn-primary(href="#") Most Popular Products
-          a.btn.btn-primary(href="#") Highest Review
-
   section
-    .container
-      .d-flex.flex-wrap
+    .row.mt-5
+      .col-md-3
+        .container
+          .card
+            .card-body
+              form(action="")
+                .form-group
+                  label(for="search") Search
+                  .input-group
+                    input.form-control(type="text", name="search" placeholder="Enter a product name...")
+                    .input-group-append
+                    span.input-group-text
+                      i.fas.fa-search
+                label(for="top_chart") Top Chart
+                .form-group
+                  input(type="checkbox", name="top_chart" class="form-check-input") 
+                  label(for="latest" class="form-check-label") Latest
+                  input(type="checkbox", name="top_chart" class="form-check-input") 
+                  label(for="popular" class="form-check-label") Most Popular
+                  input(type="checkbox", name="top_chart" class="form-check-input")
+                  label(for="review" class="form-check-label") Top Review
+                .form-group
+                  label(for="price") Price Range
+                  input(type="range", name="price" class="form-control-range")
+                .form-group
+                  label(for="category") Category
+                  br
+                  each category in categories
+                    input(type="checkbox", name="category")
+                    label(for="category")= category
+      .col-md-9 
         each item in items
-          .col-md-4
+          .col-md-3
             .card.text-center
               img.card-img-top(src="https://isteam.wsimg.com/ip/9b02432e-870d-4cf8-a939-514b86ec717e/ols/1_original/:/rs=w:280,h:280,cg:false,m" alt="placeholder")
               .card-body
@@ -44,7 +55,7 @@ main
                   i.fas.fa-cart-plus.mr-2
                   span Add to Cart 
 
-  
+        
             
 
 include ./layouts/footer.pug
