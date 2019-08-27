@@ -1,0 +1,68 @@
+include ../layouts/header.pug 
+include ../layouts/nav.pug
+
+include ../layouts/sidebar.pug
+  form(action="")
+    section
+      .container
+        .row
+          .col-12
+            .card
+              .card-body
+                .row
+                  .col-12
+                    h4 Product Details
+                    hr
+                .row
+                  .col-md-6
+                    .form-group
+                      label(for="") Product Name
+                      input.form-control(type="text")
+                    .form-group
+                      label(for="") Category
+                      select.custom-select(name="")
+                        option(value="Test") Test
+                    .form-group
+                      label(for="") Brand
+                      input.form-control(type="text")
+                    .form-group
+                      label(for="") Description
+                      textarea.form-control.rounded-0(name="", cols="30", rows="10")
+                    .form-group
+                      label(for="") SKU / Unique Identification Code
+                      input.form-control(type="text")
+                    .form-group
+                      label(for="") Size
+                      input.form-control(type="text")
+                    .form-group
+                      label(for="") Color
+                      input.form-control(type="text")
+                .row
+                  .col-md-4
+                    .custom-control.custom-checkbox
+                      label.custom-control-label.active(for="") Taxable
+                      input.custom-control-input(type="checkbox", name="")
+                  .col-md-4
+                  
+                  .col-md-4
+                .row.mt-5
+                  .col-12
+                    h4 Inventory Tracking
+                    hr
+                .row
+                  .col-md-6
+                    .form-group
+                      .custom-control.custom-checkbox
+                        label.custom-control-label(for="") Enable Tracking
+                        input.custom-control-input(type="checkbox", name="")
+                    .form-group
+                      label(for="") Quantity On Hand
+                      input.form-control(type="text")
+                .row
+                  .col-12
+                    a.btn.btn-primary(href="#")
+                      i.fas.fa-plus.mr-2
+                      | Add Product
+
+
+include ../layouts/footer.pug

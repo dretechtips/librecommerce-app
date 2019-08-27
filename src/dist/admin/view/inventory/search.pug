@@ -1,0 +1,66 @@
+include ../layouts/header.pug
+include ../layouts/nav.pug 
+
+include ../layouts/sidebar.pug
+  section
+    .container
+      .row.mt-3
+        .col-12
+          .card
+            .card-body
+              form(action="")
+                label(for="") Products:
+                .row.mb-3
+                  .col-md-6
+                    input.form-control(type="text", name="" placeholder="Name")
+                  .col-md-6
+                    input.form-control(type="text", name="" placeholder="Unique Identification Code / SKU")
+                .row.mb-4
+                  .col-md-4
+                    label(for="") Price Range:
+                    .form-inline.no-gutters
+                      .form-group.col-6
+                        input.form-control.form-control-sm.w-100(type="text" placeholder="Min Price")
+                      .form-group.col-6
+                        input.form-control.form-control-sm.w-100(type="text" placeholder="Max Price")
+                  .col-md-4
+                    label(for="") Brand:
+                    input.form-control.form-control-sm(type="text" placeholder="Brand Name")
+                  .col-md-4
+                    label(for="") Stock:
+                    input.form-control.form-control-sm(type="text" placeholder="Amount")
+                .row
+                  .col-12
+                    a.btn.btn-primary.btn-sm.mr-2(href="#")
+                      i.fas.fa-search.mr-2
+                      | Search
+  
+  section
+    .container
+      .row.mt-3
+        .col-12
+          table.table.table-striped
+            thead
+              th Products
+              th ID
+              th Stock
+              th Profit Margin
+              th Price
+              th Brand
+              th Rating
+              th
+              th
+            tbody
+              td Magic Mango
+              td 4234723847423890
+              td 32
+              td +2.8%
+              td $19.20
+              td Teariffic
+              td 4.2
+              td
+                a.btn.btn-outline-primary Modify
+              td
+                a.btn.btn-outline-primary Remove
+
+include ../layouts/footer.pug

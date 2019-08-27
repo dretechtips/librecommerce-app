@@ -1,0 +1,78 @@
+include ../layouts/header.pug 
+include ../layouts/nav.pug 
+include ../layouts/sidebar.pug
+  form(action="")
+    section
+      .container
+        .row
+          .col-12
+            .card
+              .card-body
+                .row
+                  .col-12
+                    h4 Customer Details
+                .row
+                  .col-md-6
+                    .form-group
+                      label(for="") Customer Name
+                      input.form-control(type="text")
+                    .form-group
+                      label(for="") Customer ID
+                      input.form-control(type="text")
+                if customers
+                  .row
+                    .col-12
+                      table.table-bordered
+                        thead
+                          th Customer Name
+                          th Last Order
+                          th Address
+                          th 
+                        tbody
+                          each customer in customers
+                            td customer.name
+                            td customer.lastOrderDate
+                            td customer.address
+                            td
+                              a.btn.btn-primary(href="#")
+                                | Select
+                if customer
+                  .row
+                    .col-12
+                      h4 Product
+                  .row
+                    .col-md-6
+                      .form-group
+                        label(for="") Product Name
+                        input(type="text")
+                      .form-group
+                        label(for="") Product ID
+                        input(type="text")
+                if cart
+                  .row
+                    .col-12
+                      table.table-bordered
+                        thead
+                          th Name
+                          th ID
+                          th Size
+                          th Color
+                          th Quantity
+                          th
+                        tbody
+                          each item in cart
+                            td item.name
+                            td item.id
+                            td item.size
+                            td item.color
+                            td item.quantity
+                  .row
+                    .col-12
+                      a.btn.btn-primary(href="#") Checkout Order
+                  
+                    
+                
+                  
+                  
+                    
+include ../layouts/footer.pug
