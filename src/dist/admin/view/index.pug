@@ -1,116 +1,140 @@
 include ./layouts/header.pug
 include ./layouts/nav.pug
 
-main
-  section
-    .container
-      .row.my-5
-        .col-md-4
-          .card
-            .card-body.text-center.py-5
-              i.fas.fa-shopping-cart.fa-fw.fa-6x.mb-3
-              h1.display-4 Orders
-        .col-md-4
-          .card
-            .card-body.text-center.py-5
-              i.fas.fa-tags.fa-fw.fa-6x.mb-3
-              h1.display-4 Inventory
-        .col-md-4
-          .card
-            .card-body.text-center.py-5
-              i.fas.fa-users.fa-fw.fa-6x.mb-3
-              h1.display-4 Tracker
+include ./layouts/sidebar.pug
+  main
+    section
+      .container
+        .row.my-5
+          .col-md-4
+            .card.bg-primary.text-white
+              .card-body.py-5.d-flex.align-items-center
+                div
+                  h4.display-4 Today Orders
+                  h1.font-weight-bold 1234
+                i.fas.fa-shopping-cart.fa-fw.fa-6x.mb-3
+          .col-md-4
+            .card.bg-danger.text-white
+              .card-body.py-5.d-flex.align-items-center
+                div
+                  h4.display-4 Total Orders
+                  h1.font-weight-bold 1234
+                i.fas.fa-layer-group.fa-fw.fa-6x.mb-3
+          .col-md-4
+            .card.bg-info.text-white
+              .card-body.py-5.d-flex.align-items-center
+                div
+                  h4.display-4 Item Count
+                  h1.font-weight-bold 1234
+                i.fas.fa-tags.fa-fw.fa-6x.mb-3
 
-  section
-    .container
-      .row
-        .col-12
-          .card
-            .card-header
-              h1 New Orders
-            .card-body
-              .d-flex.justify-content-between.mb-3
-                a(href="#").btn.btn-primary
-                  i.fas.fa-plus.mr-2
-                  | Add Order
-                a(href="#").btn.btn-primary
-                  i.fas.fa-minus.mr-2
-                  | Remove Order
-              table.table.table-bordered
-                thead
-                  tr
-                    th Person Name
-                    th ID
-                    th Date
-                    th Products
-                    th Address
-                    th
-                tbody
-                  each order in orders
+    section
+      .container
+        .row
+          .col-12
+            .card
+              .card-header
+                h1 New Orders
+              .card-body
+                .d-flex.justify-content-between.mb-3
+                  a(href="#").btn.btn-primary
+                    i.fas.fa-plus.mr-2
+                    | Add Order
+                  a(href="#").btn.btn-primary
+                    i.fas.fa-minus.mr-2
+                    | Remove Order
+                table.table.table-bordered
+                  thead
                     tr
-                      td=order.name
-                      td=order.id
-                      td=order.date
-                      td=order.products
-                      td=order.address
-                      td
-                        a(href="#").btn.btn-outline-primary Complete Order
-  
-  section
-    .container
-      .row
-        .col-12
-          .card
-            .card-header
-              h1 New Items
-            .card-body
-              .d-flex.justify-content-between.mb-3
-                a(href="#").btn.btn-primary
-                  i.fas.fa-plus.mr-2
-                  | Add Item
-                a(href="#").btn.btn-primary
-                  i.fas.fa-minus.mr-2
-                  | Remove Item
-              table.table.table-bordered
-                thead
-                  tr
-                    th Item Name
-                    th ID
-                    th Price
-                    th Brand
-                    th Rating
-                    th Stock
-                    th 
-                tbody
-                  each item in inventory
+                      th Person Name
+                      th ID
+                      th Date
+                      th Products
+                      th Address
+                      th
+                  tbody
+                    each order in orders
+                      tr
+                        td=order.name
+                        td=order.id
+                        td=order.date
+                        td=order.products
+                        td=order.address
+                        td
+                          a(href="#").btn.btn-outline-primary Complete Order
+    
+    section
+      .container
+        .row
+          .col-12
+            .card
+              .card-header
+                h1 New Items
+              .card-body
+                .d-flex.justify-content-between.mb-3
+                  a(href="#").btn.btn-primary
+                    i.fas.fa-plus.mr-2
+                    | Add Item
+                  a(href="#").btn.btn-primary
+                    i.fas.fa-minus.mr-2
+                    | Remove Item
+                table.table.table-bordered
+                  thead
                     tr
-                      td=item.name
-                      td=item.id
-                      td= '$' + item.price
-                      td=item.brand
-                      td=item.rating
-                      if item.stock
-                        td.text-success In Stock
-                      else
-                        td.text-warning Unavaliable
-                      td
-                        a(href="#").btn.btn-outline-primary Modify Item
-  
-  section
-    .container
-      .row
-        .col-12
-          .card
-            .card-header
-              h1 New Accounts
-            .card-body
-              .d-flex.justify-content-between.mb-3
-                a(href="#").btn.btn-primary
-                  i.fas.fa-plus.mr-2
-                  | Add Account
-                a(href="#").btn.btn-primary
-                  i.fas.fa-minus.mr-2
-                  | Remove Account
+                      th Item Name
+                      th ID
+                      th Price
+                      th Brand
+                      th Rating
+                      th Stock
+                      th 
+                  tbody
+                    each item in inventory
+                      tr
+                        td=item.name
+                        td=item.id
+                        td= '$' + item.price
+                        td=item.brand
+                        td=item.rating
+                        if item.stock
+                          td.text-success In Stock
+                        else
+                          td.text-warning Unavaliable
+                        td
+                          a(href="#").btn.btn-outline-primary Modify Item
+    
+    section
+      .container
+        .row
+          .col-12
+            .card
+              .card-header
+                h1 New Accounts
+              .card-body
+                .d-flex.justify-content-between.mb-3
+                  a(href="#").btn.btn-primary
+                    i.fas.fa-plus.mr-2
+                    | Add Account
+                  a(href="#").btn.btn-primary
+                    i.fas.fa-minus.mr-2
+                    | Remove Account
+                table.table.table-bordered
+                  thead
+                    tr
+                      th Username
+                      th Password
+                      th ID
+                      th Date
+                      th 
+                  tbody
+                    each account in accounts
+                      tr
+                        td=account.user
+                        td=account.pass
+                        td=account.id
+                        td=account.date
+                        td
+                          a(href="#").btn.btn-outline-primary Modify account
 
 
 

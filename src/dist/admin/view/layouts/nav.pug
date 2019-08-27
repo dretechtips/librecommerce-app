@@ -1,11 +1,13 @@
-nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
-  a.navbar-brand(href="#") Ruff Tiger Admin 
+nav.navbar.navbar-expand-lg.navbar-light.bg-light.border-bottom.border-success
+  a.navbar-brand(href="#")
+    img(src="https://upload.wikimedia.org/wikipedia/en/thumb/a/af/Medicine_Hat_Tigers_Logo.svg/1200px-Medicine_Hat_Tigers_Logo.svg.png", alt="Logo" height="40")
   button.navbar-toggler(data-toggle="collapse" data-target="navbarPanel")
     span.navbar-toggler-icon
   
   .colapse.navbar-collapse#navbarPanel
     ul.navbar-nav.ml-auto
-      a.navbar-brand(href="#")
-        img.rounded-circle(src="https://via.placeholder.com/50x50", alt="Admin Image")
-        span.text-white.ml-2 John Doe
+      li.nav-item
+        a(href="#").nav-link
+          img.rounded-circle(src="https://via.placeholder.com/40x40", alt="Admin Image").mr-2
+          | John Doe
       
