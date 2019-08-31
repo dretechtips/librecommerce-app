@@ -84,7 +84,7 @@ export class DatabaseQuery
   private _condition: string;
   private _query: DatabaseQueryConstructor;
 
-  private constructor(query: DatabaseQueryConstructor)
+  constructor(query: DatabaseQueryConstructor)
   {
     this._query = query;
   }

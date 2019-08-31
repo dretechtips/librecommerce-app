@@ -1,7 +1,7 @@
-const Database = require('./Database');
-const hconsole = require('./Console');
+import { default as Database } from "../model/Database";
+import hconsole from "../model/Console";
 
-module.exports = class Users
+export class Users
 {
   static async add(user, pass, type)
   {
@@ -16,3 +16,4 @@ module.exports = class Users
     database.main.singleQuery();
   }
 }
+

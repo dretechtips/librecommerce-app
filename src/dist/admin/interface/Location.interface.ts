@@ -8,3 +8,11 @@ export interface AddressConstructor
   country: string,
   zipCode: number, 
 }
+
+export interface PhoneNumConstructor
+{
+  accessCode?: number,
+  countryCode: number,
+  areaCode: number,
+  localCode: number,
+}
