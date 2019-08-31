@@ -61,7 +61,7 @@ class Database
     client.release();
     return result;
   }
-  static arrayToSqlArray(array: Array<string>): string
+  static arrayToSqlArray(array: string[]): string
   {
     const SQLStrings: string[] = array.map(cur =>
       {
@@ -72,6 +72,23 @@ class Database
       }
     );
     return `ARRAY[${SQLStrings.join()}]`;
+  }
+  public static arrayToSetVal(array: [column, string | number | boolean][])
+  {
+    let value = "";
+    for(let  i = 0 ; i < array.length ; i++)
+    {
+      const cur = array[i];
+      if(typeof cur[1] === "string")
+      {
+        value += `${cur[0]} = '${cur[1]}, '`;
+      }
+      else if(typeof cur[1] === "number" || typeof cur[1] === "boolean")
+      {
+        value += `${cur[0]} = ${cur[1]}, `;
+      }
+    }
+    return value.substring(0, value.length - 2) + " ";
   }
   static _db = {
     main: new Database('main', 'postgres', 'pass', 'dadadavhividasvii3213', '42342789890543'),
@@ -112,13 +129,16 @@ export class DatabaseQuery
     }
     return this;
   }
-  private update(value: string[]): DatabaseQuery
+  private update(value: [column, string | number | boolean][], condition: string): DatabaseQuery
   {
-    
+    this._main += `UPDATE ${this._query.table} SET ${Database.arrayToSetVal(value)}`
+    this._condition += `WHERE ${condition}`;
     return this;
   }
-  private delete(): DatabaseQuery
+  private delete(condition: string): DatabaseQuery
   {
+    this._main += `DELETE FROM ${this._query.table}`;
+    this._main += `WHERE ${condition}`
     return this;
   }
 }

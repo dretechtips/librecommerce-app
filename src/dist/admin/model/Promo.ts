@@ -4,7 +4,14 @@ export class Promo
 {
   public static add(promo: StandardPromo | IntervalPromo)
   {
-    
+    if(Promo.isStandardPromo)
+    {
+      Promo.addStandard(promo as StandardPromo);
+    }
+    else if(Promo.isIntervalPromo)
+    {
+      Promo.addInterval(promo as IntervalPromo);
+    }
   }
   public static isStandardPromo(promo: StandardPromo | IntervalPromo): promo is StandardPromo
   {
@@ -14,11 +21,19 @@ export class Promo
   {
     return promo.discriminator === 'interval';
   }
-  public static remove(promoID: string)
+  public static addStandard(promo: StandardPromo): boolean
+  {
+  
+  }
+  public static addInterval(promo: IntervalPromo): boolean
+  {
+    
+  }
+  public static remove(promoID: string): boolean
   {
 
   }
-  public static update(promoID: string)
+  public static update(promo: StandardPromo | IntervalPromo, promoID: string)
   {
 
   }

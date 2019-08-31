@@ -1,11 +1,39 @@
 import { Week } from "../interface/Week.interface";
 
+type weekString = "mon" |'tues'|"wed" |"thrus" |"fri" |"sat"| "sun";
+
 export class IntervalDate
 {
-  week: Week
-  constructor(week: Week)
+  private week: Week
+  constructor(week: Week | string[])
   {
-    this.setDate(week);
+    if(Array.isArray(week))
+    {
+      const newWeek: Week = this.weekArrayToWeek(week as string[]);
+      this.setDate(newWeek);
+    }
+    else
+    {
+      this.setDate(week);
+    }
+  }
+  private weekArrayToWeek(weeks: string[]): Week
+  {
+    let week: Week = {};
+    const weekKey = Object.keys(week);
+    for(let i = 0 ; i < weeks.length ; i++)
+    {
+      const cur: weekString = weeks[i] as weekString;
+      if(weekKey.find(el => el === cur))
+      {
+        week[cur] === true;
+      }
+      else 
+      {
+        week[cur] === false;
+      }
+    }
+    return week;
   }
   public setDate(week: Week): void
   {

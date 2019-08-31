@@ -1,4 +1,4 @@
-import hconsole from "./Console";
+import hconsole from "../model/Console";
 
 export class TimeRange
 {
@@ -135,37 +135,48 @@ enum TimeRangeTimeZone
 
 export class DateRange
 {
+  private _dateA: Date;
+  private _dateB: Date;
   constructor(dateA: Date, dateB: Date)
   {
-    
+    this._dateA = dateA;
+    this._dateB = dateB;
   }
   static Builder = class
   {
-    private static _dateRangeFromNow(days: number): DateRange
+    private static dateRangeFromNow(days: number): DateRange
     {
       const [dateA, dateB] = [new Date(), DateRange.addDays(days)];
       return new DateRange(dateA, dateB);
     }
     public static OneDayFromNow(): DateRange
     {
-      return this._dateRangeFromNow(1)
+      return this.dateRangeFromNow(1);
     }
     public static OneWeekFromNow(): DateRange
     {
-      return this._dateRangeFromNow(7);
+      return this.dateRangeFromNow(7);
     }
     public static OneMonthFromNow()
     {
-      return this._dateRangeFromNow(30);
+      return this.dateRangeFromNow(30);
     }
     public static  SixMonthFromNow()
     {
-      return this._dateRangeFromNow(182);
+      return this.dateRangeFromNow(182);
     }
     public static OneYearFromNow()
     {
-      return this._dateRangeFromNow(365);
+      return this.dateRangeFromNow(365);
     }
+  }
+  public getStartDate(): Date
+  {
+    return this._dateA;
+  }
+  public  getEndDate(): Date
+  {
+    return this._dateB;
   }
   public static addDays(days: number)
   {
@@ -175,14 +186,34 @@ export class DateRange
   }
   public offset(days: number, type: '+' | '-'): DateRange
   {
+    if(type === "+")
+    {
+      this.offsetPositive(days);
+    }
+    else if(type === "-")
+    {
+      this.offsetNegative(days);
+    }
     return this;
   }
   public shift(days: number): DateRange
   {
+    this._dateA.setDate(this._dateA.getDate() + days);
     return this;
   }
   public pop(days: number): DateRange
   {
+    this._dateB.setDate(this._dateA.getDate() - days);
     return this;
+  }
+  private offsetPositive(days: number)
+  {
+    this._dateA.setDate(this._dateA.getDate() + days);
+    this._dateB.setDate(this._dateA.getDate() + days);
+  }
+  private offsetNegative(days: number)
+  {
+    this._dateA.setDate(this._dateA.getDate() - days);
+    this._dateB.setDate(this._dateA.getDate() - days);
   }
 }

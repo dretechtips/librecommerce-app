@@ -1,32 +1,28 @@
 import { Discount } from "../model/Coupon";
 import { IntervalDate } from "../model/IntervalDate";
+import { DateRange } from "../type/Range";
 
-export interface StandardPromo
+export interface BasePromo
 {
-  name: string,
-  id: string,
-  startDate: Date,
-  endDate: Date,
-  productsID?: string[],
-  categoriesID?: string[],
-  all?: boolean,
-  code: string,
-  deal: Discount,
-  active: boolean,
-  discriminator: 'standard'
+  name: string;
+  id: string;
+  productsID?: string[];
+  categoriesID?: string[];
+  all?: boolean;
+  code: string;
+  deal: Discount;
+  active: boolean;
 }
 
-export interface IntervalPromo
+export interface StandardPromo extends BasePromo
 {
-  name: string,
-  id: string,
-  interval: IntervalDate,
-  productsID?: string[],
-  categoriesID?: string[],
-  all?: boolean,
-  code: string,
-  deal: Discount,
-  active: boolean,
-  discriminator: 'interval'
+  dateRange: DateRange;
+  discriminator: 'standard';
+}
+
+export interface IntervalPromo extends BasePromo
+{
+  interval: IntervalDate;
+  discriminator: 'interval';
 }
 
