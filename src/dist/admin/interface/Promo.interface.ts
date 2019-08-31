@@ -13,6 +13,7 @@ export interface StandardPromo
   code: string,
   deal: Discount,
   active: boolean,
+  discriminator: 'standard'
 }
 
 export interface IntervalPromo
@@ -26,5 +27,6 @@ export interface IntervalPromo
   code: string,
   deal: Discount,
   active: boolean,
+  discriminator: 'interval'
 }
 

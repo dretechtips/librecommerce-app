@@ -132,3 +132,57 @@ enum TimeRangeTimeZone
   CDT,
   EDT,
 }
+
+export class DateRange
+{
+  constructor(dateA: Date, dateB: Date)
+  {
+    
+  }
+  static Builder = class
+  {
+    private static _dateRangeFromNow(days: number): DateRange
+    {
+      const [dateA, dateB] = [new Date(), DateRange.addDays(days)];
+      return new DateRange(dateA, dateB);
+    }
+    public static OneDayFromNow(): DateRange
+    {
+      return this._dateRangeFromNow(1)
+    }
+    public static OneWeekFromNow(): DateRange
+    {
+      return this._dateRangeFromNow(7);
+    }
+    public static OneMonthFromNow()
+    {
+      return this._dateRangeFromNow(30);
+    }
+    public static  SixMonthFromNow()
+    {
+      return this._dateRangeFromNow(182);
+    }
+    public static OneYearFromNow()
+    {
+      return this._dateRangeFromNow(365);
+    }
+  }
+  public static addDays(days: number)
+  {
+    let date = new Date();
+    date.setDate(date.getDate() + days);
+    return date;
+  }
+  public offset(days: number, type: '+' | '-'): DateRange
+  {
+    return this;
+  }
+  public shift(days: number): DateRange
+  {
+    return this;
+  }
+  public pop(days: number): DateRange
+  {
+    return this;
+  }
+}
