@@ -49,7 +49,18 @@ export class IntervalDate
   {
     return this.week;
   }
-  
+  public toStringArray(): string[]
+  {
+    let aDay: string[] = [];
+    for(let cur in this.week)
+    {
+      if(this.week[cur] ===  true)
+      {
+        aDay.push(cur);
+      }
+    }
+    return aDay;
+  }
   public setAllDateTrue(): void
   {
     const WeekProp = Object.keys(this.week);

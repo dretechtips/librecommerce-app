@@ -1,16 +1,30 @@
 import { StandardPromo, IntervalPromo } from "../interface/Promo.interface";
+import { DatabaseQueryConstructor, DatabaseKeyValue } from "../interface/Database.interface";
+import { Database, DatabaseQuery } from "../model/Database";
 
 export class Promo
 {
+  private static _details: DatabaseQueryConstructor =
+  {
+    table: "promo",
+    schema: "public",
+    col: ["name", "id", "productsID", "categoriesID", "all", "code", "deal", "active", "dateRange", "interval"]
+  }
   public static add(promo: StandardPromo | IntervalPromo)
   {
+    const val: DatabaseKeyValue[] = [["name", promo.name], ["id", promo.id], ["productsID", promo.productsID], 
+    ["categoriesID", promo.categoriesID], ["all", promo.all], ["code", promo.code], 
+    ["deal", promo.deal.toNum()], ["active", promo.deal.toNum()], ["dateRange", promo.dateRange.toStringArray()]]
     if(Promo.isStandardPromo)
     {
-      Promo.addStandard(promo as StandardPromo);
+      const query: DatabaseQuery = new DatabaseQuery(this._details);
+      query.insert();
     }
     else if(Promo.isIntervalPromo)
     {
-      Promo.addInterval(promo as IntervalPromo);
+      const query: DatabaseQuery = new DatabaseQuery(this._details);
+      val.push(["interval", (promo as IntervalPromo).interval.toStringArray()]);
+      query.insert();
     }
   }
   public static isStandardPromo(promo: StandardPromo | IntervalPromo): promo is StandardPromo
@@ -20,14 +34,6 @@ export class Promo
   public static isIntervalPromo(promo: StandardPromo | IntervalPromo): promo is IntervalPromo
   {
     return promo.discriminator === 'interval';
-  }
-  public static addStandard(promo: StandardPromo): boolean
-  {
-  
-  }
-  public static addInterval(promo: IntervalPromo): boolean
-  {
-    
   }
   public static remove(promoID: string): boolean
   {

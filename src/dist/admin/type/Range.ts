@@ -178,6 +178,14 @@ export class DateRange
   {
     return this._dateB;
   }
+  public toString(): string
+  {
+    return this._dateA.toLocaleDateString('en-US') + ', ' + this._dateB.toLocaleDateString('en-US');
+  }
+  public toStringArray(): [string, string]
+  {
+    return [this._dateA.toLocaleDateString('en-US'), this._dateB.toLocaleDateString('en-US')];
+  }
   public static addDays(days: number)
   {
     let date = new Date();

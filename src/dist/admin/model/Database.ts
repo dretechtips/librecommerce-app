@@ -1,9 +1,9 @@
 import { Pool, PoolConfig, PoolClient, QueryResult } from "pg";
 import * as crypto from "crypto";
 import { default as hconsole } from "../model/Console";
-import { DatabaseQueryConstructor, column } from "../interface/Database.interface";
+import { DatabaseQueryConstructor, column, DatabaseKeyValue } from "../interface/Database.interface";
 
-class Database 
+export class Database 
 {
   private name: string; 
   private user: string;
@@ -61,19 +61,24 @@ class Database
     client.release();
     return result;
   }
-  static arrayToSqlArray(array: string[]): string
+  static arrayToSqlArray(array: DatabaseKeyValue[1][]): string
   {
-    const SQLStrings: string[] = array.map(cur =>
+    let value = "";
+    for(let i = 0 ; i < array.length ; i++)
+    {
+      const cur = array[i];
+      if(typeof cur === "string")
       {
-        let newCur: string[]= Array.from(cur);
-        newCur.unshift('\'');
-        newCur.push('\'');
-        return newCur.toString();
+        value += `'${cur}', `;
       }
-    );
-    return `ARRAY[${SQLStrings.join()}]`;
+      else if (typeof cur === "number" || typeof cur === "boolean")
+      {
+        value += `${cur}, `;
+      }
+    }
+    return `ARRAY[${value.substring(0, value.length - 2)}]`;
   }
-  public static arrayToSetVal(array: [column, string | number | boolean][])
+  public static arrayToSetVal(array: DatabaseKeyValue[])
   {
     let value = "";
     for(let  i = 0 ; i < array.length ; i++)
@@ -95,6 +100,8 @@ class Database
   }
 };
 
+export default Database;
+
 export class DatabaseQuery
 {
   private _main: string;
@@ -105,42 +112,101 @@ export class DatabaseQuery
   {
     this._query = query;
   }
+  private validateColumn(col: column[]): boolean
+  {
+    for(let i = 0 ; i < col.length ; i++)
+    {
+      const cur = col[i][0];
+      if(!this._query.col.find((el) => el === cur))
+      {
+        return false;
+      }
+    }
+    return true;
+  }
+  private valueArrayToInsertVal(values: DatabaseKeyValue[])
+  {
+    let col: string;
+    let val: string;
+    for(let  i = 0 ; i < values.length ; i++)
+    {
+      const value: string | boolean | number = values[i][1];
+      if(typeof value === "string")
+      {
+        col += values[i][0] + ", ";
+        val += `'${value}', `;
+      }
+      else
+      {
+        col += values[i][0] + ", ";
+        val += `${value}, `;
+      }
+    }
+    return `(${col.substring(0, col.length - 2)}) VALUES (${val.substring(0, col.length - 2)})`;
+  }
+  private valuesToColumn(values: DatabaseKeyValue[])
+  {
+    let columns: column[] = [];
+    for(let val in values)
+    {
+      columns.push(val[0]);
+    }
+    return columns;
+  }
   public toSQLQuery(): string
   {
-    return this._main;
+    return this._main + this._condition;
   }
-  private insert(values: string[]): DatabaseQuery
+  public insert(values: DatabaseKeyValue[]): DatabaseQuery
   {
-    const col: column[] = this._query.col;
-    const table: string = this._query.table;
-    const schema: string = this._query.schema;
-    this._main += `INSERT INTO ${schema + '.' + table} (${col.join(',')}) VALUES (${values.join(',')})`;
-    return this;
-  }
-  private select(column: column[]) : DatabaseQuery
-  {
-    if(column[0] === "*" && column.length === 0)
-    {
-      this._main += `SELECT * FROM ${this._query.schema + '' + this._query.table}`;
+    try {
+      const columns: column[] = this.valuesToColumn(values);
+      const isValid: boolean = this.validateColumn(columns);
+      if(!isValid) throw Error("Cannot INSERT data into non-valid column");
+      this._main = `INSERT INTO ${this._query.schema + '.' + this._query.table} ${this.valueArrayToInsertVal}`;
+      return this;
+    } catch (e) {
+      const ex: Error = e;
+      hconsole.error(ex.message);
     }
-    else
-    {
-      this._main += `SELECT (${Database.arrayToSqlArray(column)}) FROM ${this._query.schema + this._query.table}`;
-    }
-    return this;
   }
-  private update(value: [column, string | number | boolean][], condition: string): DatabaseQuery
+  public select(column: column[]) : DatabaseQuery
   {
-    this._main += `UPDATE ${this._query.table} SET ${Database.arrayToSetVal(value)}`
+    try {
+      const isValid: boolean = this.validateColumn(column);
+      if(!isValid) throw new Error("Cannot SELECT data from non-valid column");
+      if(column[0] === "*" && column.length === 0)
+      {
+        this._main = `SELECT * FROM ${this._query.schema + '' + this._query.table}`;
+      }
+      else
+      {
+        this._main = `SELECT (${Database.arrayToSqlArray(column)}) FROM ${this._query.schema + this._query.table}`;
+      }
+      return this;
+    } catch (e) {
+      const ex: Error = e;
+      hconsole.error(ex.message);
+    }
+  }
+  public update(values: DatabaseKeyValue[], condition: string): DatabaseQuery
+  {
+    try {
+      const column: column[] = this.valuesToColumn(values);
+      const isValid: boolean = this.validateColumn(column);
+      if(!isValid) throw new Error("Unable to UPDATE WHERE " + condition + " becuase columns aren't valid");
+      this._main = `UPDATE ${this._query.table} SET ${Database.arrayToSetVal(values)}`;
+      this._condition = `WHERE ${condition}`;
+      return this;
+    } catch (e) {
+      const ex: Error = e;
+      hconsole.log(ex.message);
+    }
+  }
+  public delete(condition: string): DatabaseQuery
+  {
+    this._main += `DELETE FROM ${this._query.table}`;
     this._condition += `WHERE ${condition}`;
     return this;
   }
-  private delete(condition: string): DatabaseQuery
-  {
-    this._main += `DELETE FROM ${this._query.table}`;
-    this._main += `WHERE ${condition}`
-    return this;
-  }
 }
-
-export default Database;

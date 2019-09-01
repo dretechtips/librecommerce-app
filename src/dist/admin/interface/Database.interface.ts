@@ -8,4 +8,6 @@ export interface DatabaseQueryConstructor
   order?: [column[], "asc" | "desc"],
 }
 
+export type DatabaseKeyValue = [string, boolean | string | number | string[]];
+
 export type column = string;
