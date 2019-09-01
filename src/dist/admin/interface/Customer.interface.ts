@@ -1,4 +1,4 @@
-import { Address, EmailAddress } from "../model/Location";
+import { Address, EmailAddress, PhoneNum } from "../model/Location";
 
 interface Customer
 {
@@ -11,6 +11,7 @@ interface Customer
   lastOrderDate: Date,
   address: Address,
   email: EmailAddress,
+  phone: PhoneNum,
 }
 
 export default Customer;

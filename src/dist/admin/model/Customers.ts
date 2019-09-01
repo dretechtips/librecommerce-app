@@ -2,7 +2,7 @@ import { default as Database } from '../model/Database';
 import Customer from '../interface/Customer.interface';
 import { QueryResult, FieldDef } from 'pg';
 
-class Customers
+export class Customers
 {
   public static async SearchID(CustomerID: string): Promise<FieldDef[] | false>
   {
@@ -17,7 +17,7 @@ class Customers
       return false;
     }
   }
-  public static async SearchName(customerName: string): Promise<any[] | false>
+  public static async SearchName(customerName: string): Promise<FieldDef[] | false>
   {
     try
     {
@@ -29,6 +29,10 @@ class Customers
     {
       return false;
     }
+  }
+  public static async SearchUsername(cUsername: string): Promise<any[]>
+  {
+    
   }
   public static async Add(customer: Customer): Promise<boolean>
   {
@@ -56,4 +60,4 @@ class Customers
 
 
 
-module.exports = Customers;
+export default Customer;

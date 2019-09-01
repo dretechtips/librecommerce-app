@@ -203,10 +203,18 @@ export class DatabaseQuery
       hconsole.log(ex.message);
     }
   }
-  public delete(condition: string): DatabaseQuery
+  public delete(values: DatabaseKeyValue[]): DatabaseQuery
   {
-    this._main += `DELETE FROM ${this._query.table}`;
-    this._condition += `WHERE ${condition}`;
-    return this;
+    try {
+      const column: column[] = this.valuesToColumn(values);
+      const isValid: boolean = this.validateColumn(column);
+      if(!isValid) throw new Error("Unable to DELETE item from " + this._query.table);
+      this._main += `DELETE FROM ${this._query.table}`;
+      this._condition += `WHERE ${condition}`;
+      return this;
+    } catch (e) {
+      const ex: Error = e;
+      hconsole.log(ex.message);
+    }
   }
 }

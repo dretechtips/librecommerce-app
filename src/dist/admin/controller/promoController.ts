@@ -66,6 +66,7 @@ export class PromoController extends Controller
       deal: new Discount(body.deal),
       active: body.active != undefined ? true : false,
       code: body.code.toUpperCase(),
+      dateRange: new DateRange(new Date(body.startDate), new Date(body.endDate)),
       discriminator: 'interval',
     }
     return promo;
@@ -104,7 +105,7 @@ export class PromoController extends Controller
   private static updateStandard(body: any)
   {
     const promo: StandardPromo = this.getStandard(body);
-    const doesExist: boolean = Promo.searchID(promo.id);
+    const doesExist: boolean = Promo.doesExist(promo.id);
     if(doesExist)
     {
       Promo.update(promo, promo.id);
@@ -113,7 +114,7 @@ export class PromoController extends Controller
   private static updateInterval(body: any)
   {
     const promo: IntervalPromo = this.getInterval(body);
-    const doesExist: boolean = Promo.searchID(promo.id);
+    const doesExist: boolean = Promo.doesExist(promo.id);
     if(doesExist)
     {
       Promo.update(promo, promo.id);
