@@ -1,5 +1,6 @@
 import { EmailAddress, PhoneNum } from "../model/Location";
 import { Money } from "../model/Money";
+import { NewShippingBody } from "../interface/Shipping.interface";
 
 export interface OrderConstructor
 {
@@ -10,5 +11,16 @@ export interface OrderConstructor
   username?: string,
   email: EmailAddress,
   phone: PhoneNum,
-  cancelled?: boolean,
+  cancelled: boolean,
+}
+
+export interface NewOrderBody
+{
+  id: string,
+  productsID: string[],
+  address: string,
+  username?: string,
+  email: string,
+  phone: string,
+  shipping: NewShippingBody
 }

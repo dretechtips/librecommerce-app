@@ -3,19 +3,20 @@ import * as pug from "pug";
 import { Controller } from "./Controller";
 import { Actions } from "../interface/Dashboard.interface";
 import { Orders } from "../model/Orders";
-import { OrderConstructor } from "../interface/Order.interface";
+import { OrderConstructor, NewOrderBody } from "../interface/Order.interface";
 import { Customers } from "../model/Customers";
 import uuid = require("uuid/v4");
 import { EmailAddress, PhoneNum } from "../model/Location";
 import { Money } from "../model/Money";
 import { FieldDef, QueryResult } from "pg";
 import hconsole from "../model/Console";
+import { ShippingController } from "./shippingController";
 const viewDir = "./admin/view";
 const orderDir = "./admin/view/orders";
 
 export class OrdersController extends Controller
 {
-  private static _dashboardActions: Actions[] = 
+  protected static _dashboardActions: Actions[] = 
   [{name: "Search Order", path: "/admin/orders/search", icon: "fas fa-search"},
   {name: "Add Order", path: "/admin/orders/add", icon: "fas fa-plus"},
   {name: "Remove Order", path: "/admin/orders/remove", icon: "fas fa-minus"},
@@ -49,19 +50,20 @@ export class OrdersController extends Controller
       res.send(page);
     }
   }
-  public static add(req: Request, res: Response): void
+  public static async add(req: Request, res: Response): Promise<void>
   {
+    let order: OrderConstructor;
     if(req.body.type === "newCustomer")
     {
-      this.addFromNewCustomer(req.body);
+      order = this.addFromNewCustomer(req.body);
     }
     else if(req.body.type === "existingCustomer")
     {
-      this.addFromExistingCustomer(req.body);
+      order = await this.addFromExistingCustomer(req.body);
     }
-    
+    ShippingController.addFromOrder(order, req.body.shipping);
   }
-  private static generate(body: any)
+  private static generate(body: NewOrderBody): OrderConstructor
   {
     const order: OrderConstructor = 
     {
@@ -71,14 +73,16 @@ export class OrdersController extends Controller
       productsID: body.productsID,
       address: body.address,
       email: new EmailAddress(body.email),
-      phone: new PhoneNum(body.phoneNum),
+      phone: new PhoneNum(body.phone),
+      cancelled: false
     }
+    return order;
   }
-  private static addFromNewCustomer(body: any)
+  private static addFromNewCustomer(body: NewOrderBody): OrderConstructor
   {
-    this.generate(body);
+    return this.generate(body);
   }
-  private static async addFromExistingCustomer(body: any)
+  private static async addFromExistingCustomer(body: NewOrderBody): Promise<OrderConstructor>
   {
     try {
       const customers: any[] = await Customers.SearchUsername(body.username);
@@ -87,8 +91,8 @@ export class OrdersController extends Controller
         body.username = customers[0][4];
         body.address = customers[0][7];
         body.email = customers[0][0];
-        body.phoneNum = customers[0][9];
-        this.generate(body);
+        body.phone = customers[0][9];
+        return this.generate(body);
       }
       else throw new Error("The username specified doesn't exist!");
     } catch (e) {
