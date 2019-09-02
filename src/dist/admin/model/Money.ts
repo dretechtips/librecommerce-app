@@ -13,4 +13,8 @@ export class Money
   {
     return '$' + this._value;
   }
+  public add(money: Money): Money
+  {
+    return new Money(this.getValue() + money.getValue());
+  }
 }
