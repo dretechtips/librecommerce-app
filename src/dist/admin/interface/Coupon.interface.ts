@@ -1,6 +1,6 @@
-import { Discount } from "../model/Coupon";
+import { Discount } from "../type/Discount";
 
-export interface StoreCoupon
+export interface BaseCoupon
 {
   name: string,
   id: string,
@@ -13,18 +13,11 @@ export interface StoreCoupon
   active: boolean
 }
 
-export interface IndividualCoupon 
+export interface StoreCoupon extends BaseCoupon {   }
+
+export interface IndividualCoupon extends BaseCoupon
 {
-  name: string,
-  id: string,
-  startTime: Date,
-  endTime: Date,
-  productsID?: string[],
-  categoriesID?: string[],
-  all?: boolean
-  deal: Discount,
   customerID: string,
-  active: boolean,
 }
 
 

@@ -1,6 +1,6 @@
 import { Address, EmailAddress, PhoneNum } from "../model/Location";
 
-interface Customer
+export interface CustomerConstructor
 {
   firstName: string,
   lastName: string,
@@ -8,10 +8,8 @@ interface Customer
   orders: string[],
   username: string,
   password: string,
-  lastOrderDate: Date,
+  lastOrderDate?: Date,
   address: Address,
   email: EmailAddress,
   phone: PhoneNum,
 }
-
-export default Customer;

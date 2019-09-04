@@ -2,20 +2,19 @@ import { Request, Response } from "express-serve-static-core";
 import * as pug from "pug";
 import { Controller } from "./Controller";
 import { Actions } from "../interface/Dashboard.interface";
-import { Orders } from "../model/Orders";
-import { OrderConstructor, NewOrderBody } from "../interface/Order.interface";
-import { Customers } from "../model/Customers";
+import { OrdersQueue, Order } from "../model/Order";
+import { Customer } from "../model/Customer";
 import uuid = require("uuid/v4");
 import { EmailAddress, PhoneNum } from "../model/Location";
 import { Money } from "../model/Money";
 import { FieldDef, QueryResult } from "pg";
 import hconsole from "../model/Console";
-import { ShippingController } from "./shippingController";
 const viewDir = "./admin/view";
 const orderDir = "./admin/view/orders";
 
 export class OrdersController extends Controller
 {
+  private static unprocessed: OrdersQueue = new OrdersQueue([]);
   protected static _dashboardActions: Actions[] = 
   [{name: "Search Order", path: "/admin/orders/search", icon: "fas fa-search"},
   {name: "Add Order", path: "/admin/orders/add", icon: "fas fa-plus"},
@@ -52,65 +51,46 @@ export class OrdersController extends Controller
   }
   public static async add(req: Request, res: Response): Promise<void>
   {
-    let order: OrderConstructor;
-    if(req.body.type === "newCustomer")
-    {
-      order = this.addFromNewCustomer(req.body);
-    }
-    else if(req.body.type === "existingCustomer")
-    {
-      order = await this.addFromExistingCustomer(req.body);
-    }
-    ShippingController.addFromOrder(order, req.body.shipping);
+    const order: Order = Order.generate(req.body);
+    this.unprocessed.enqueue(order);
   }
-  private static generate(body: NewOrderBody): OrderConstructor
+  public static async complete(req: Request, res: Response)
   {
-    const order: OrderConstructor = 
+    if(req.body.orderID === this.unprocessed.getNext().getValue().id)
     {
-      id: uuid(),
-      username: body.username !== undefined ? body.username : "",
-      timestamp: new Date(),
-      productsID: body.productsID,
-      address: body.address,
-      email: new EmailAddress(body.email),
-      phone: new PhoneNum(body.phone),
-      cancelled: false
+      this.unprocessed.dequeue();
+      res.send({success: true})
     }
-    return order;
-  }
-  private static addFromNewCustomer(body: NewOrderBody): OrderConstructor
-  {
-    return this.generate(body);
-  }
-  private static async addFromExistingCustomer(body: NewOrderBody): Promise<OrderConstructor>
-  {
-    try {
-      const customers: any[] = await Customers.SearchUsername(body.username);
-      if(customers.length > 0)
-      {
-        body.username = customers[0][4];
-        body.address = customers[0][7];
-        body.email = customers[0][0];
-        body.phone = customers[0][9];
-        return this.generate(body);
-      }
-      else throw new Error("The username specified doesn't exist!");
-    } catch (e) {
-      const ex: Error = e;
-      hconsole.error(ex.message);
+    else
+    {
+      res.send({success: false, error: "Order ID must be the next order in queue"});
     }
+  }
+  public static hold(req: Request, res: Response)
+  {
+    if(req.body.orderID === this.unprocessed.getNext().getValue().id)
+    {
+      this.unprocessed.hold();
+      res.send({success: true});
+    }
+    else res.send({success: false, error: "Order ID must be be an existing order ID in holding cell"});
+  }
+  public static async unhold(req: Request, res: Response)
+  {
+    const result = this.unprocessed.unhold(req.body.orderID);
+    if(!result)
+      res.send({success: false, error: "Order ID must be present within the holding cell"});
+    else
+      res.send({success: true});
   }
   public static remove(req: Request, res: Response): void
   {
-    
+    const order: Order = Order.From.id(req.body.id);
+    order.delete();
   }
   public static update(req: Request, res: Response): void
   {
-    const body = req.body;
-    const orderID: string = body.orderID;
-    if(body.cancelled)
-    {
-      
-    }
+    const order: Order = Order.From.id(req.body.id);
+    order.update(req.body);
   }
 }

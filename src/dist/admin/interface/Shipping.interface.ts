@@ -2,7 +2,7 @@ import { Money } from "../model/Money";
 
 export interface ShippingConstructor
 {
-  orderID: string,
+  orderID?: string,
   days: number,
   price: Money,
   provider: "fedex" | "ups",

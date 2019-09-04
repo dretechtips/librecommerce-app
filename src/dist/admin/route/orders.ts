@@ -1,5 +1,5 @@
 import * as express from "express";
-import { OrdersController } from "../controller/ordersController";
+import { OrdersController } from "../controller/Orders.controller";
 const router: express.Router = express.Router();
 
 router.get('/', (req, res) => OrdersController.renderDashboard(req, res));

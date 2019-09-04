@@ -17,3 +17,11 @@ export class Users
   }
 }
 
+export class User
+{
+  constructor()
+  {
+    
+  }
+}
+

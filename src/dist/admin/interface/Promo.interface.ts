@@ -1,8 +1,8 @@
-import { Discount } from "../model/Coupon";
+import { Discount } from "../type/Discount";
 import { IntervalDate } from "../model/IntervalDate";
 import { DateRange } from "../type/Range";
 
-interface BasePromo
+export interface BasePromo
 {
   name: string;
   id: string;
@@ -12,18 +12,15 @@ interface BasePromo
   code: string;
   deal: Discount;
   active: boolean;
+  dateRange: DateRange;
 }
 
 export interface StandardPromo extends BasePromo
-{
-  dateRange: DateRange;
-  discriminator: 'standard';
-}
+{   }
 
 export interface IntervalPromo extends BasePromo
 {
-  dateRange: DateRange;
+
   interval: IntervalDate;
-  discriminator: 'interval';
 }
 

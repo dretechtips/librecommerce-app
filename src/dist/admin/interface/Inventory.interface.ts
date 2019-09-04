@@ -1,7 +1,7 @@
 import { Money } from "../model/Money";
-import { Color } from "../model/Color";
+import { Color } from "../type/Color";
 
-export interface Product
+export interface ProductConstructor
 {
   name: string,
   id: string,
