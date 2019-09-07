@@ -7,7 +7,7 @@ const Admin = require('./admin/route/Admin');
 import * as http from "http";
 import { default as hconsole } from "./admin/model/Console";
 
-const server = http.createServer(app).listen(8000, '127.0.0.1', () =>
+const server: http.Server = http.createServer(app).listen(8000, '127.0.0.1', () =>
 {
   hconsole.log(`Initalizing Server with the IP Address of ${server.address().address} and the PORT of ${server.address().port}`);
 });
