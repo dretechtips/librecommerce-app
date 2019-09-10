@@ -3,7 +3,7 @@ import { ColorConstructor } from "../interface/Color.interface";
 export class Color
 {
   private _color: ColorConstructor;
-  private _colorArray: string[] = 
+  private static _colorArray: string[] = 
   ["black",
   "blue",
   "brown",
@@ -41,6 +41,10 @@ export class Color
       this._color = color;
     }
   }
+  public static allToArray()
+  {
+    return this._colorArray;
+  }
   public toString(): string
   {
     let colorArray: string[];
@@ -57,7 +61,7 @@ export class Color
   private stringToColor(color: string): ColorConstructor
   {
     const colorConst: ColorConstructor = {};
-    for(let cur of this._colorArray)
+    for(let cur of Color._colorArray)
     {
       if(color.search(cur) !== -1)
       {
@@ -73,9 +77,9 @@ export class Color
   private strArrayToColor(color: string[]): ColorConstructor
   {
     const colorConst: ColorConstructor = {};
-    for(let cur of this._colorArray)
+    for(let cur of Color._colorArray)
     {
-      if(this._colorArray.find(now => now === cur))
+      if(Color._colorArray.find(now => now === cur))
       {
         colorConst[cur] === true;
       }

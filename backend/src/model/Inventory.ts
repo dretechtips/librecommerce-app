@@ -1,7 +1,7 @@
 import { default as Database } from "../model/Database";
-import {  ProductConstructor, NewProductBody } from "../interface/Inventory.interface";
+import {  ProductConstructor, NewProductBody, ExistingProductBody, InventoryCategory } from "../interface/Inventory.interface";
 import uuid = require("uuid/v4");
-import { Money } from "./Money";
+import { Money } from "../type/Money";
 import { Color } from "../type/Color";
 
 export class Inventory
@@ -25,6 +25,10 @@ export class Inventory
     this._products.clear();
     // DB Query
     // Populate The Hash Map
+  }
+  public static fetchCategories(): InventoryCategory[]
+  {
+    // Database method
   }
   find(id: string): Product
   {
@@ -95,11 +99,26 @@ export class Product
     }
     return new Product(product);
   }
+  public toPrimitiveObj(): ExistingProductBody
+  {
+    const product: ExistingProductBody = {
+      ...this._values,
+      price: this._values.price.getValue(),
+      images: this._values.images.map(cur => String(cur)),
+      colors: this._values.colors.map(cur => cur.toString()),
+    }
+    return product;
+  }
   public static From = class
   {
     public static id(id: string): Product
     {
       
     }
+    public static price(min: number, max: number): Product[]
+    {
+      
+    }
+    
   }
 }

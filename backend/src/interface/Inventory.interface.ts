@@ -1,4 +1,4 @@
-import { Money } from "../model/Money";
+import { Money } from "../type/Money";
 import { Color } from "../type/Color";
 
 export interface ProductConstructor
@@ -36,4 +36,17 @@ export interface NewProductBody
   warning?: string,
   ingredients?: string[],
   benefits?: string[],
+}
+
+export interface ExistingProductBody extends NewProductBody
+{
+  id: string,
+  rating: number,
+  ratingAmount: number
+}
+
+export interface InventoryCategory 
+{
+  name: string,
+  id: string,
 }
