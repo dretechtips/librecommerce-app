@@ -45,6 +45,16 @@ export interface ExistingProductBody extends NewProductBody
   ratingAmount: number
 }
 
+export interface ProductSearchQuery
+{
+  name?: string,
+  id?: string,
+  minPrice?: number,
+  maxPrice?: number,
+  brand?: string,
+  stock?: string, 
+}
+
 export interface InventoryCategory 
 {
   name: string,

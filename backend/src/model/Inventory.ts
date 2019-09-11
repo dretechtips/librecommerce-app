@@ -1,5 +1,5 @@
 import { default as Database } from "../model/Database";
-import {  ProductConstructor, NewProductBody, ExistingProductBody, InventoryCategory } from "../interface/Inventory.interface";
+import {  ProductConstructor, NewProductBody, ExistingProductBody, InventoryCategory, ProductSearchQuery } from "../interface/Inventory.interface";
 import uuid = require("uuid/v4");
 import { Money } from "../type/Money";
 import { Color } from "../type/Color";
@@ -9,18 +9,22 @@ export class Inventory
   private _products: Map<string, Product>;
   constructor(productID: string[])
   {
-    
+    productID.forEach(cur => {
+      const product: Product = Product.From.id(cur);
+      this._products.set(cur, product);
+    })
   }
-  public add(product: Product)
+  public add(product: Product): void
   {
-  
+    this._products.set(product.getValue().id, product);
+    product.save();
   }
-  public remove(id: string)
+  public remove(id: string): void
   {
     this._products.delete(id);
   }
   // Grab the hottest product and newest product
-  public refresh()
+  public refresh(): void
   {
     this._products.clear();
     // DB Query
@@ -41,7 +45,7 @@ export class Product
   private _values: ProductConstructor;
   constructor(product: ProductConstructor)
   {
-    
+    this._values = product;
   }
   public add()
   {
@@ -52,14 +56,13 @@ export class Product
     // find within database
     // find within memory 
   }
+  public save()
+  {
+    
+  }
   public getValue(): ProductConstructor
   {
     return this._values;
-  }
-  public save()
-  {
-    // save into database
-    // save into inventory if it was is memory
   }
   public update(body: any)
   {
@@ -111,6 +114,10 @@ export class Product
   }
   public static From = class
   {
+    public static queries(body: ProductSearchQuery): Product[]
+    {
+      
+    }
     public static id(id: string): Product
     {
       
@@ -119,6 +126,5 @@ export class Product
     {
       
     }
-    
   }
 }
