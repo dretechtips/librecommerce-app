@@ -197,6 +197,10 @@ export class IPAddress
   {
     
   }
+  public toString(): string
+  {
+    return this._value;
+  }
   private validateIPv4(ip: string)
   {
     if(isIPv4(ip)) this._value = ip;

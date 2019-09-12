@@ -1,5 +1,5 @@
 import { default as Database } from "./Database";
-import { OrderConstructor, NewOrderBody } from "../interface/Order.interface";
+import { OrderConstructor, NewOrderBody, OrderProduct, ExistingOrderBody } from "../interface/Order.interface";
 import { DatabaseKeyValue, DatabaseQueryConstructor } from "../interface/Database.interface";
 import { Queue } from "../data/Queue";
 import * as uuid from "uuid/v4";
@@ -9,6 +9,8 @@ import { CustomerConstructor } from "../interface/Customer.interface";
 import { Shipping } from "./Shipping";
 import { default as axios } from "axios";
 import { Request } from "express-serve-static-core"
+import { Money } from "../type/Money";
+import { ShippingConstructor } from "../interface/Shipping.interface";
 
 export class OrdersQueue extends Queue
 {
@@ -31,6 +33,10 @@ export class OrdersQueue extends Queue
   {
     return this._values[this._values.length - 1];
   }
+  public getNextOrderID(): string
+  {
+    return this.getNext().getValue().id;
+  }
   public hold()
   {
     const order: Order = this._values.shift();
@@ -43,6 +49,11 @@ export class OrdersQueue extends Queue
       return false;
     else 
       return true;
+  }
+  public getHoldList(): Order[]
+  {
+    const orders: Order[] = Array.from(this._hold.values());
+    return orders;
   }
 }
 
@@ -81,6 +92,14 @@ export class Order
   {
     return this._value.shipping;
   }
+  public getProducts(): OrderProduct[]
+  {
+    return this._value.products;
+  }
+  public getTotalPay(): Money
+  {
+    return this._value.totalPay;
+  }
   public delete(): boolean
   {
 
@@ -97,7 +116,7 @@ export class Order
   {
     const value = this._value;
     if(body.username) value.username = body.username
-    if(body.productsID) value.productsID = body.productsID;
+    if(body.products) value.products = body.products;
     if(body.address) value.address = body.address;
     if(body.email) value.email = body.email;
     if(body.phone) value.phone = body.phone
@@ -112,13 +131,14 @@ export class Order
         id: uuid(),
         username: customer.username,
         timestamp: new Date(),
-        productsID: body.productsID,
         address: customer.address,
         email: customer.email,
         phone: customer.phone,
         cancelled: false,
         shipping: Shipping.generate(body.shipping),
-        ipAddress: IPAddress.generate(req)
+        ipAddress: IPAddress.generate(req),
+        products: body.products,
+        totalPay: new Money(6.6666666),
       }
       return new Order(order);
     }
@@ -128,7 +148,7 @@ export class Order
       {
         id: uuid(),
         timestamp: new Date(),
-        productsID: body.productsID,
+        products: body.products,
         address: new Address(body.address),
         email: new EmailAddress(body.email),
         phone: new PhoneNum(body.phone),
@@ -139,8 +159,28 @@ export class Order
       return new Order(order);
     }
   }
+  public toPrimObj(): ExistingOrderBody
+  {
+    const shipping: ShippingConstructor = this._value.shipping.getValue();
+    const order: ExistingOrderBody = {
+      ...this._value,
+      timestamp: this._value.timestamp.toDateString(),
+      ipAddress: this._value.ipAddress.toString(),
+      totalPay: this._value.totalPay.getValue(),
+      shipping: {
+        ...shipping,
+        price: shipping.price.getValue(),
+        orderID: shipping.orderID,
+        cancelled: shipping.cancelled,
+      }
+    }
+  }
   public static From = class
   {
+    public static body(body: any): Order[]
+    {
+      
+    }
     public static id(id: string): Order
     {
       

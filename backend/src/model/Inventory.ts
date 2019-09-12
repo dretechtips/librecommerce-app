@@ -3,6 +3,7 @@ import {  ProductConstructor, NewProductBody, ExistingProductBody, InventoryCate
 import uuid = require("uuid/v4");
 import { Money } from "../type/Money";
 import { Color } from "../type/Color";
+import { Paypal } from "./Paypal";
 
 export class Inventory
 {
@@ -63,6 +64,10 @@ export class Product
   public getValue(): ProductConstructor
   {
     return this._values;
+  }
+  public saveToPaypal()
+  {
+    const paypal: Paypal = new Paypal();
   }
   public update(body: any)
   {

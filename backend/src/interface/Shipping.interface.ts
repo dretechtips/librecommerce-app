@@ -16,3 +16,10 @@ export interface NewShippingBody
   price: number,
   provider: "fedex" | "ups",
 }
+
+export interface ExistingShippingBody extends NewShippingBody
+{
+  shippingID: string,
+  orderID: string,
+  cancelled: boolean,
+}
