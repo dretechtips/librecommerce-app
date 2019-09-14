@@ -9,6 +9,8 @@ import { FieldDef, QueryResult } from "pg";
 import hconsole from "../model/Console";
 import { Paypal } from "../model/Paypal";
 import { Shipping } from "../model/Shipping";
+import WebSocket = require('ws');
+import { OrderConstructor, ExistingOrderBody } from "../interface/Order.interface";
 
 export class OrdersController extends Controller
 {
@@ -18,6 +20,7 @@ export class OrdersController extends Controller
     try {
       const order: Order = Order.generate(req.body, req);
       this.unprocessed.enqueue(order);
+      req.ws.emit("+order", order.toPrimObj());
     } catch (e) {
       const ex: Error = e;
       hconsole.error(ex);
@@ -111,5 +114,21 @@ export class OrdersController extends Controller
       hconsole.error(ex);
       res.send({success: false, error: "System was unable to get the hold list!"})
     }
+  }
+  public static feed(req: Request, res: Response)
+  {
+    req.ws.once("connection", wss =>
+    {
+      wss.on("+order", message =>
+      {
+        try {
+          const msg = <ExistingOrderBody> message;
+          wss.send(msg);
+        } catch (e) {
+          const ex: Error = e;
+          hconsole.error(ex);
+        }
+      });
+    })
   }
 }

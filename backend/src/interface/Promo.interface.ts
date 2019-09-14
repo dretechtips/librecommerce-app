@@ -1,5 +1,5 @@
 import { Discount } from "../type/Discount";
-import { IntervalDate } from "../model/IntervalDate";
+import { IntervalDate } from "../type/IntervalDate";
 import { DateRange } from "../type/Range";
 
 export interface BasePromo
@@ -20,7 +20,6 @@ export interface StandardPromo extends BasePromo
 
 export interface IntervalPromo extends BasePromo
 {
-
   interval: IntervalDate;
 }
 

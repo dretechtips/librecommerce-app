@@ -36,7 +36,10 @@ export class Address implements AddressConstructor
   {
     // Use Google Geocoding API
   }
-  
+  public getValue()
+  {
+    return this as AddressConstructor;
+  }
 }
 
 export class EmailAddress
@@ -71,6 +74,10 @@ export class EmailAddress
     {
       return false
     }
+  }
+  public toString(): string
+  {
+    return this.emailAddy;
   }
 }
 //

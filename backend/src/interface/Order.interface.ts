@@ -3,6 +3,7 @@ import { NewShippingBody, ExistingShippingBody } from "./Shipping.interface";
 import { Shipping } from "../model/Shipping";
 import { IPAddress } from "../type/Location";
 import { Money } from "../type/Money";
+import { AddressConstructor } from "./Location.interface";
 
 export interface OrderConstructor
 {
@@ -23,7 +24,7 @@ export interface NewOrderBody
 {
   id: string,
   products: OrderProduct[],
-  address: string,
+  address: AddressConstructor,
   username?: string,
   email: string,
   phone: string,
@@ -32,6 +33,7 @@ export interface NewOrderBody
 
 export interface ExistingOrderBody extends NewOrderBody
 {
+  address: AddressConstructor,
   timestamp: string,
   cancelled: boolean,
   ipAddress: string,

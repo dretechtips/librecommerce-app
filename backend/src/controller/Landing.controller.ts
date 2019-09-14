@@ -4,7 +4,6 @@ import { Request, Response } from "express-serve-static-core";
 
 export class LandingController extends Controller
 {
-  protected static _childViewDir = "/";
   public static renderHome(req: Request, res: Response): void
   {
     const page: string = pug.renderFile(this._landingViewDir + "/home.pug");

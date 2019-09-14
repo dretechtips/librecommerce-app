@@ -1,40 +1,47 @@
-import { NextFunction, Request, Response } from "express-serve-static-core";
-import * as pug from "pug";
-const viewDir = "./admin/view";
+import { Request, Response } from "express-serve-static-core";
+import { ActiveUsers, User } from "../model/User";
+import uuid = require('uuid/v4');
 
 export class UserController
 {
-  public static verify(req: Request, res: Response, next: NextFunction): void
+  private static session = new ActiveUsers();
+  public static verify(req: Request, res: Response): void
   {
-    if(!req.cookies.loginID && req.path !== '/login')
+    if(!req.cookies.accessToken)
     {
-      res.redirect('/admin/login');
+      res.send({success: false, error: "Client access token doesn't exist."});
     }
     else{
-      next();
+      if(UserController.session.hasToken(req.cookies.accessToken))
+      {
+        res.send({success: true, });
+      }
+      else
+      {
+        res.send({success: false, error: "Client access token has expired or is invalid."});
+      }
     }
-  }
-  public static renderLogin(req: Request, res: Response): void
-  {
-    const error = req.query.error;
-    const page = pug.renderFile(viewDir + '/login.pug', {
-      error: error ? true : false
-    });
-    res.send(page);
   }
   public static login(req: Request, res: Response): void
   {
-    const user = req.body.user;
-    const pass = req.body.pass;
-    const validation = new Validation(user, pass);
-    if(validation)
+    const eCred: string = req.body.clientID;
+    const bCred: Buffer = Buffer.from(eCred, "base64");
+    const dCred: string = bCred.toString();
+    const [username, password] = dCred.split(":");
+    const user: User = User.From.cred(username, password);
+    if(user === null)
     {
-      req.cookies.loginID = uuid();
-      res.redirect('/admin/home');
+      res.send({success: false, error: "Your password or username was incorrect."});
     }
     else 
     {
-      res.redirect('/admin/login?error=true');
+      const accessToken: string = uuid();
+      UserController.session.add(accessToken, user);
+      res.send({success: true, accessToken: accessToken});
     }
+  }
+  public static update(req: Request, res: Response): void
+  {
+
   }
 }

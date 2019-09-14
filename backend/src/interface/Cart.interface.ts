@@ -1,5 +1,7 @@
 import { Product } from "../model/Inventory";
 
+type cartID = string;
+
 export interface CartConstructor
 {
   items: Product[],
@@ -8,5 +10,5 @@ export interface CartConstructor
 
 export interface NewCartBody
 {
-  items: string[]
+  items: cartID[]
 }

@@ -1,8 +1,9 @@
-import { Address, EmailAddress, PhoneNum } from "../model/Location";
+import { Address, EmailAddress, PhoneNum } from "../type/Location";
 import { Schedule } from "../model/Schedule";
 
 export interface UserConstructor
 {
+  id: string,
   firstName: string,
   lastName: string,
   privilege: Privilege,

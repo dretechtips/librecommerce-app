@@ -1,55 +1,70 @@
-import { Request, Response, NextFunction } from "express-serve-static-core";
+import { Request, Response } from "express-serve-static-core";
 import uuid = require('uuid/v4');
 import hconsole from "../model/Console";
 import { CartSession, Cart } from "../model/Cart";
 import { Product } from "../model/Inventory";
 import { Controller } from "./Controller";
-import { Action } from "../interface/Dashboard.interface";
 import { OrdersController } from "./Orders.controller";
-import pug = require('pug');
+import { ProductConstructor, ExistingProductBody } from "../interface/Inventory.interface";
 
 export class CartController extends Controller
 {
-  protected static _dashboardActions: Action[] = [
-    {name: "Search", path: "/admin/search", icon: "fas fa-search"},
-  ]
-  protected static _childViewDir = "/cart";
   private static session = new CartSession();
-  public static add(req: Request, res: Response)
-  {
-    const product: Product = Product.From.id(req.body.productID);
-    const cart: Cart = this.session.find(req.cookies.cartID);
-    cart.getValue().items.push(product);
-    this.session.update(cart.getValue().id, cart);
-  }
-  private static create(req: Request, res: Response)
+  private static create(req: Request, res: Response): Response
   {
     const cart: Cart = Cart.generate(req.body);
     this.session.add(cart);
-    res.cookie('cartID', cart.getValue().id).send();
+    return res.cookie('cartID', cart.getValue().id);
   }
-  public static verify(req: Request, res: Response, next: NextFunction)
+  public static verify(req: Request, res: Response): void
   {
     try {
-    if(!req.cookies.cartID)
-      CartController.create(req, res);
-    next();
+      if(!req.cookies.cartID)
+      {
+        const cart: Response = CartController.create(req, res);
+        res.send({success: true});
+      }
     } catch (e) {
       const ex: Error = e;
       hconsole.error(ex);
+      res.send({success: false, error: "System was unable to create a cart."});
     }
   }
-  public static checkout(req: Request, res: Response)
+  public static checkout(req: Request, res: Response): void
   {
-    this.session.remove(req.cookies.cartID);
-    res.clearCookie('cartID');
-    OrdersController.add(req, res);
+    try {
+      this.session.remove(req.cookies.cartID);
+      res.clearCookie('cartID');
+      OrdersController.add(req, res); 
+    } catch (e) {
+      const ex: Error = e;
+      hconsole.error(ex);
+      res.send({success: false, error: "System was unable to checkout your order"});
+    }
   }
-  public static renderCheckout(req: Request, res: Response)
+  public static listItems(req: Request, res: Response): void
   {
-    CartController.init();
-    const page = pug.renderFile(this._adminViewDir + this._childViewDir + '/checkout.pug', {
-      cart: this.session.find(req.cookies.cartID),
-    })
+    try {
+      const cartID: string = req.cookies.cartID;
+      if(!cartID) throw new Error("Unable to find the cart ID in the cookies.");
+      const cart = this.session.find(cartID);
+      const products: Product[] = cart.getValue().items;
+      const productBody: ExistingProductBody[] = products.map(cur => cur.toPrimitiveObj());
+      res.send({success: true, products: productBody});
+    } catch (e) {
+      const ex: Error = e;
+      hconsole.error(ex);
+      res.send({success: false, error: });
+    }
+  }
+  public static search(req: Request, res: Response): void
+  {
+    try {
+      
+    } catch (e) {
+      const ex: Error = e;
+      hconsole.error(ex);
+      res.send({success: false, error: ""});
+    }
   }
 }

@@ -154,7 +154,8 @@ export class Order
         phone: new PhoneNum(body.phone),
         shipping: Shipping.generate(body.shipping),
         cancelled: false,
-        ipAddress: IPAddress.generate(req)
+        ipAddress: IPAddress.generate(req),
+        totalPay: new Money(6.666666)
       }
       return new Order(order);
     }
@@ -172,8 +173,12 @@ export class Order
         price: shipping.price.getValue(),
         orderID: shipping.orderID,
         cancelled: shipping.cancelled,
-      }
+      },
+      address: this._value.address.getValue(),
+      email: this._value.email.toString(),
+      phone: this._value.phone.toString(),
     }
+    return order;
   }
   public static From = class
   {
