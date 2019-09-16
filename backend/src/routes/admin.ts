@@ -3,7 +3,7 @@ import { AdminController } from "../controller/Admin.controller";
 
 import { default as BillingRoutes } from "./billing";
 import { default as CouponRoutes } from "./coupon";
-import { default as  CustomerRoutes } from "./customer";
+import { AdminRoute as  CustomerRoutes } from "./customer";
 import { default as InventoryRoutes } from "./inventory";
 import { AdminRoute as OrderRoutes } from "./order";
 import { default as PromoRoutes } from "./promo";
@@ -16,11 +16,10 @@ const router: express.Router = express.Router();
 router.get(['', '/home'], (req, res) => AdminController.renderHome(req, res));
 
 // The Root URL will be used for downloading the react.js file
-router.use('/');
-router.use('/user', UserRoutes);
+router.use('/', UserRoutes);
 router.use('/inventory', InventoryRoutes);
 router.use('/order', OrderRoutes);
-router.use('/customer', CustomerRoutes.adminRoute);
+router.use('/customer', CustomerRoutes);
 router.use('/billing', BillingRoutes);
 router.use('/promo', BillingRoutes);
 router.use('/coupon', CouponRoutes);

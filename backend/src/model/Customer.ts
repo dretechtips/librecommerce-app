@@ -1,62 +1,32 @@
 import { default as Database, DatabaseQuery } from './Database';
-import {  CustomerConstructor  } from '../interface/Customer.interface';
+import {  CustomerConstructor, NewCustomerBody  } from '../interface/Customer.interface';
 import { QueryResult, FieldDef } from 'pg';
+import uuid = require('uuid/v4');
+import { Address, EmailAddress, PhoneNum } from "../type/Location";
 
-// export class Customers
-// {
-//   public static async SearchID(CustomerID: string): Promise<FieldDef[] | false>
-//   {
-//     try
-//     {
-//       const query: string = `SELECT * FROM customers WHERE id = '${CustomerID}'`;
-//       const result: QueryResult =  await Database._db.main.singleQuery(query);
-//       return result.fields;
-//     }
-//     catch(e)
-//     {
-//       return false;
-//     }
-//   }
-//   public static async SearchName(customerName: string): Promise<FieldDef[] | false>
-//   {
-//     try
-//     {
-//       const query = `SELECT * FROM customers WHERE name LIKE '%${customerName}%`;
-//       const result =  await Database._db.main.singleQuery(query);
-//       return result.fields;
-//     }
-//     catch(e)
-//     {
-//       return false;
-//     }
-//   }
-//   public static async SearchUsername(cUsername: string): Promise<any[]>
-//   {
-    
-//   }
-//   public static async Add(customer: Customer): Promise<boolean>
-//   {
-//     try {
-      
-//     } catch (e) {
-      
-//     }
-//   }
-//   public static async Remove(customerID: string): Promise<boolean>
-//   {
-//     try {
-//       const query: string = `DELETE FROM customers WHERE id = '${customerID}'`;
-//       const result: QueryResult = await Database._db.main.singleQuery(query);
-//       if(result.rows.length > 0)
-//       {
-//         return true;
-//       }
-//       else return false;
-//     } catch (e) {
-//       return false;
-//     }
-//   }
-// }
+export class ActiveCustomer {
+  private _session: Map<string, Customer>;
+  constructor(customers: Customer[]) {
+    this._session = new Map();
+    if (customers !== null) {
+      for (let i = 0; i < customers.length; i++) {
+        const cur: Customer = customers[i];
+        this._session.set(cur.getValue().id, cur);
+      }
+    }
+  }
+  public add(customer: Customer): void {
+    this._session.set(customer.getValue().id, customer);
+    return;
+  }
+  public remove(customerID: string): void {
+    this._session.delete(customerID);
+    return;
+  }
+  public fetch(customerID: string): Customer {
+    return this._session.get(customerID);
+  }
+}
 
 export class Customer
 {
@@ -71,23 +41,50 @@ export class Customer
   {
     return this._value;
   }
-  public delete()
+  public delete(): void
   {
+    
     //const query: DatabaseQuery = this._details.delete();
   }
-  public update()
+  public save(): void {
+
+  }
+  public update(body: any): void
   {
-    //const query: DatabaseQuery = this._details.update();
+    if (body.firstName) this._value.firstName = body.firstName;
+    if (body.lastName) this._value.lastName = body.lastName;
+    if (body.username) this._value.username = body.username;
+    if (body.address) this._value.address = new Address(body.address);
+    if (body.email) this._value.email = new EmailAddress(body.email);
+    if (body.phone) this._value.phone = new PhoneNum(body.phoneNum);
+  }
+  public static generate(body: NewCustomerBody): Customer {
+    const customer: CustomerConstructor = {
+      firstName: body.firstName,
+      lastName: body.lastName,
+      id: uuid(),
+      ordersID: [],
+      username: body.username,
+      password: body.password,
+      lastOrderDate: null,
+      address: new Address(body.address),
+      email: new EmailAddress(body.email),
+      phone: new PhoneNum(body.phone)
+    }
+    return new Customer(customer);
   }
   public static From = class
   {
-    public static id(id: string)
+    public static id(id: string): Customer
     {
       
     }
     public static username(username: string): Customer
     {
       
+    }
+    public static cred(username: string, password: string): Customer {
+
     }
   }
 }

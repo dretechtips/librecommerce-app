@@ -8,7 +8,7 @@ export interface BillingConstructor
   ipAddress: IPAddress,
   timestamp: Date,
   dateRange: DateRange,
-  transactions: Map<Date, Transaction>[],
+  transactions: BillingDate[],
 }
 
 export interface TransactionConstructor
@@ -16,7 +16,32 @@ export interface TransactionConstructor
   ipAddress: IPAddress,
   orderID: string,
   shippingID: string,
-  subtotal: Money,
   transactionID: string,
-  tax: Money,
+}
+
+export interface BillingDate
+{
+  date: Date,
+  transactions: Transaction[]
+}
+
+export interface BillingDateBody {
+  date: string,
+  transactions: TransactionBody[],
+}
+
+export interface BillingBody
+{
+  timestamp: string,
+  startDate: string,
+  endDate: string,
+  transactions: BillingDateBody[],
+}
+
+export interface TransactionBody
+{
+  ipAddress: string,
+  orderID: string,
+  shippingID: string,
+  transactionID: string,
 }

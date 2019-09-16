@@ -6,6 +6,7 @@ import schedule = require('node-schedule');
 export class CartSession
 {
   private _value: Map<string, Cart>;
+  private _dateLeft: number = 7;
   constructor()
   {
     
@@ -14,7 +15,7 @@ export class CartSession
   {
     this._value.set(cart.getValue().id, cart);
     let scheduleDate: Date = new Date();
-    scheduleDate.setDate(scheduleDate.getDate() + 7);
+    scheduleDate.setDate(scheduleDate.getDate() + this._dateLeft);
     schedule.scheduleJob(scheduleDate, () => this.remove(cart.getValue().id));
   }
   public remove(id: string)
@@ -34,6 +35,10 @@ export class CartSession
   {
     this._value.delete(id);
     this._value.set(id, cart);
+  }
+  public findAll(): Cart[]
+  {
+    return Array.from(this._value.values());
   }
 }
 

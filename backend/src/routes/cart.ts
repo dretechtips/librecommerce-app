@@ -7,7 +7,6 @@ ClientRoute.use((req, res) => CartController.verify(req, res));
 ClientRoute.post('/checkout', (req, res) => CartController.checkout(req, res));
 ClientRoute.get('/items', (req, res) => CartController.listItems(req, res));
 
-AdminRoute.route('/search')
-.get((req, res) => CartController.search(req, res));
+AdminRoute.get('/search', (req, res) => CartController.search(req, res));
 
 export {  ClientRoute, AdminRoute  };

@@ -7,9 +7,10 @@ export class ActiveUsers
 {
   private _session: Map<string, User>;
   private _expTime: 10800000;
-  constructor(user?: User[])
+  constructor(user: User[])
   {
-    if(user !== undefined)
+    this._session = new Map();
+    if(user !== null)
     {
       for(let i = 0 ; i < user.length ; i++)
       {

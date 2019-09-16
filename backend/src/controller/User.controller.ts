@@ -1,24 +1,26 @@
-import { Request, Response } from "express-serve-static-core";
+import { Request, Response, NextFunction } from "express-serve-static-core";
 import { ActiveUsers, User } from "../model/User";
 import uuid = require('uuid/v4');
 
 export class UserController
 {
-  private static session = new ActiveUsers();
-  public static verify(req: Request, res: Response): void
+  private static session = new ActiveUsers(null);
+  public static verify(req: Request, res: Response, next: NextFunction): void
   {
     if(!req.cookies.accessToken)
     {
-      res.send({success: false, error: "Client access token doesn't exist."});
+      res.send({ success: false, error: "Client access token doesn't exist." });
+      return;
     }
     else{
       if(UserController.session.hasToken(req.cookies.accessToken))
       {
-        res.send({success: true, });
+        return next();
       }
       else
       {
-        res.send({success: false, error: "Client access token has expired or is invalid."});
+        res.send({ success: false, error: "Client access token has expired or is invalid." });
+        return;
       }
     }
   }

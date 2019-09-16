@@ -2,10 +2,7 @@ import * as express from "express";
 import { BillingController } from "../controller/Billing.controller";
 const router = express.Router();
 
-router.get('/report', (req, res) => BillingController.renderToday(req, res));
-
-router.route('/search')
-.get((req, res) =>)
-.post((req, res) =>)
+router.get('/search', (req, res) => BillingController.search(req, res));
+router.get('/search/today', (req, res) => BillingController.searchToday(req, res));
 
 export default router;
