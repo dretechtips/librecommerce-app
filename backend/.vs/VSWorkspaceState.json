@@ -1,0 +1,15 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\build",
+    "\\src",
+    "\\src\\controller",
+    "\\src\\decorator",
+    "\\src\\helper",
+    "\\src\\interface",
+    "\\src\\model",
+    "\\src\\routes"
+  ],
+  "SelectedNode": "\\src\\controller\\Customer.controller.ts",
+  "PreviewInSolutionExplorer": false
+}

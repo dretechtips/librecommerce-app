@@ -7,20 +7,64 @@ import { HttpMethod } from "../decorator/HttpMethod";
 export class CouponsController extends Controller
 {
   @HttpMethod("POST")
-  public static add( req: Request, res: Response)
+  public static add( req: Request, res: Response): void
   {
-    const coupon: Coupon = Coupon.generate(req.body);
-    coupon.save();
+    try {
+      const coupon: Coupon = Coupon.generate(req.body);
+      coupon.save();
+      return;
+    }
+    catch (e) {
+      const ex: Error = e;
+      hconsole.error(ex);
+      res.send({ success: false, error: "System was unable to add the coupon." });
+    }
   }
   @HttpMethod("DELETE")
-  public static delete(req: Request, res: Response)
+  public static delete(req: Request, res: Response): void
   {
-    const func: Function = new Function("apple", "pear", "kiil");
-    func.arguments
+    try {
+      const couponID: string = req.body.couponID;
+      if (!couponID) {
+        res.send({ success: false, error: "Client didn't pass in a coupon ID." });
+        return;
+      }
+      const coupon: Coupon = Coupon.From.id(couponID);
+      if (coupon === null) {
+        res.send({ success: false, error: "Coupon ID doesn't exist in the system." });
+      }
+      coupon.delete();
+      res.send({ success: true });
+      return;
+    }
+    catch (e) {
+      const ex: Error = e;
+      hconsole.error(ex);
+      res.send({ success: false, error: "System was unable to delete the coupon" });
+    }
   }
-  public static update(req: Request, res: Response)
+  @HttpMethod("PATCH")
+  public static update(req: Request, res: Response): void
   {
-
+    try {
+      const couponID: string = req.body.couponID;
+      if (!couponID) {
+        res.send({ success: false, error: "Client didn't pass in a coupon ID." });
+        return;
+      }
+      const coupon: Coupon = Coupon.From.id(couponID);
+      if (!coupon) {
+        res.send({ success: false, error: "Coupon with the the coupon ID inputted doesn't exist." });
+        return;
+      }
+      coupon.update();
+      return;
+    }
+    catch (e) {
+      const ex: Error = e;
+      hconsole.error(ex);
+      res.send({ success: false, error: "Systemw as unable to update the coupon." });
+    }
   }
   
   public static search(req: Request, res: Response)

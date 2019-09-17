@@ -10,6 +10,7 @@ import { default as PromoRoutes } from "./promo";
 import { default as SpyRoutes } from "./spy";
 import { default as UserRoutes } from "./user";
 import { AdminRoute as CartRoutes } from "./cart";
+import { default as ScheduleRoutes } from "./schedule";
 
 const router: express.Router = express.Router();
 
@@ -26,5 +27,6 @@ router.use('/coupon', CouponRoutes);
 router.use('/promo', PromoRoutes);
 router.use('/spy', SpyRoutes);
 router.use('/cart', CartRoutes);
+router.use('/schedule', ScheduleRoutes);
 
 export default router;

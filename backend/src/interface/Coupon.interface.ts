@@ -1,11 +1,11 @@
 import { Discount } from "../type/Discount";
+import { DateRange } from "../type/Range";
 
-export interface BaseCoupon
+interface BaseCoupon
 {
   name: string,
   id: string,
-  startTime: Date,
-  endTime: Date,
+  dateRange: DateRange,
   productsID?: string[],
   categoriesID?: string[],
   all?: boolean,
@@ -13,12 +13,39 @@ export interface BaseCoupon
   active: boolean
 }
 
-export interface StoreCoupon extends BaseCoupon {   }
+export interface StoreCoupon extends BaseCoupon {
+  type: "store"
+}
 
 export interface IndividualCoupon extends BaseCoupon
 {
+  type: "individual",
   customerID: string,
 }
+
+export type CouponConstructor = StoreCoupon | IndividualCoupon;
+
+interface BaseCouponBody {
+  name: string,
+  startDate: string,
+  endDate: string,
+  productsID: string[],
+  categoriesID: string[],
+  all: boolean,
+  deal: number,
+  active: boolean
+}
+
+export interface StoreCouponBody extends BaseCouponBody {
+  type: "store";
+}
+
+export interface IndividualCouponBody extends BaseCouponBody {
+  type: "individual";
+  customerID: string;
+}
+
+export type CouponBody = StoreCouponBody | IndividualCouponBody;
 
 
 

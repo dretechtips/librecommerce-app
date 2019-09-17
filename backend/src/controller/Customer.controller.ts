@@ -2,12 +2,13 @@ import { Request, Response, NextFunction } from "express-serve-static-core";
 import { Controller } from "./Controller";
 import { Customer, ActiveCustomer } from "../model/Customer";
 import hconsole from "../model/Console";
+import { HttpMethod } from "../decorator/HttpMethod";
 
 export class CustomerController extends Controller
 {
   private static session = new ActiveCustomer(null);
   public static verify(req: Request, res: Response, next: NextFunction): void {
-    const accessToken: string = req.body.accessToken;
+    const accessToken: string = req.cookies.accessToken;
     if (!accessToken) {
       res.send({ success: false, error: "Customer access token doesn't exist." });
       return;
@@ -20,6 +21,7 @@ export class CustomerController extends Controller
       return;
     }
   }
+  @HttpMethod("POST")
   public static signin(req: Request, res: Response): void {
     try {
       const clientID: string = req.body.clientID;
@@ -35,7 +37,10 @@ export class CustomerController extends Controller
         res.send({ success: false, error: "System doesn't have this customer ID" });
         return;
       }
-      res.send({ success: true });
+      else {
+        const accessToken: string = this.session.add(customer);
+        res.cookie("accessToken" , accessToken).send({ success: true });
+      }
       return;
     }
     catch (e) {
@@ -43,6 +48,7 @@ export class CustomerController extends Controller
       res.send({ success: false, error: "System was unable to sign in the customer" });
     }
   }
+  @HttpMethod("POST")
   public static add(req: Request, res: Response): void
   {
     try {
@@ -56,6 +62,7 @@ export class CustomerController extends Controller
       res.send({ success: false, error: "System was unable to add the customer"});
     }
   }
+  @HttpMethod("DELETE")
   public static remove(req: Request, res: Response): void
   {
     try {
@@ -76,6 +83,7 @@ export class CustomerController extends Controller
       res.send({ success: false, error: "System was unable to delete the customer."});
     }
   }
+  @HttpMethod("PATCH")
   public static update(req: Request, res: Response): void
   {
     try {

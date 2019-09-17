@@ -6,6 +6,7 @@ import { Address, EmailAddress, PhoneNum } from "../type/Location";
 
 export class ActiveCustomer {
   private _session: Map<string, Customer>;
+  private _timeout: number = 3600000;
   constructor(customers: Customer[]) {
     this._session = new Map();
     if (customers !== null) {
@@ -15,16 +16,18 @@ export class ActiveCustomer {
       }
     }
   }
-  public add(customer: Customer): void {
-    this._session.set(customer.getValue().id, customer);
+  public add(customer: Customer): string {
+    const accessToken: string = uuid();
+    this._session.set(accessToken, customer);
+    setTimeout(() => this.remove(accessToken));
+    return accessToken;
+  }
+  public remove(accessToken: string): void {
+    this._session.delete(accessToken);
     return;
   }
-  public remove(customerID: string): void {
-    this._session.delete(customerID);
-    return;
-  }
-  public fetch(customerID: string): Customer {
-    return this._session.get(customerID);
+  public fetch(accessToken: string): Customer {
+    return this._session.get(accessToken);
   }
 }
 
