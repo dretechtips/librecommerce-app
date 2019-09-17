@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express-serve-static-core";
 import uuid = require('uuid/v4');
-import hconsole from "../model/Console";
 import { CartSession, Cart } from "../model/Cart";
 import { Product } from "../model/Inventory";
 import { Controller } from "./Controller";

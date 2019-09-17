@@ -1,9 +1,8 @@
 import fs = require('fs');
 
-class hconsole
+export class ConsolePlus
 {
-  private static _console: Console = new Console();
-  public static init(): hconsole
+  constructor()
   {
     try {
       fs.exists("./out", (exists) =>
@@ -17,38 +16,37 @@ class hconsole
             fs.writeFile(file, "", (error) =>
             {
               if(error) throw error;
-              hconsole.log("Output Directory has been initalized");
+              this.log("Output Directory has been initalized");
             })
           }
         })
       });
-      return hconsole;
     } catch (e) {
       const ex: Error = e;
-      hconsole.error(ex);
+      this.error(ex);
     }
   }
-  public static log(msg: string) : void
+  public log(msg: string) : void
   {
     try {
       const msgf: string =  `[${new Date}](INFO): ${msg}`;
-      this._console.log("\x1b[1m", msgf);
+      console.log("\x1b[1m", msgf);
       fs.appendFile("./out/log.out.txt", msgf, (error) =>
       {
         if(error) throw error;
       })
     } catch (e) {
       const ex: Error = e;
-      hconsole.error(ex);
+      this.error(ex);
     }
   }
-  public static error(msg: string | Error) : void
+  public error(msg: string | Error) : void
   {
     try {
       if(typeof msg === "string")
       {
         const msgf: string = `[${new Date}](ERROR): ${msg}`;
-        this._console.error("\x1b[31m", msgf);
+        console.error("\x1b[31m", msgf);
         fs.appendFile("./out/error.out.txt", msgf, (error) => 
         {
           if(error) throw error;
@@ -57,7 +55,7 @@ class hconsole
       else 
       {
         const msgf: string = `[${new Date}](ERROR) ${msg.message} \n ${msg.stack}`
-        this._console.error("\x1b[31m", msgf);
+        console.error("\x1b[31m", msgf);
         fs.appendFile("./out/error.out.txt", msgf, (error) => 
         {
           if(error) throw error;
@@ -67,11 +65,11 @@ class hconsole
       const ex: Error = e;
     }
   }
-  public static warn(msg: string): void
+  public warn(msg: string): void
   {
     try {
       const msgf: string = `[${new Date}](WARNING): ${msg}`;
-      this._console.warn("\x1b[33m", msgf);
+      console.warn("\x1b[33m", msgf);
       fs.appendFile("./out/log.out.txt", msgf, (error) =>
       {
         if(error) throw error;
@@ -81,7 +79,3 @@ class hconsole
     }
   }
 }
-
-hconsole.init();
-
-export default hconsole;

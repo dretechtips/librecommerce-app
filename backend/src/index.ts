@@ -2,11 +2,14 @@ import * as express from "express";
 import * as session from "express-session";
 import * as http from "http";
 import WebSocket = require('ws');
-import { default as hconsole } from "./model/Console";
 
 import { default as ClientRoutes } from "./routes/client";
 import { default as AdminRoutes } from "./routes/admin";
 import { default as LandingRoutes } from "./routes/landing";
+import { ConsolePlus } from "./model/Console";
+
+hconsole = new ConsolePlus();
+Object.freeze(hconsole);
 
 const app: express.Express = express();
 const server: http.Server = http.createServer(app).listen(8000, '127.0.0.1', () =>
@@ -28,3 +31,4 @@ app.use((req, res, next) => {
 app.use('/', LandingRoutes);
 app.use('/admin', AdminRoutes);
 app.use('/client', ClientRoutes);
+

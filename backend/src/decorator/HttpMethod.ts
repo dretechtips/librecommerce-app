@@ -1,5 +1,4 @@
 import { Request, Response } from "express-serve-static-core";
-import { default as hconsole } from "../model/Console";
 
 export function HttpMethod(method: "GET" | "PATCH" | "POST" | "DELETE"): Function {
   return function (target: Object, key: string | symbol, descriptor: PropertyDescriptor): void {
