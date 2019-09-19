@@ -28,6 +28,18 @@ export class Dimension {
     this._unit = unit;
     return this;
   }
+  public getLength(): number {
+    return this._length;
+  }
+  public getHeight(): number {
+    return this._height;
+  }
+  public getWidth(): number {
+    return this._width;
+  }
+  public getVolume(): string {
+    return (this._length * this._height * this._width) + this._unit;
+  }
 }
 
 type unit = "in" | "ft" | "yd" | "cm" | "m";
