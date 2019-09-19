@@ -6,10 +6,12 @@ export interface ScheduleConstructor {
   userID: string,
   scheduleID: string,
   events: WeekEvents,
+  hasOverTime: boolean
 }
 
 
 export interface ScheduleBody {
   userID: string,
-  events: WeekEventsBodyArray
+  events: WeekEventsBodyArray,
+  hasOverTime: boolean,
 }

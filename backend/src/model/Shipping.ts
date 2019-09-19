@@ -6,23 +6,6 @@ import { Order } from "./Order";
 import { Money } from "../type/Money";
 import uuid = require("uuid/v4");
 
-// export class Shipping
-// {
-//   private _details: DatabaseQueryConstructor;
-//   public static add(shipping: ShippingConstructor)
-//   {
-    
-//   }
-//   public static remove()
-//   {
-
-//   }
-//   public static update()
-//   {
-    
-//   }
-// }
-
 export class ShippingQueue extends Queue
 {
   protected _values: Shipping[];

@@ -1,7 +1,6 @@
 import { StandardPromo, IntervalPromo, BasePromo } from "../interface/Promo.interface";
 import { DatabaseQueryConstructor, DatabaseKeyValue } from "../interface/Database.interface";
 import { Database, DatabaseQuery } from "../model/Database";
-import { IntervalDate } from "../type/IntervalDate";
 import uuid = require('uuid/v4');
 import { DateRange } from "../type/Range";
 import { Discount } from "../type/Discount";

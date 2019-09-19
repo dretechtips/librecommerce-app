@@ -1,6 +1,5 @@
 import { Money } from "../type/Money";
 import { default as axios, AxiosAdapter, AxiosResponse } from "axios";
-import hconsole from "./Console";
 import { Order } from "./Order";
 import { OrderProduct } from "../interface/Order.interface";
 import { Product } from "../model/Inventory";

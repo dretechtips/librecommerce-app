@@ -1,5 +1,4 @@
 import { default as Database } from "./Database";
-import hconsole from "./Console";
 import { UserConstructor } from "../interface/User.interface";
 import uuid = require('uuid/v4');
 

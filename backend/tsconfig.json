@@ -9,8 +9,5 @@
   },
   "include": [
     "./src/*"
-  ],
-  "files": [
-    "./src/type/custom.d.ts"
   ]
 }

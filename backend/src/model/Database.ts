@@ -1,6 +1,5 @@
 import { Pool, PoolConfig, PoolClient, QueryResult } from "pg";
 import * as crypto from "crypto";
-import { default as hconsole } from "./Console";
 import { DatabaseQueryConstructor, column, DatabaseKeyValue } from "../interface/Database.interface";
 
 export class Database 

@@ -120,6 +120,9 @@ export class TimeRange
   {
     
   }
+  public getTotalHour(): number {
+
+  }
 }
 
 enum TimeRangeTimeZone

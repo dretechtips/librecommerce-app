@@ -15,5 +15,4 @@ AdminRoute.get('/product/color', (req, res) => InventoryController.getColor(req,
 
 ClientRoute.get('/product/id', (req, res) => InventoryController.find(req, res));
 
-
-export default ;
+export { AdminRoute, ClientRoute };

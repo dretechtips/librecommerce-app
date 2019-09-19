@@ -7,7 +7,7 @@ import {  EmailAddress, PhoneNum, Address, IPAddress  } from "../type/Location";
 import { Customer } from "./Customer";
 import { CustomerConstructor } from "../interface/Customer.interface";
 import { Shipping } from "./Shipping";
-import { default as axios } from "axios";
+import axios = require("axios");
 import { Request } from "express-serve-static-core"
 import { Money } from "../type/Money";
 import { ShippingConstructor } from "../interface/Shipping.interface";
