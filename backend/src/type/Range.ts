@@ -112,15 +112,18 @@ export class TimeRange
   {
   
   }
-  public getTime()
+  public getStartTime(): string
   {
-    
+    return this._start + this._startMeridiem;
+  }
+  public getEndTime(): string {
+    return this._end + this._endMeridiem;
   }
   public getTimeConverted()
   {
     
   }
-  public getTotalHour(): number {
+  public getTotalHours(): number {
 
   }
 }

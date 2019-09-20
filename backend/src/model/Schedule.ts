@@ -3,6 +3,59 @@ import { WeekEvents } from "../type/WeekEvents";
 import { TimeRange } from "../type/Range";
 import uuid = require("uuid/v4");
 import { Day } from "../interface/Week.interface";
+import fs = require("fs");
+
+export class ActiveSchedule
+{
+  private _schedule: Map<string, Schedule>;
+  private _filePath: string;
+  constructor() {
+    this._schedule = new Map();
+    this.importSchedule();
+    this.setEvents();
+  }
+  private importSchedule(): void {
+    
+  }
+  public delete(scheduleID: string): void {
+    
+  }
+  private generateSave(): string {
+    let save: string;
+    this._schedule.forEach(cur => {
+      const value: ScheduleConstructor = cur.getValue();
+      save += value.scheduleID + " " + value.userID + " " + value.hasOverTime + " \n";
+      const days: Day[] = ["mon", "tues", "wed", "thur", "fri", "sat", "sun"];
+      days.forEach(cur => )
+      save += Array.from(value.events.getEventsByDay("mon").values())[0].name + " " + value.events.getEventsByDay("mon").values().return().value.details.hours.getStartTime() + " ")
+    });
+  }
+  public save() {
+    try {
+      fs.exists(this._filePath, (exist) => {
+        if (!exist)
+          throw new Error("System was unable to find the schedule file");
+        fs.writeFile(this._filePath, "", { encoding: "utf-8" }, (err) => {
+          if (err)
+            throw new Error("System was unable to clear the schedule file.");
+          fs.writeFile(this._filePath, this.generateSave(), { encoding: "utf-8" }, (err) => {
+            if (err)
+              throw new Error("System was unable to add content into the schedule file.");
+          });
+        });
+      });
+    }
+    catch (e) {
+      const ex: Error = e;
+      hconsole.error(ex);
+    }
+  }
+  private setEvents(): void {
+    process.on("beforeExit", (code) => {
+      this.save();
+    });
+  }
+}
 
 export class Schedule
 {
@@ -43,6 +96,9 @@ export class Schedule
       hconsole.error(ex);
     }
   }
+public getValue(): ScheduleConstructor {
+  return this._value; 
+}
   public deleteEvent(eventID: string, day?: Day): void {
     this._value.events.deleteEvent(eventID, day);
   }

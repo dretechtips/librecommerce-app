@@ -1,8 +1,9 @@
 import { Request, Response } from "express-serve-static-core";
 import { HttpMethod } from "../decorator/HttpMethod";
-import { Schedule } from "../model/Schedule";
+import { Schedule, ActiveSchedule } from "../model/Schedule";
 
 export class ScheduleController {
+  private static weekSchedule: ActiveSchedule;
   @HttpMethod("POST")
   public static add(req: Request, res: Response): void {
     try {
