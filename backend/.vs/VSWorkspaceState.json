@@ -2,10 +2,12 @@
   "ExpandedNodes": [
     "",
     "\\src",
+    "\\src\\controller",
+    "\\src\\interface",
     "\\src\\libs",
     "\\src\\model",
     "\\src\\type"
   ],
-  "SelectedNode": "\\src\\type\\Dimension.ts",
+  "SelectedNode": "\\src\\interface\\Events.interface.ts",
   "PreviewInSolutionExplorer": false
 }

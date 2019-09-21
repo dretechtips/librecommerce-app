@@ -1,15 +1,18 @@
 import { default as Database } from "./Database";
-import { UserConstructor } from "../interface/User.interface";
+import { UserConstructor, UserBody } from "../interface/User.interface";
 import uuid = require('uuid/v4');
+import { UserManager } from "../service/User.service";
+import { EmailAddress, Address, PhoneNum } from "../type/Location";
 
 export class ActiveUsers
 {
   private _session: Map<string, User>;
   private _expTime: 10800000;
-  constructor(user: User[])
+  private manager: UserManager;
+  constructor(user?: User[])
   {
     this._session = new Map();
-    if(user !== null)
+    if(user !== undefined)
     {
       for(let i = 0 ; i < user.length ; i++)
       {
@@ -22,10 +25,10 @@ export class ActiveUsers
   {
     return Array.from(this._session.values());
   }
-  public add(id: string, user: User): void
+  public add(accessToken: string, user: User): void
   {
-    this._session.set(id, user);
-    setTimeout(() => this.delete(id), this._expTime);
+    this._session.set(user.getID(), user);
+    setTimeout(() => this.delete(user.getID()), this._expTime);
   }
   public delete(userID: string): void
   {
@@ -61,6 +64,24 @@ export class User
   public getID(): string
   {
     return this._value.id;
+  }
+  public static generate(body: UserBody): User {
+    const [firstName, lastName] = Buffer.from(body.nameInfo, "base64").toString().split(":");
+    const [username, password] = Buffer.from(body.loginInfo, "base64").toString().split(":");
+    const user: UserConstructor = {
+      id: uuid(),
+      firstName: firstName,
+      lastName: lastName,
+      privilege: body.privilege,
+      username: username,
+      password: password,
+      address: new Address(body.address),
+      emailAddress: new EmailAddress(body.emailAddress),
+      phoneNum: new PhoneNum(body.phoneNum),
+      schedule: null,
+      position: body.position
+    }
+    return new User(user);
   }
   public static From = class {
     public static cred(user: string, pass: string): User

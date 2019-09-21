@@ -1,6 +1,6 @@
-import { WeekEvents } from "../type/WeekEvents";
+import { WeekEvents } from "../type/Events";
 import { TimeRange } from "../type/Range";
-import { WeekEventsArray, WeekEventsBodyArray } from "./Week.interface";
+import { SingleEventBody } from "./Events.interface";
 
 export interface ScheduleConstructor {
   userID: string,
@@ -12,6 +12,6 @@ export interface ScheduleConstructor {
 
 export interface ScheduleBody {
   userID: string,
-  events: WeekEventsBodyArray,
+  events: SingleEventBody[],
   hasOverTime: boolean,
 }

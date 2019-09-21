@@ -194,7 +194,7 @@ export class PhoneNum
 
 export class IPAddress
 {
-  private _value: string,
+  private _value: string;
   constructor(ip: string)
   {
     this.validateIPv4(ip);

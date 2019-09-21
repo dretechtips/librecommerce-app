@@ -3,12 +3,12 @@ import { HttpMethod } from "../decorator/HttpMethod";
 import { Schedule, ActiveSchedule } from "../model/Schedule";
 
 export class ScheduleController {
-  private static weekSchedule: ActiveSchedule;
+  private static activeSchedule: ActiveSchedule = new ActiveSchedule();
   @HttpMethod("POST")
   public static add(req: Request, res: Response): void {
     try {
-      const schedule: Schedule =  Schedule.generate(req.body.schedule);
-      schedule.save();
+      const schedule: Schedule = Schedule.generate(req.body.schedule);
+      this.activeSchedule.add(schedule);
       return;
     } catch (e) {
       const ex: Error = e;
@@ -29,7 +29,7 @@ export class ScheduleController {
         res.send({success: false, error: "Schedule ID doesn't exist in the system."});
         return;
       }
-      schedule.delete();
+      this.activeSchedule.delete(scheduleID);
       return;
     } catch (e) {
       const ex: Error = e;
@@ -42,7 +42,7 @@ export class ScheduleController {
     try {
       const scheduleID: string = req.body.schedule.scheduleID;
       if(!scheduleID){
-        res.send({success: false, error: "Clinet didn't provide a schedule ID."});
+        res.send({success: false, error: "Client didn't provide a schedule ID."});
         return;
       }
       const schedule: Schedule = Schedule.From.id(scheduleID);
@@ -51,6 +51,8 @@ export class ScheduleController {
         return;
       }
       schedule.update(req.body.schedule);
+      this.activeSchedule.delete(scheduleID);
+      this.activeSchedule.add(schedule);
       return;
     } catch (e) {
       const ex: Error = e;

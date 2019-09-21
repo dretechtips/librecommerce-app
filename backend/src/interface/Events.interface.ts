@@ -1,5 +1,5 @@
 import { TimeRange } from "../type/Range";
-import { SingleEvent, DayEvents } from "../type/Events";
+import { SingleEvent, DayEvents, WeekEvents } from "../type/Events";
 
 export type Day = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
 
@@ -15,7 +15,7 @@ export interface ISingleEvent {
 
 export interface SingleEventBody {
   name: string;
-  day: string;
+  day: Day;
   startTime: string;
   endTime: string;
 }
@@ -37,7 +37,7 @@ export interface IWeekEvents {
   getEvent(eventID: string, day: Day): SingleEvent;
   getEventsByDay(day: Day): DayEvents;
   deleteEvent(eventID: string, day: Day): void;
-  deleteEvents(eventIDs: string[], day: Day): void;
+  deleteEvents(events: [string, Day][]): void;
   getLimit(day: Day): number;
   getLimitAll(): number[];
   setLimit(limit: number, day: Day): void;

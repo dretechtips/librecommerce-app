@@ -1,16 +1,21 @@
-export abstract class Queue
+export class Queue<T>
 {
-  protected _values: any[];
-  constructor(vals: any[])
+  protected _values: T[];
+  constructor(vals?: T[])
   {
-    this._values = vals;
+    if (typeof vals !== "undefined") {
+      this._values = vals;
+    }
+    else {
+      this._values = [];
+    }
   }
-  enqueue(val: any)
+  enqueue(val: T)
   {
     this._values.push(val);
   }
-  dequeue(): any
+  dequeue(): T
   {
-    return this._values.pop()
+    return this._values.pop();
   }
 }

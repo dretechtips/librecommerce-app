@@ -7,7 +7,7 @@ export class SingleEvent implements ISingleEvent {
   private _name: string;
   private _hours: TimeRange;
   private _id: eventID;
-  constructor(name: string, day: Day, hours: TimeRange) {
+  constructor(name: string, hours: TimeRange) {
     this._name = name;
     this._hours = hours;
     this._id = uuid();
@@ -28,7 +28,7 @@ export class SingleEvent implements ISingleEvent {
     return this._hours.getTotalHours();
   }
   public static generate(body: SingleEventBody): SingleEvent {
-    return new SingleEvent(body.name, body.day as Day, new TimeRange(body.startTime, body.endTime));
+    return new SingleEvent(body.name, new TimeRange(body.startTime, body.endTime));
   }
 }
 
@@ -71,26 +71,39 @@ export class DayEvents implements IDayEvents {
   public getSize(): number {
     return this._events.size;
   }
+  public deleteEvent(eventID: string): void {
+    this._events.delete(eventID);
+  }
 }
 
 export class WeekEvents implements IWeekEvents
 {
   private _days: {
+    sun: DayEvents;
     mon: DayEvents;
     tue: DayEvents;
     wed: DayEvents;
     thu: DayEvents;
     fri: DayEvents;
     sat: DayEvents;
-    sun: DayEvents;
   }
   private _dayName: Day[] = Object.keys(this._days) as Day[];
-  constructor(dayEvents: DayEvents[])
+  constructor(dayEvents: DayEvents[], limits: number[])
   {
     for (let i = 0; i < this._dayName.length; i++) {
       const name: Day = this._dayName[i];
       this._days[name] = dayEvents[i];
+      this._days[name].setLimit(limits[i]);
     }
+  }
+  public static generate(events: SingleEventBody[], limit: number[]): WeekEvents {
+    const week: WeekEvents = new WeekEvents([], limit);
+    for (let i = 0; i < events.length; i++) {
+      const cur: SingleEventBody = events[i];
+      const event: SingleEvent = new SingleEvent(cur.name, new TimeRange(cur.startTime, cur.endTime));
+      week.addEvent(event, cur.day);
+    }
+    return week;
   }
   public getTotalHours(): number {
     let hours: number = 0;
@@ -130,29 +143,11 @@ export class WeekEvents implements IWeekEvents
     return this._days[day];
   }
   public deleteEvent(eventID: string, day: Day): void {
-    try {
-      if (day !== undefined) {
-        const isDeleted: boolean = this.getDayEvents(day).);
-        if (!isDeleted)
-          throw new Error("System week events doesn't have the the id inputted.");
-      }
-      else {
-        for (let i = 0; this._week.length; i++) {
-          const cur: Day = this._week[i];
-          const isDeleted: boolean = this._value[cur].events.delete(eventID);
-          if (!isDeleted)
-            throw new Error("System week events doesn't have the the id inputted.");
-        }
-      }
-    }
-    catch (e) {
-      const ex: Error = e;
-      hconsole.error(ex);
-    }
+    this.getDayEvents(day).deleteEvent(eventID);
   }
-  public deleteEvents(eventID: string[], day: Day): void {
-    for (let i = 0; i < eventID.length; i++) {
-      this.deleteEvent(eventID[i]);
+  public deleteEvents(events: [string, Day][]): void {
+    for (let i = 0; i < events.length; i++) {
+      this.deleteEvent(events[i][0], events[i][1]);
     }
   }
   public getLimit(day: Day): number {

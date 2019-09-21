@@ -1,4 +1,4 @@
-import { Address, EmailAddress, PhoneNum } from "../type/Location";
+import { Address, EmailAddress, PhoneNum, IPAddress } from "../type/Location";
 
 export interface CustomerConstructor
 {
@@ -12,6 +12,7 @@ export interface CustomerConstructor
   address: Address,
   email: EmailAddress,
   phone: PhoneNum,
+  associatedIP: IPAddress[]
 }
 
 export interface NewCustomerBody {

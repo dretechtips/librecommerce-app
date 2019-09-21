@@ -1,10 +1,11 @@
 import { Request, Response, NextFunction } from "express-serve-static-core";
 import { ActiveUsers, User } from "../model/User";
 import uuid = require('uuid/v4');
+import { HttpMethod } from "../decorator/HttpMethod";
 
 export class UserController
 {
-  private static session = new ActiveUsers(null);
+  private static _session = new ActiveUsers();
   public static verify(req: Request, res: Response, next: NextFunction): void
   {
     if(!req.cookies.accessToken)
@@ -13,7 +14,7 @@ export class UserController
       return;
     }
     else{
-      if(UserController.session.hasToken(req.cookies.accessToken))
+      if(UserController._session.hasToken(req.cookies.accessToken))
       {
         return next();
       }
@@ -24,6 +25,7 @@ export class UserController
       }
     }
   }
+  @HttpMethod("POST")
   public static login(req: Request, res: Response): void
   {
     const eCred: string = req.body.clientID;
@@ -38,12 +40,18 @@ export class UserController
     else 
     {
       const accessToken: string = uuid();
-      UserController.session.add(accessToken, user);
+      UserController._session.add(accessToken, user);
       res.send({success: true, accessToken: accessToken});
     }
   }
+  @HttpMethod("PATCH")
   public static update(req: Request, res: Response): void
   {
 
+  }
+  @HttpMethod("PATCH")
+  public static add(req: Request, res: Response): void {
+    const user: User = User.generate(req.body.user);
+    this._session.add(uuid(), user);
   }
 }

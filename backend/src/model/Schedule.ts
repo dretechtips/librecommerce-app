@@ -1,8 +1,8 @@
 import { ScheduleConstructor, ScheduleBody } from "../interface/Schedule.inteface";
-import { WeekEvents } from "../type/WeekEvents";
+import { WeekEvents, SingleEvent } from "../type/Events";
 import { TimeRange } from "../type/Range";
 import uuid = require("uuid/v4");
-import { Day } from "../interface/Week.interface";
+import { Day } from "../interface/Events.interface";
 import fs = require("fs");
 
 export class ActiveSchedule
@@ -11,47 +11,26 @@ export class ActiveSchedule
   private _filePath: string;
   constructor() {
     this._schedule = new Map();
-    this.importSchedule();
     this.setEvents();
   }
   private importSchedule(): void {
-    
+    const schedules: Schedule[] = Schedule.From.active(true);
+    for (let i = 0; i < schedules.length; i++) {
+      const cur: Schedule = schedules[i];
+      this._schedule.set(cur.getID(), cur);
+    }
   }
   public delete(scheduleID: string): void {
-    
+    this._schedule.delete(scheduleID);
   }
-  private generateSave(): string {
-    let save: string;
-    this._schedule.forEach(cur => {
-      const value: ScheduleConstructor = cur.getValue();
-      save += value.scheduleID + " " + value.userID + " " + value.hasOverTime + " \n";
-      const days: Day[] = ["mon", "tues", "wed", "thur", "fri", "sat", "sun"];
-      days.forEach(cur => )
-      save += Array.from(value.events.getEventsByDay("mon").values())[0].name + " " + value.events.getEventsByDay("mon").values().return().value.details.hours.getStartTime() + " ")
-    });
+  public save(): void {
+    // DB Method
   }
-  public save() {
-    try {
-      fs.exists(this._filePath, (exist) => {
-        if (!exist)
-          throw new Error("System was unable to find the schedule file");
-        fs.writeFile(this._filePath, "", { encoding: "utf-8" }, (err) => {
-          if (err)
-            throw new Error("System was unable to clear the schedule file.");
-          fs.writeFile(this._filePath, this.generateSave(), { encoding: "utf-8" }, (err) => {
-            if (err)
-              throw new Error("System was unable to add content into the schedule file.");
-          });
-        });
-      });
-    }
-    catch (e) {
-      const ex: Error = e;
-      hconsole.error(ex);
-    }
+  public add(schedule: Schedule): void {
+    this._schedule.set(schedule.getID(), schedule);
   }
   private setEvents(): void {
-    process.on("beforeExit", (code) => {
+    process.on("beforeExit", () => {
       this.save();
     });
   }
@@ -73,12 +52,6 @@ export class Schedule
       hconsole.error(ex);
     }
   }
-  public save(): void {
-    
-  }
-  public delete(): void {
-    
-  }
   public update(body: any): void {
     if(body.scheduleID) this._value.scheduleID = body.scheduleID;
     if(body.userID) this._value.userID = body.userID;
@@ -86,19 +59,19 @@ export class Schedule
   }
   public addEvent(name: string, day: Day, hours: TimeRange) {
     try {
-      const totalHour: number = this._value.events.getTotalHour();
-      if (!this._value.hasOverTime && (40 < totalHour + hours.getTotalHour()))
+      const totalHour: number = this._value.events.getTotalHours();
+      if (!this._value.hasOverTime && (40 < (totalHour + hours.getTotalHours())))
         throw new Error("This employee schedule doesn't allow over time.");
-      this._value.events.addEvent(name, day, hours);
+      this._value.events.addEvent(new SingleEvent(name, hours), day);
     }
     catch (e) {
       const ex: Error = e;
       hconsole.error(ex);
     }
   }
-public getValue(): ScheduleConstructor {
-  return this._value; 
-}
+  public getValue(): ScheduleConstructor {
+    return this._value; 
+  }
   public deleteEvent(eventID: string, day?: Day): void {
     this._value.events.deleteEvent(eventID, day);
   }
@@ -106,15 +79,20 @@ public getValue(): ScheduleConstructor {
     const scheduleConstruct: ScheduleConstructor = {
       userID: body.userID,
       scheduleID: uuid(),
-      events: new WeekEvents(body.events, [1, 1, 1, 1, 1, 1, 1]),
+      events: WeekEvents.generate(body.events, [1, 1, 1, 1, 1, 1, 1]),
       hasOverTime: body.hasOverTime
     }
     return new Schedule(scheduleConstruct);
   }
-  
+  public getID(): string {
+    return this.getValue().scheduleID;
+  }
   public static From = class {
     public static id(scheduleID: string): Schedule {
       
+    }
+    public static active(isActive: boolean): Schedule[] {
+
     }
   }
 }

@@ -6,19 +6,31 @@ export interface UserConstructor
   id: string,
   firstName: string,
   lastName: string,
-  privilege: Privilege,
-  task: string,
+  privilege: PRIVILEGE,
   username: string,
   password: string,
   address: Address,
   emailAddress: EmailAddress,
   phoneNum: PhoneNum,
   schedule: Schedule,
+  position: Position
 }
 
-export enum Privilege
+export interface UserBody {
+  nameInfo: string;
+  privilege: number;
+  loginInfo: string;
+  address: string;
+  emailAddress: string;
+  phoneNum: string;
+  position: Position;
+}
+
+export type Position = "OWNER" | "MANAGER" | "STOCKER_SHIPPER" | "DEVELOPER";
+
+export enum PRIVILEGE
 {
-  basic,
-  mod,
-  admin
+  BASIC,
+  MOD,
+  ADMIN
 }
