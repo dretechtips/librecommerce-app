@@ -1,6 +1,17 @@
 import { IPAddress } from "../type/Location";
 
 export interface BanBody {
-  firstName: string,
-  lastName: string,
+  customerID: string;
+  reason: string;
+}
+
+export interface BanAppealBody {
+  caseID: string,
+  message: string,
+  customerID: string;
+}
+
+export interface BanAppealReview {
+  caseID: string;
+  resolution: "resolve" | "reject";
 }

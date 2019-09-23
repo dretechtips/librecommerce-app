@@ -1,13 +1,16 @@
 {
   "ExpandedNodes": [
     "",
+    "\\build",
+    "\\build\\v0.0.1a",
     "\\src",
-    "\\src\\controller",
-    "\\src\\interface",
+    "\\src\\data",
+    "\\src\\decorator",
+    "\\src\\helper",
     "\\src\\libs",
     "\\src\\model",
-    "\\src\\type"
+    "\\src\\routes"
   ],
-  "SelectedNode": "\\src\\interface\\Events.interface.ts",
+  "SelectedNode": "\\src\\libs\\global.d.ts",
   "PreviewInSolutionExplorer": false
 }

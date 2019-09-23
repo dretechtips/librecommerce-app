@@ -2,7 +2,7 @@ import { default as Database, DatabaseQuery } from './Database';
 import {  CustomerConstructor, NewCustomerBody  } from '../interface/Customer.interface';
 import { QueryResult, FieldDef } from 'pg';
 import uuid = require('uuid/v4');
-import { Address, EmailAddress, PhoneNum } from "../type/Location";
+import { Address, EmailAddress, PhoneNum, IPAddress } from "../type/Location";
 
 export class ActiveCustomer {
   private _session: Map<string, Customer>;
@@ -87,6 +87,9 @@ export class Customer
       
     }
     public static cred(username: string, password: string): Customer {
+
+    }
+    public static IPAddress(ipAddress: IPAddress): Customer[] {
 
     }
   }

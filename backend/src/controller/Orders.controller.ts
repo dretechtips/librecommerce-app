@@ -6,10 +6,9 @@ import uuid = require("uuid/v4");
 import { EmailAddress, PhoneNum } from "../type/Location";
 import { Money } from "../type/Money";
 import { FieldDef, QueryResult } from "pg";
-import hconsole from "../model/Console";
 import { Paypal } from "../model/Paypal";
 import { Shipping } from "../model/Shipping";
-import WebSocket = require('ws');
+import { wsServer } from "../index";
 import { OrderConstructor, ExistingOrderBody } from "../interface/Order.interface";
 
 export class OrdersController extends Controller
@@ -20,7 +19,7 @@ export class OrdersController extends Controller
     try {
       const order: Order = Order.generate(req.body, req);
       this.unprocessed.enqueue(order);
-      req.ws.emit("+order", order.toPrimObj());
+      ws.emit(, order.toPrimObj());
     } catch (e) {
       const ex: Error = e;
       hconsole.error(ex);
@@ -117,12 +116,12 @@ export class OrdersController extends Controller
   }
   public static feed(req: Request, res: Response)
   {
-    req.ws.once("connection", wss =>
+    ws.on("connection", wss =>
     {
-      wss.on("+order", message =>
+      wss.on("message", message =>
       {
         try {
-          const msg = <ExistingOrderBody> message;
+          const msg = message;
           wss.send(msg);
         } catch (e) {
           const ex: Error = e;

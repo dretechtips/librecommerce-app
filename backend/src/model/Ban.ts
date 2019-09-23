@@ -1,35 +1,46 @@
 import { IPAddress, EmailAddress } from "../type/Location";
 import uuid = require("uuid/v4");
 import cron = require('node-cron');
+import { Customer } from "../model/Customer";
 
 export class BanList {
-  private _list: Map<IPAddress, Ban>;
+  private _list: Map<Customer, Ban>;
   constructor(bans?: Ban[]) {
     this._list = new Map();
     if (bans) {
       for (let i = 0; i < bans.length; i++) {
-        this._list.set(bans[i].getIPAddress(), bans[i]);
+        this._list.set(bans[i].getCustomer(), bans[i]);
       }
     }
     this.setEvents();
   }
-  public add(ban: Ban) {
-    this._list.set(ban.getIPAddress(), ban);
+  public add(ban: Ban): void {
+    this._list.set(ban.getCustomer(), ban);
   }
-  public remove(ipAddress: IPAddress): void {
-    this._list.delete(ipAddress);
+  public remove(customer: Customer): void {
+    this._list.delete(customer);
     return;
   }
   public save(): void {
     
     // write to db
   }
-  public setEvents(): void {
+  private setEvents(): void {
     process.on("beforeExit", () => this.save());
     cron.schedule("0 2 * * *", () => this.save());
   }
-  public find(ipAddress: IPAddress): Ban {
-    return this._list.get(ipAddress);
+  public find(customer: Customer): Ban {
+    const ban: Ban = this._list.get(customer);
+    return ban ? ban : null;
+  }
+  public findFromIP(ipAddress: IPAddress): Ban[] {
+    const customer: Customer[] = Customer.From.IPAddress(ipAddress);
+    const banList: Ban[] = new Array<Ban>(customer.length).fill(null);
+    for (let i = 0; i < customer.length; i++) {
+      const cur: Customer = customer[i];
+      banList[i] = this._list.get(cur);
+    }
+    return banList;
   }
 }
 
@@ -43,46 +54,45 @@ export class BanAppealList {
       }
     }
   }
-  public add(appeal: BanAppeal) {
+  public add(appeal: BanAppeal): void {
     this._list.set(appeal.getCaseID(), appeal);
   }
-  public remove(caseID: string) {
+  public remove(caseID: string): void {
     this._list.delete(caseID);
   }
-  public save() {
+  public find(caseID: string): BanAppeal {
+    return this._list.get(caseID);
+  }
+  public save(): void {
     // Save to db
   }
-  private setEvents() {
+  private setEvents(): void {
     process.on("beforeExit", () => this.save());
     cron.schedule("0 2 * * *", () => this.save());
   }
 }
 
 export class Ban {
-  private readonly _firstName: string;
-  private readonly _lastName: string;
-  private readonly _email: EmailAddress;
+  private readonly _customer: Customer;
   private readonly _timestamp: Date;
-  private readonly _ipAddress: IPAddress;
-  constructor(firstName: string, lastName: string, email: EmailAddress, ipAddress: IPAddress) {
-    this._firstName = firstName;
-    this._lastName = lastName;
-    this._email = email;
-    this._ipAddress = ipAddress;
+  private readonly _reason: string;
+  constructor(customer: Customer, reason: string) {
+    this._customer = customer;
     this._timestamp = new Date();
+    this._reason = reason;
   }
-  public getFullName(): string {
-    return this._firstName + " " + this._lastName;
-  }
-  public getIPAddress(): IPAddress {
-    return this._ipAddress;
+  public getAllIPAddress(): IPAddress[] {
+    return this._customer.getValue().associatedIP;
   }
   public getTimestamp(): Date {
     return this._timestamp;
   }
+  public getCustomer(): Customer {
+    return this._customer;
+  }
 }
 
-class BanAppeal {
+export class BanAppeal {
   private readonly _message: string;
   private readonly _case: string;
   private readonly _ban: Ban;
@@ -101,6 +111,9 @@ class BanAppeal {
   public getCaseID(): string {
     return this._case;
   }
+  public getBan(): Ban {
+    return this._ban;
+  }
   public hasResolution(): boolean {
     if (!this._resolution) {
       return false;
@@ -108,6 +121,12 @@ class BanAppeal {
     else {
       return true;
     }
+  }
+  public getResolution(): "resolve" | "reject" {
+    return this._resolution;
+  }
+  public setResolution(res: "resolve" | "reject") {
+    this._resolution = res;
   }
 }
 
