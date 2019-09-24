@@ -24,6 +24,10 @@ export class DirManager {
   public deleteFile(filename: string): boolean {
     return this._files.delete(filename);
   }
+  public getAllFile(): FileManager[] {
+    const files: FileManager[] = Array.from(this._files.values());
+    return files;
+  }
 }
 
 export class FileManager {
@@ -35,6 +39,9 @@ export class FileManager {
   }
   private getPath(): string {
     return this._dirname + "/" + this._filename;
+  }
+  public getFileName(): string {
+    return this._filename;
   }
   public changeFileName(filename: string) {
     fs.renameSync(this.getPath(), this._dirname + "/" + filename);

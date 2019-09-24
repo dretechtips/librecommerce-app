@@ -4,10 +4,13 @@ import { BanList, Ban, BanAppealList, BanAppeal } from "../model/Ban";
 import { BanBody, BanAppealBody, BanAppealReview } from "../interface/Ban.interface";
 import { Customer } from "../model/Customer";
 import { IPAddress } from "../type/Location";
+import { SFController } from "./SpeechFilter.controller";
+import { SpeechFilter } from "../model/SpeechFilter";
 
 export class BanController {
   private static _bans = new BanList();
   private static _appeals = new BanAppealList();
+  private static _filter: SpeechFilter = SFController.getManager().import("BAN_REVIEW_AUTOMATION.txt");
   public static verify(req: Request, res: Response, next: NextFunction): void {
     try {
       const ip: string = req.headers['x-forwarded-for'][0] || req.connection.remoteAddress;
@@ -36,9 +39,11 @@ export class BanController {
   public static add(req: Request, res: Response): void {
     try {
       const banBody: BanBody = req.body.ban;
-      if (!banBody) throw new Error("System didn't recieve any value to create a ban.");
+      if (!banBody)
+        throw new Error("System didn't recieve any value to create a ban.");
       const customer: Customer = Customer.From.id(banBody.customerID);
-      if (!customer) throw new Error("System couldn't find the customer from the customer ID specified.");
+      if (!customer)
+        throw new Error("System couldn't find the customer from the customer ID specified.");
       const ban: Ban = new Ban(
         customer,
         banBody.reason);
@@ -54,9 +59,11 @@ export class BanController {
   public static remove(req: Request, res: Response) {
     try {
       const banAppealBody: BanAppealBody = req.body.banAppeal;
-      if (!banAppealBody) throw new Error("System didn't revieve a ban appeal from the client.");
+      if (!banAppealBody)
+        throw new Error("System didn't revieve a ban appeal from the client.");
       const banAppeal: BanAppeal = this._appeals.find(banAppealBody.caseID);
-      if (!banAppeal.hasResolution()) throw new Error("System reviewers hasn't process this ban appeal yet.");
+      if (!banAppeal.hasResolution())
+        throw new Error("System reviewers hasn't process this ban appeal yet.");
       else {
         const result = banAppeal.getResolution();
         if (result === "reject") {
@@ -89,7 +96,9 @@ export class BanController {
       const ban: Ban = this._bans.find(customer);
       if (!ban) throw new Error("This customer has no ban on his account.");
       const banAppeal: BanAppeal = new BanAppeal(appeal.message, ban);
-      this._appeals.add(banAppeal);
+      const isSafe: boolean = this._filter.isSafe(banAppeal.getMessage());
+      if(isSafe)
+        this._appeals.add(banAppeal);
       res.send({ success: true });
     }
     catch (e) {

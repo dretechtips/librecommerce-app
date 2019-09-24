@@ -15,20 +15,19 @@ import { default as SFRoute } from "./speechfilter";
 
 const router: express.Router = express.Router();
 
-router.get(['', '/home'], (req, res) => AdminController.renderHome(req, res));
-
 // The Root URL will be used for downloading the react.js file
-router.use('/', UserRoutes);
-router.use('/inventory', InventoryRoutes);
-router.use('/order', OrderRoutes);
-router.use('/customer', CustomerRoutes);
-router.use('/billing', BillingRoutes);
-router.use('/promo', BillingRoutes);
-router.use('/coupon', CouponRoutes);
-router.use('/promo', PromoRoutes);
-router.use('/spy', SpyRoutes);
-router.use('/cart', CartRoutes);
-router.use('/schedule', ScheduleRoutes);
-router.use('/speech-filter', SFRoute);
+router.get('/interface', (req, res) => AdminController.getAdminJS(req, res));
+router.use('/api', (req, res, next) => AdminController.monitor(req, res, next));
+router.use('/api/user', UserRoutes);
+router.use('/api/inventory', InventoryRoutes);
+router.use('/api/order', OrderRoutes);
+router.use('/api/customer', CustomerRoutes);
+router.use('/api/billing', BillingRoutes);
+router.use('/api/coupon', CouponRoutes);
+router.use('/api/promo', PromoRoutes);
+router.use('/api/spy', SpyRoutes);
+router.use('/api/cart', CartRoutes);
+router.use('/api/schedule', ScheduleRoutes);
+router.use('/api/speech-filter', SFRoute);
 
 export default router;

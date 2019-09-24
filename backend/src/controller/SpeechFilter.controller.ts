@@ -47,7 +47,9 @@ export class SFController {
   }
   public static list(req: Request, res: Response) {
     try {
-      res.send({ success: true, speechfilters: "" });
+      const SFs: SpeechFilter[] = this._manager.importAll();
+      const SFBodys: SpeechFilterBody[] = SFs.map(cur => cur.toPrimObj());
+      res.send({ success: true, speechfilters: SFBodys });
     }
     catch (e) {
       res.sendError(e, "System was unable to list the speech filter(s)");

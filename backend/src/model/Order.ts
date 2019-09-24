@@ -12,7 +12,7 @@ import { Request } from "express-serve-static-core"
 import { Money } from "../type/Money";
 import { ShippingConstructor } from "../interface/Shipping.interface";
 
-export class OrdersQueue extends Queue
+export class OrdersQueue extends Queue<Order>
 {
   private _hold: Map<string, Order>;
   constructor(vals: Order[])

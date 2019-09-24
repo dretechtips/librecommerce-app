@@ -1,6 +1,7 @@
 import fs = require('fs');
 import cron = require('node-cron');
 import { DirManager, FileManager } from './FileManager';
+import { SpeechFilterBody } from "../interface/SpeechFilter.interface";
 
 export class SpeechFilter {
   private _file: FileManager;
@@ -33,6 +34,13 @@ export class SpeechFilter {
     }
     return true;
   }
+  public toPrimObj(): SpeechFilterBody {
+    const SFBody: SpeechFilterBody = {
+      name: this._file.getFileName(),
+      words: this._file.getFileContent("utf-8")
+    }
+    return SFBody;
+  }
 }
 
 export class SFManager {
@@ -42,9 +50,9 @@ export class SFManager {
   }
   public import(filename: string): SpeechFilter {
     try {
-      const file: FileManager = this._dir.getFile(filename);
+      let file: FileManager = this._dir.getFile(filename);
       if (!file)
-        throw new Error("This file cannot be imported because it cannot be found.");
+        file = this.add([], filename);
       const content: string = file.getFileContent("utf-8");
       return new SpeechFilter(content.split(","), file);
     }
@@ -53,9 +61,22 @@ export class SFManager {
       hconsole.error(ex);
     }
   }
-  public add(words: string[], filename: string): void {
+  public importAll(): SpeechFilter[] {
+    const files: FileManager[] = this._dir.getAllFile();
+    const filters = new Array<SpeechFilter>(files.length);
+    if (!files)
+      throw new Error("There is no file in this directory to import.");
+    for (let i = 0; i < filters.length; i++) {
+      filters[i] = new SpeechFilter(
+        files[i].getFileContent("utf-8").split(','),
+        files[i]);
+    }
+    return filters;
+  }
+  public add(words: string[], filename: string): FileManager {
     const file: FileManager = this._dir.addFile(filename, "utf-8");
     file.writeToFile(words.toString(), "utf-8");
+    return file;
   }
   public remove(filename: string): boolean {
     return this._dir.deleteFile(filename);

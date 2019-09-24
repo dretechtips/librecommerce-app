@@ -8,7 +8,7 @@ const router: express.Router = express.Router();
 
 router.use('/', CustomerRoutes);
 router.use('/shop', ShoppingRoute);
-router.use('/setting', );
+//router.use('/setting', );
 router.use('/cart', CartRoutes);
 
 

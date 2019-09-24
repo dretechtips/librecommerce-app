@@ -1,19 +1,20 @@
-import { NextFunction, Request, Response } from "express-serve-static-core";
-import * as pug from "pug";
-const viewDir = "./admin/view";
+import { NextFunction, Request, Response } from "express";
+import { IPAddress } from "../type/Location";
 
 export class AdminController
 {
-  public static renderHome(req: Request, res: Response): void
-  {
-    const orders = [{name: 'Will Smith', id: 347824032, date: '01/20/2003', products: '5 Magic Mangos(5 Packs)', address: '2500 Frosted Green'}];
-    const inventory = [{name: "Magic Mango", price: 19.20, brand: "Teariffic", rating: 4.2, stock: true, id: 34627493289}];
-    const accounts = [{user: "admin", pass: "34242vsdvs", date: "01-20-2003", id: 42342346786482}];
-    const page = pug.renderFile(viewDir + '/index.pug', {
-      orders,
-      inventory,
-      accounts
-    });
-    res.send(page);
+  public static monitor(req: Request, res: Response, next: NextFunction) {
+    try {
+      const ip: IPAddress = new IPAddress(req.ip);
+      hconsole.log(`An ADMIN with the IP address ${ip.toString()}
+      has made an attempted change to the ${req.path}`);
+      return next();
+    }
+    catch (e) {
+      res.sendError(e, "System cannot log these changes");
+    }
+  }
+  public static getAdminJS(req: Request, res: Response) {
+    // Get the React file and download it
   }
 }
