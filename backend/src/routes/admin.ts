@@ -4,13 +4,14 @@ import { AdminController } from "../controller/Admin.controller";
 import { default as BillingRoutes } from "./billing";
 import { default as CouponRoutes } from "./coupon";
 import { AdminRoute as  CustomerRoutes } from "./customer";
-import { default as InventoryRoutes } from "./inventory";
+import { AdminRoute as InventoryRoutes } from "./inventory";
 import { AdminRoute as OrderRoutes } from "./order";
 import { default as PromoRoutes } from "./promo";
 import { default as SpyRoutes } from "./spy";
 import { default as UserRoutes } from "./user";
 import { AdminRoute as CartRoutes } from "./cart";
 import { default as ScheduleRoutes } from "./schedule";
+import { default as SFRoute } from "./speechfilter";
 
 const router: express.Router = express.Router();
 
@@ -28,5 +29,6 @@ router.use('/promo', PromoRoutes);
 router.use('/spy', SpyRoutes);
 router.use('/cart', CartRoutes);
 router.use('/schedule', ScheduleRoutes);
+router.use('/speech-filter', SFRoute);
 
 export default router;

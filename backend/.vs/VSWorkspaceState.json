@@ -1,16 +1,16 @@
 {
   "ExpandedNodes": [
     "",
-    "\\build",
-    "\\build\\v0.0.1a",
     "\\src",
+    "\\src\\controller",
     "\\src\\data",
     "\\src\\decorator",
     "\\src\\helper",
+    "\\src\\interface",
     "\\src\\libs",
     "\\src\\model",
     "\\src\\routes"
   ],
-  "SelectedNode": "\\src\\libs\\global.d.ts",
+  "SelectedNode": "\\src\\controller\\SpeechFilter.controller.ts",
   "PreviewInSolutionExplorer": false
 }
