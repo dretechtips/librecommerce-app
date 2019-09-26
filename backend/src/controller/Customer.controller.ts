@@ -52,7 +52,7 @@ export class CustomerController
     CustomerManager.add(cData);
     res.send({ success: true });
   }
-  @HttpMethod("DELETE", "System was unable to delete the customer."s)
+  @HttpMethod("DELETE", "System was unable to delete the customer.")
   public static remove(req: Request, res: Response): void
   {
     const customerID: string = req.body.customer.id;

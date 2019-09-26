@@ -42,7 +42,7 @@ export class BanController {
       res.sendError(e, "System couldn't verify your IP Address.");
     }
   }
-  @HttpMethod("POST", "System was unable to add a new ban.")
+  @HttpMethod("POST", "System was unable to add the new ban.")
   public static add(req: Request, res: Response): void {
     const banBody: BanBody = req.body.ban;
     if (!banBody)
@@ -89,21 +89,13 @@ export class BanController {
     const isSafe: boolean = this._filter.isSafe(banAppeal.getMessage());
     if(isSafe)
       this._appeals.add(banAppeal);
-    res.send({ success: true });
   }
-  @HttpMethod("POST")
+  @HttpMethod("POST", "System cannot process this review on customer ban.")
   public static review(req: Request, res: Response): void {
-    try {
-      const review: BanAppealReview = req.body.banAppealView;
-      if (!review) throw new Error("The system didn't recieve the review from the client.");
-      const banAppeal: BanAppeal = this._appeals.find(review.caseID);
-      if (!banAppeal) throw new Error("System could not find the ban appeal with the case id specified.");
-      banAppeal.setResolution(review.resolution);
-      res.send({ success: true });
-      return;
-    }
-    catch (e) {
-      res.sendError(e, "System was review the customer ban.");
-    }
+    const review: BanAppealReview = req.body.banAppealView;
+    if (!review) throw new Error("The system didn't recieve the review from the client.");
+    const banAppeal: BanAppeal = this._appeals.find(review.caseID);
+    if (!banAppeal) throw new Error("System could not find the ban appeal with the case id specified.");
+    banAppeal.setResolution(review.resolution);
   }
 }
