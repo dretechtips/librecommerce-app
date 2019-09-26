@@ -1,17 +1,33 @@
 import { Request, Response } from "express-serve-static-core";
 
-export function HttpMethod(method: "GET" | "PATCH" | "POST" | "DELETE"): Function {
-  return function (target: Object, key: string | symbol, descriptor: PropertyDescriptor): void {
+// Reference Catch Decorator TS
+
+function ErrorHandler(res: Response, err: Error, clientMsg: string) {
+  res.sendError(err, clientMsg);
+}
+
+export function HttpMethod(method: "GET" | "PATCH" | "POST" | "DELETE", clientErrorMsg: string): Function {
+  return function (target: Object, key: string | symbol, descriptor: PropertyDescriptor): PropertyDescriptor {
     const original: Function = descriptor.value;
     descriptor.value = function (req: Request, res: Response) {
-      if (req.method !== method) {
-        res.send({ success: false, error: method.toUpperCase() + " method wasn't implemented correctly." });
-        return null;
+      try {
+        if (req.method !== method) {
+          throw new Error(method.toUpperCase() + " method wasn't implemented correctly.");
+        }
+        else {
+          const next = original.apply(this, [req, res]);
+          if (next && typeof next.then === 'function' && typeof next.catch === 'function') {
+            return next.catch((error: Error) => {
+              ErrorHandler(res, error, clientErrorMsg);
+            })
+          }
+          res.send({ success: true });
+        }
       }
-      else {
-        const next = original.apply(this, [req, res]);
-        return next;
+      catch (e) {
+        ErrorHandler(res, e, clientErrorMsg);
       }
     }
-    }
+    return descriptor;
+  }
 }

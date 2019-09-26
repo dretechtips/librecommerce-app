@@ -3,33 +3,72 @@ import {  CustomerConstructor, NewCustomerBody  } from '../interface/Customer.in
 import { QueryResult, FieldDef } from 'pg';
 import uuid = require('uuid/v4');
 import { Address, EmailAddress, PhoneNum, IPAddress } from "../type/Location";
+import { BanController } from '../controller/Ban.controller';
+import { Ban } from "../model/Ban";
+import { Time } from "../type/Time";
+
+type customerID = string;
+type accessToken = string;
 
 export class ActiveCustomer {
-  private _session: Map<string, Customer>;
-  private _timeout: number = 3600000;
-  constructor(customers: Customer[]) {
+  protected _session: Map<accessToken, customerID>;
+  protected _timeout: Time;
+  constructor(customers?: Customer[]) {
     this._session = new Map();
-    if (customers !== null) {
+    this._timeout = new Time(3, "h");
+    this._timeout.toMilliSeconds();
+    if (!isNotSet(customers)) {
       for (let i = 0; i < customers.length; i++) {
         const cur: Customer = customers[i];
-        this._session.set(cur.getValue().id, cur);
+        this._session.set(uuid(), cur.getValue().id);
       }
     }
   }
-  public add(customer: Customer): string {
+  public add(customer: Customer): accessToken {
     const accessToken: string = uuid();
-    this._session.set(accessToken, customer);
-    setTimeout(() => this.remove(accessToken));
+    this._session.set(accessToken, customer.getID());
+    setTimeout(() => this.remove(accessToken), this._timeout.getAmount());
     return accessToken;
   }
-  public remove(accessToken: string): void {
-    this._session.delete(accessToken);
-    return;
+  public remove(accessToken: accessToken): boolean {
+    return this._session.delete(accessToken);
   }
-  public fetch(accessToken: string): Customer {
+  public fetch(accessToken: accessToken): customerID {
     return this._session.get(accessToken);
   }
 }
+
+export class PasswordResetList extends ActiveCustomer {
+  constructor(customers?: Customer[]) {
+    super(customers);
+    this._timeout = new Time(24, "h");
+  }
+}
+
+export class CustomerManager {
+  public static add(data: CustomerConstructor): Customer {
+    // save into database
+    return new Customer(data);
+  }
+  public static delete(id: string) {
+
+  }
+  public static from = class {
+    public static id(id: string): Customer {
+
+    }
+    public static username(username: string): Customer {
+
+    }
+    public static credientals(username: string, password: string): Customer {
+
+    }
+    public static IPAddress(ipAddress: IPAddress): Customer[] {
+
+    }
+  }
+}
+
 
 export class Customer
 {
@@ -44,10 +83,14 @@ export class Customer
   {
     return this._value;
   }
-  public delete(): void
-  {
-    
-    //const query: DatabaseQuery = this._details.delete();
+  public getID(): string {
+    return this._value.id;
+  }
+  public ban(reason: string): Ban {
+    this._value.isBan = true;
+    const ban: Ban = new Ban(this, reason);
+    BanController.Account.add(ban);
+    return ban;
   }
   public save(): void {
 
@@ -76,24 +119,4 @@ export class Customer
     }
     return new Customer(customer);
   }
-  public static From = class
-  {
-    public static id(id: string): Customer
-    {
-      
-    }
-    public static username(username: string): Customer
-    {
-      
-    }
-    public static cred(username: string, password: string): Customer {
-
-    }
-    public static IPAddress(ipAddress: IPAddress): Customer[] {
-
-    }
-  }
 }
-
-
-export default Customer;

@@ -54,7 +54,7 @@ export class ConsolePlus
       }
       else 
       {
-        const msgf: string = `[${new Date}](ERROR) ${msg.message} \n ${msg.stack}`
+        const msgf: string = `[${new Date}](ERROR): ${msg.name}:${msg.message} \n ${msg.stack}`
         console.error("\x1b[31m", msgf);
         fs.appendFile("./out/error.out.txt", msgf, (error) => 
         {

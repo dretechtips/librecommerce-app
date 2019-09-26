@@ -3,6 +3,7 @@ import { UserConstructor, UserBody } from "../interface/User.interface";
 import uuid = require('uuid/v4');
 import { UserManager } from "../service/User.service";
 import { EmailAddress, Address, PhoneNum } from "../type/Location";
+import { BanController } from "../controller/Ban.controller";
 
 export class ActiveUsers
 {
@@ -56,10 +57,12 @@ export class User
   constructor(user: UserConstructor)
   {
     this._value = user;
+    if (!isNotSet(this._value.alerts))
+      this._value.alerts = [];
   }
-  public ban(): void
+  public ban(reason: string): void
   {
-
+    
   }
   public getID(): string
   {
@@ -79,7 +82,8 @@ export class User
       emailAddress: new EmailAddress(body.emailAddress),
       phoneNum: new PhoneNum(body.phoneNum),
       schedule: null,
-      position: body.position
+      position: body.position,
+      alerts: null,
     }
     return new User(user);
   }

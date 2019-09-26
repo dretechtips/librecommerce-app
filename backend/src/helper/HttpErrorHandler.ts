@@ -1,4 +1,5 @@
-import { Response } from "express-serve-static-core";
+/// <reference path="../libs/global.d.ts" />
+import { Response } from "express";
 
 export type HttpErrorHandler = (error: any, clientMsg: string) => Response; 
 

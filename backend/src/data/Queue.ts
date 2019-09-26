@@ -3,7 +3,7 @@ export class Queue<T>
   protected _values: T[];
   constructor(vals?: T[])
   {
-    if (typeof vals !== "undefined") {
+    if (vals !== undefined || vals !== null) {
       this._values = vals;
     }
     else {

@@ -1,5 +1,6 @@
 import { Address, EmailAddress, PhoneNum } from "../type/Location";
 import { Schedule } from "../model/Schedule";
+import { Alert } from "../model/Alert";
 
 export interface UserConstructor
 {
@@ -13,7 +14,8 @@ export interface UserConstructor
   emailAddress: EmailAddress,
   phoneNum: PhoneNum,
   schedule: Schedule,
-  position: Position
+  position: Position,
+  alerts: Alert[],
 }
 
 export interface UserBody {

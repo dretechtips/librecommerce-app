@@ -2,18 +2,25 @@ import { Request, Response, NextFunction } from "express";
 import { HttpMethod } from "../decorator/HttpMethod";
 import { BanList, Ban, BanAppealList, BanAppeal } from "../model/Ban";
 import { BanBody, BanAppealBody, BanAppealReview } from "../interface/Ban.interface";
-import { Customer } from "../model/Customer";
+import { Customer, CustomerManager } from "../model/Customer";
 import { IPAddress } from "../type/Location";
 import { SFController } from "./SpeechFilter.controller";
 import { SpeechFilter } from "../model/SpeechFilter";
+import { ClientError, ServerError } from "../model/Error";
 
 export class BanController {
-  private static _bans = new BanList();
-  private static _appeals = new BanAppealList();
-  private static _filter: SpeechFilter = SFController.getManager().import("BAN_REVIEW_AUTOMATION.txt");
+  private static _bans: BanList = new BanList();
+  private static _appeals: BanAppealList = new BanAppealList();
+  private static _filter: SpeechFilter =
+    SFController.import("BAN_REVIEW_AUTOMATION.txt");
+  public static Account = class {
+    public static add(ban: Ban): void {
+      BanController._bans.add(ban);
+    }
+  }
   public static verify(req: Request, res: Response, next: NextFunction): void {
     try {
-      const ip: string = req.headers['x-forwarded-for'][0] || req.connection.remoteAddress;
+      const ip: string = req.ip;
       const ipAddress: IPAddress = new IPAddress(ip);
       const bans: Ban[] = BanController._bans.findFromIP(ipAddress);
       if (!bans.every(cur => cur === null)) {
@@ -35,75 +42,54 @@ export class BanController {
       res.sendError(e, "System couldn't verify your IP Address.");
     }
   }
-  @HttpMethod("POST")
+  @HttpMethod("POST", "System was unable to add a new ban.")
   public static add(req: Request, res: Response): void {
-    try {
-      const banBody: BanBody = req.body.ban;
-      if (!banBody)
-        throw new Error("System didn't recieve any value to create a ban.");
-      const customer: Customer = Customer.From.id(banBody.customerID);
-      if (!customer)
-        throw new Error("System couldn't find the customer from the customer ID specified.");
-      const ban: Ban = new Ban(
-        customer,
-        banBody.reason);
-      this._bans.add(ban);
-      res.send({ success: true });
-      return;
-    }
-    catch (e) {
-      res.sendError(e, "System was unable to add a new ban.");
-    }
+    const banBody: BanBody = req.body.ban;
+    if (!banBody)
+      throw new Error("System didn't recieve any value to create a ban.");
+    const customer: Customer = CustomerManager.from.id(banBody.customerID);
+    if (!customer)
+      throw new Error("System couldn't find the customer from the customer ID specified.");
+    const ban: Ban = customer.ban(banBody.reason);
+    this._bans.add(ban);
   }
-  @HttpMethod("DELETE")
+  @HttpMethod("DELETE", "System was unable to remove the ban.")
   public static remove(req: Request, res: Response) {
-    try {
-      const banAppealBody: BanAppealBody = req.body.banAppeal;
-      if (!banAppealBody)
-        throw new Error("System didn't revieve a ban appeal from the client.");
-      const banAppeal: BanAppeal = this._appeals.find(banAppealBody.caseID);
-      if (!banAppeal.hasResolution())
-        throw new Error("System reviewers hasn't process this ban appeal yet.");
-      else {
-        const result = banAppeal.getResolution();
-        if (result === "reject") {
-          this._appeals.remove(banAppealBody.caseID);
-        }
-        else if (result === "resolve") {
-          const ban: Ban = banAppeal.getBan();
-          this._bans.remove(ban.getCustomer());
-          res.send({ success: true });
-        }
+    const banAppealBody: BanAppealBody = req.body.banAppeal;
+    if (!banAppealBody)
+      throw new ServerError("System didn't revieve a ban appeal from the client.");
+    const banAppeal: BanAppeal = this._appeals.find(banAppealBody.caseID);
+    if (!banAppeal.hasResolution())
+      throw new Error("System reviewers hasn't process this ban appeal yet.");
+    else {
+      const result = banAppeal.getResolution();
+      if (result === "reject") {
+        this._appeals.remove(banAppealBody.caseID);
       }
-    }
-    catch (e) {
-      res.sendError(e, "System was unable to remove the ban.");
+      else if (result === "resolve") {
+        const ban: Ban = banAppeal.getBan();
+        this._bans.remove(ban.getCustomer());
+      }
     }
   }
-  @HttpMethod("POST")
+  @HttpMethod("POST", "System was unable to create an appeal.")
   public static appeal(req: Request, res: Response): void {
-    try {
-      const appeal: BanAppealBody = req.body.banAppeal;
-      if (this._appeals.find(appeal.caseID)) {
-        res.send({
-          success: false, error: `This client has already sent an appeal. 
-            Any further attempts to create multiple appeals 
-            will lead to a permenant case close to every appeal.` });
-      }
-      if (!appeal) throw new Error("Client didn't provide an appeal to the system.");
-      const customer: Customer = Customer.From.id(appeal.customerID);
-      if (!customer) throw new Error("System couldn't find any customer from the id specified.");
-      const ban: Ban = this._bans.find(customer);
-      if (!ban) throw new Error("This customer has no ban on his account.");
-      const banAppeal: BanAppeal = new BanAppeal(appeal.message, ban);
-      const isSafe: boolean = this._filter.isSafe(banAppeal.getMessage());
-      if(isSafe)
-        this._appeals.add(banAppeal);
-      res.send({ success: true });
+    const appeal: BanAppealBody = req.body.banAppeal;
+    if (this._appeals.find(appeal.caseID)) {
+      throw new ClientError(`This client has already sent an appeal. 
+          Any further attempts to create multiple appeals 
+          will lead to a permenant case close to every appeal.`);
     }
-    catch (e) {
-      res.sendError(e, "System was unable to create an appeal.");
-    }
+    if (!appeal) throw new Error("Client didn't provide an appeal to the system.");
+    const customer: Customer = CustomerManager.from.id(appeal.customerID);
+    if (!customer) throw new Error("System couldn't find any customer from the id specified.");
+    const ban: Ban = this._bans.find(customer);
+    if (!ban) throw new Error("This customer has no ban on his account.");
+    const banAppeal: BanAppeal = new BanAppeal(appeal.message, ban);
+    const isSafe: boolean = this._filter.isSafe(banAppeal.getMessage());
+    if(isSafe)
+      this._appeals.add(banAppeal);
+    res.send({ success: true });
   }
   @HttpMethod("POST")
   public static review(req: Request, res: Response): void {

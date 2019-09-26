@@ -12,32 +12,34 @@ import { Request } from "express-serve-static-core"
 import { Money } from "../type/Money";
 import { ShippingConstructor } from "../interface/Shipping.interface";
 
-export class OrdersQueue extends Queue<Order>
+export class OrderQueue extends Queue<Order>
 {
   private _hold: Map<string, Order>;
-  constructor(vals: Order[])
+  constructor(vals?: Order[])
   {
     super(vals);
   }
-  public enqueue(order: Order)
+  public getAllOrders(): Order[] {
+    return this._values;
+  }
+  public enqueue(order: Order): void
   {
     this._values.push(order);
   }
   public dequeue(): Order
   {
     const val: Order = this._values.shift();
-    val.save();
     return val;
   }
   public getNext(): Order
   {
-    return this._values[this._values.length - 1];
+    return this._values[1];
   }
   public getNextOrderID(): string
   {
     return this.getNext().getValue().id;
   }
-  public hold()
+  public hold(): void
   {
     const order: Order = this._values.shift();
     this._hold.set(order.getValue().id, order);
@@ -60,22 +62,23 @@ export class OrdersQueue extends Queue<Order>
 export class Order
 {
   private _value: OrderConstructor;
-  private static _details: DatabaseQueryConstructor = {
-    schema: "public",
-    table: "orders",
-    col: [""]
-  }
   constructor(order: OrderConstructor)
   {
     this._value = order;
     this._value.shipping.setID(this._value.id);
+  }
+  public complete() {
+    this._value.complete = true;
+  }
+  public getID(): string {
+    return this._value.id;
   }
   public transact()
   {
     // Talk to paypal api
     
   }
-  public save()
+  public async save()
   {
     // Add Into Database
   }
@@ -139,6 +142,7 @@ export class Order
         ipAddress: IPAddress.generate(req),
         products: body.products,
         totalPay: new Money(6.6666666),
+        complete: false,
       }
       return new Order(order);
     }

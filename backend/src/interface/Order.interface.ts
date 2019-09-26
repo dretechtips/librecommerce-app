@@ -17,7 +17,8 @@ export interface OrderConstructor
   cancelled: boolean,
   shipping: Shipping,
   ipAddress: IPAddress,
-  totalPay: Money
+  totalPay: Money,
+  complete: boolean
 }
 
 export interface NewOrderBody

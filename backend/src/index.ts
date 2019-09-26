@@ -9,10 +9,7 @@ import WebSocket = require('ws');
 import { default as ClientRoutes } from "./routes/client";
 import { default as AdminRoutes } from "./routes/admin";
 import { default as LandingRoutes } from "./routes/landing";
-import { ConsolePlus } from "./model/Console";
-import { httpErrorHandler } from "./helper/HttpErrorHandler";
 
-const hconsole = new ConsolePlus();
 const app: express.Express = express.extend();
 const server: http.Server = http.createServer(app).listen(8000, '127.0.0.1', () =>
 {

@@ -2,15 +2,15 @@
   "ExpandedNodes": [
     "",
     "\\src",
-    "\\src\\controller",
     "\\src\\data",
     "\\src\\decorator",
+    "\\src\\event",
     "\\src\\helper",
     "\\src\\interface",
     "\\src\\libs",
     "\\src\\model",
     "\\src\\routes"
   ],
-  "SelectedNode": "\\src\\controller\\SpeechFilter.controller.ts",
+  "SelectedNode": "\\src\\event\\Order.event.ts",
   "PreviewInSolutionExplorer": false
 }

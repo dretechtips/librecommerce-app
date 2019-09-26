@@ -10,7 +10,7 @@ AdminRoute.patch('/update', (req, res) => CustomerController.update(req, res));
 ClientRoute.use('/', (req, res, next) => CustomerController.verify(req, res, next));
 ClientRoute.post('/signin', (req, res) => CustomerController.signin(req, res));
 ClientRoute.patch('/forgotpassword', (req, res) => CustomerController.emailPassword(req, res));
+ClientRoute.patch('/resetpassword', (req, res) => CustomerController.passwordReset(req, res));
 ClientRoute.post('/register', (req, res) => CustomerController.add(req, res));
-
 
 export { ClientRoute, AdminRoute };

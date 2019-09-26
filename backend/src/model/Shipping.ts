@@ -31,6 +31,9 @@ export class Shipping
   {
     
   }
+  public complete(): void {
+
+  }
   public setID(id: string): void
   {
     this._values.orderID = id;
