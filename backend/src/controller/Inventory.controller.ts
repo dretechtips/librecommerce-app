@@ -1,13 +1,11 @@
-import { Request, Response } from "express-serve-static-core";
-import { Controller } from "./Controller";
+import { Request, Response } from "express";
 import { Inventory, Product } from "../model/Inventory";
 import { Color } from "../type/Color";
 import { InventoryCategory } from "../interface/Inventory.interface";
-import hconsole from "../model/Console";
 
 export class InventoryController extends Controller
 {
-  private static inventory = new Inventory([]);
+  private static _inventory = new Inventory([]);
   public static add(req: Request, res: Response): void
   {
     try {

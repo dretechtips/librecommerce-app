@@ -1,14 +1,18 @@
 import { Product } from "../model/Inventory";
-
-type cartID = string;
+import { ExistingProductBody } from "./Inventory.interface";
 
 export interface CartConstructor
 {
   items: Product[],
-  id?: string,
+  id: string,
 }
 
 export interface NewCartBody
 {
-  items: cartID[]
+  items: string[]
+}
+
+export interface ExistingCartBody {
+  items: ExistingProductBody[];
+  id: string;
 }

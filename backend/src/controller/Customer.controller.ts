@@ -8,20 +8,16 @@ export class CustomerController
 {
   private static _session = new ActiveCustomer();
   private static _PRList = new PasswordResetList();
+  @HttpMethod("ALL", "System couldn't verify the access token.")
   public static verify(req: Request, res: Response, next: NextFunction): void {
-    try {
-      const accessToken: string = req.cookies.accessToken;
-      if (!accessToken)
-        throw new ClientError("Client didn't provide a customer access token.");
-      const customerID: string = this._session.fetch(accessToken);
-      if (customerID !== null)
-        return next();
-      else
-        throw new ServerError("System couldn't find the access token with the sessions.");
-    }
-    catch (e) {
-      res.sendError(e, "System couldn't verify the access token.");
-    }
+    const accessToken: string = req.cookies.accessToken;
+    if (!accessToken)
+      throw new ClientError("Client didn't provide a customer access token.");
+    const customerID: string = this._session.fetch(accessToken);
+    if (customerID !== null)
+      return next();
+    else
+      throw new ServerError("System couldn't find the access token with the sessions.");
   }
   @HttpMethod("POST", "System was unable to sign in the customer")
   public static signin(req: Request, res: Response): Error {

@@ -3,32 +3,29 @@ import { Action } from "../interface/Dashboard.interface";
 import { Billing } from "../model/Billing";
 import { DateRange } from "../type/Range";
 import { HttpMethod } from "../decorator/HttpMethod";
+import { ClientError } from "../model/Error";
+import { BillingBody } from "../interface/Billing.interface";
 
 export class BillingController
 {
-  @HttpMethod("GET", "System couldn't find the bill.")
+  @HttpMethod("GET", "System couldn't find the bill for the date range.")
   public static search(req: Request, res: Response): void
   {
     if(!req.query.startDate || !req.query.endDate)
-      throw new Error("No Date Range is specified to fetch billing!");
+      throw new ClientError("Client didn't specify a start date and end date to search.");
     const startDate: string = req.body.startDate;
     const endDate: string = req.body.endDate;
     const range: DateRange = new DateRange(new Date(startDate), new Date(endDate));
     const billing: Billing = new Billing(range, req);
-    billing.toPrimObj();
-    res.send({success: true, billing: ""});
+    const bill: BillingBody = billing.toPrimObj();
+    res.send({success: true, billing: bill});
   }
   @HttpMethod("GET", "System couldn't find the bill for today.")
   public static searchToday(req: Request, res: Response): void
   {
-   
-    try {
-      const range: DateRange = new DateRange(new Date(), new Date());
-      const billing: Billing = new Billing(range, req);
-    } catch (e) {
-      const ex: Error = e;
-      hconsole.error(ex);
-      res.send({success: false, error: })
-    }
+      const billRange: DateRange = new DateRange(new Date(), new Date());
+      const billing: Billing = new Billing(billRange, req);
+      const bill: BillingBody = billing.toPrimObj()
+      res.send({success: true, billing: bill});
   }
 }

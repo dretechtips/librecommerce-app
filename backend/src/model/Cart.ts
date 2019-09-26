@@ -1,22 +1,21 @@
-import { CartConstructor, NewCartBody } from "../interface/Cart.interface";
+import { CartConstructor, NewCartBody, ExistingCartBody } from "../interface/Cart.interface";
 import uuid = require('uuid/v4');
 import { Product } from "./Inventory";
-import schedule = require('node-schedule');
+import { Time } from "../type/Time";
 
 export class CartSession
 {
   private _value: Map<string, Cart>;
-  private _dateLeft: number = 7;
+  private _timeout: Time;
   constructor()
   {
-    
+    this._timeout = new Time(7, "d");
+    this._timeout.toMilliSeconds();
   }
   public add(cart: Cart)
   {
-    this._value.set(cart.getValue().id, cart);
-    let scheduleDate: Date = new Date();
-    scheduleDate.setDate(scheduleDate.getDate() + this._dateLeft);
-    schedule.scheduleJob(scheduleDate, () => this.remove(cart.getValue().id));
+    this._value.set(cart.getID(), cart);
+    setTimeout(() => this.remove(cart.getID()), this._timeout.getAmount())
   }
   public remove(id: string)
   {
@@ -36,7 +35,7 @@ export class CartSession
     this._value.delete(id);
     this._value.set(id, cart);
   }
-  public findAll(): Cart[]
+  public getAll(): Cart[]
   {
     return Array.from(this._value.values());
   }
@@ -45,16 +44,21 @@ export class CartSession
 export class Cart
 {
   private _value: CartConstructor;
-  constructor(cart: CartConstructor)
+  constructor(products: Product[])
   {
-    this._value = cart;
-    if(!this._value.id) this._value.id = uuid();
+    this._value = {
+      items: products,
+      id: uuid(),
+    }
   }
-  public getValue(): CartConstructor
+  public getProducts(): Product[]
   {
-    return this._value;
+    return this._value.items;
   }
-  public static generate(body: NewCartBody)
+  public getID(): string {
+    return this._value.id;
+  }
+  public static generate(body: NewCartBody): Cart
   {
     const cart: CartConstructor =
     {
@@ -62,5 +66,12 @@ export class Cart
       id: uuid(),
     }
     return new Cart(cart);
+  }
+  public toPrimObj(): CartBody {
+    const cart: CartBody = {
+      items: this._value.items.map(cur => cur.toPrimitiveObj()),
+      id: this._value.id,
+    }
+    return cart;
   }
 }

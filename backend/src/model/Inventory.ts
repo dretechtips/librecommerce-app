@@ -8,8 +8,9 @@ import { Paypal } from "./Paypal";
 export class Inventory
 {
   private _products: Map<string, Product>;
-  constructor(productID: string[])
+  constructor(productID?: string[])
   {
+    if(isNotSet(productID))
     productID.forEach(cur => {
       const product: Product = Product.From.id(cur);
       this._products.set(cur, product);

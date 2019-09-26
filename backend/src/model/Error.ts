@@ -18,3 +18,10 @@ export class DatabaseError extends Error {
     this.name = "Database Error";
   }
 }
+
+export class ProgramError extends Error {
+  constructor(msg: string) {
+    super(msg);
+    this.name = "Program Error";
+  }
+}

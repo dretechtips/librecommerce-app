@@ -1,6 +1,5 @@
 import { default as Database, DatabaseQuery } from "./Database";
 import { StoreCoupon, IndividualCoupon, CouponConstructor, CouponBody } from "../interface/Coupon.interface";
-import { QueryResult, FieldDef } from "pg";
 import uuid = require("uuid/v4");
 import { DateRange } from "../type/Range";
 import { Discount } from "../type/Discount";
@@ -9,7 +8,6 @@ import { Discount } from "../type/Discount";
 export class Coupon
 {
   private _value: CouponConstructor;
-  private _details: DatabaseQuery;
   constructor(coupon: CouponConstructor)
   {
     this._value = coupon;
@@ -30,10 +28,10 @@ export class Coupon
     return new Coupon(coupon);
   }
   public delete(): void {
-    
+    // Database Method to delete self
   }
   public save(): void {
-
+    // Database method to save self
   }
   public update(body: CouponBody): void {
     if (body.name) this._value.name = body.name;
@@ -46,10 +44,14 @@ export class Coupon
     if (this._value.type === "individual" && body.type === "individual")
       if (body.customerID) this._value.customerID = body.customerID;
   }
-  public static From = class
-  {
-    public static id(id: string): Coupon
-    {
+}
+
+export class CouponManager {
+  public static from = class {
+    public static id(id: string): Coupon {
+      
+    }
+    public static products(productID: string[]): Coupon[] {
 
     }
   }
