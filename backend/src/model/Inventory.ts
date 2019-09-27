@@ -1,20 +1,45 @@
 import { default as Database } from "../model/Database";
-import {  ProductConstructor, NewProductBody, ExistingProductBody, InventoryCategory, ProductSearchQuery } from "../interface/Inventory.interface";
+import {  ProductConstructor, NewProductBody, ExistingProductBody, InventoryCategory, ProductSearchQuery, CategoryBody } from "../interface/Inventory.interface";
 import uuid = require("uuid/v4");
 import { Money } from "../type/Money";
 import { Color } from "../type/Color";
 import { Paypal } from "./Paypal";
+import cron = require('node-cron');
+
+export class InventoryManager {
+  public static import(): Inventory {
+    // Database Method
+  }
+}
 
 export class Inventory
 {
   private _products: Map<string, Product>;
-  constructor(productID?: string[])
+  private _categories: Map<string, Category>;
+  constructor(productsID?: string[], categoriesID?: string[])
   {
-    if(isNotSet(productID))
-    productID.forEach(cur => {
-      const product: Product = Product.From.id(cur);
-      this._products.set(cur, product);
-    })
+    this._products = new Map();
+    this._categories = new Map();
+    if (productsID) {
+      productsID.forEach(cur => {
+        const product: Product | null = Product.From.id(cur);
+        if(product)
+          this._products.set(cur, product);
+      });
+    }
+    if (categoriesID) {
+      categoriesID.forEach(cur => {
+        const category: Category = Category.import(cur);
+        this._categories.set(cur, category);
+      })
+    }
+  }
+  private setEvents(): void {
+    cron.schedule("0 1 * * *", () => this.save());
+    process.on("beforeExit", () => this.save());
+  }
+  public save(): void {
+    // Database Method
   }
   public add(product: Product): void
   {
@@ -25,21 +50,63 @@ export class Inventory
   {
     this._products.delete(id);
   }
-  // Grab the hottest product and newest product
-  public refresh(): void
+  public getCategories(): Category[]
   {
-    this._products.clear();
-    // DB Query
-    // Populate The Hash Map
+    return Array.from(this._categories.values());
   }
-  public static fetchCategories(): InventoryCategory[]
+  public addCategory(category: Category) {
+    this._categories.set(category.getID(), category);
+  }
+  public find(id: string): Product | null
   {
-    // Database method
+    const product: Product | undefined = this._products.get(id);
+    if (product === undefined)
+      return null;
+    else
+      return product;
   }
-  find(id: string): Product
-  {
-    return this._products.get(id);
+  public list(limit: number): Product[] {
+    return Array.from(this._products.values());
   }
+}
+
+export class Category {
+  private _name: string;
+  private _id: string;
+  constructor(name: string, id: string) {
+    this._name = name;
+    this._id = id;
+  }
+  public static import(id: string): Category {
+    // Database Method
+  }
+  public static importAll(): Category[] {
+    // Database Method
+  }
+  public getID(): string {
+    return this._id;
+  }
+  public toPrimObj(): CategoryBody {
+    const obj: CategoryBody = {
+      name: this._name,
+      id: this._id,
+    }
+    return obj;
+  }
+}
+
+export class ProductManager {
+  public static from = class {
+    public static queries(body: ProductSearchQuery): Product[] | null {
+
+    }
+    public static id(id: string): Product | null {
+
+    }
+    public static price(min: number, max: number): Product[] | null {
+
+    }
+  }s
 }
 
 export class Product
@@ -51,24 +118,22 @@ export class Product
   }
   public add()
   {
-    
+    // Database Method
   }
   public remove()
   {
-    // find within database
-    // find within memory 
+    // Database Method
   }
   public save()
   {
-    
+    // Datbase Method
   }
   public getValue(): ProductConstructor
   {
     return this._values;
   }
-  public saveToPaypal()
-  {
-    const paypal: Paypal = new Paypal();
+  public getID(): string {
+    return this._values.id;
   }
   public update(body: any)
   {
@@ -117,20 +182,5 @@ export class Product
       colors: this._values.colors.map(cur => cur.toString()),
     }
     return product;
-  }
-  public static From = class
-  {
-    public static queries(body: ProductSearchQuery): Product[]
-    {
-      
-    }
-    public static id(id: string): Product
-    {
-      
-    }
-    public static price(min: number, max: number): Product[]
-    {
-      
-    }
   }
 }

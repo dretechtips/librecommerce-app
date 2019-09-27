@@ -5,6 +5,7 @@
 import express = require("express");
 import * as http from "http";
 import WebSocket = require('ws');
+import pug = require('pug');
 
 import { default as ClientRoutes } from "./routes/client";
 import { default as AdminRoutes } from "./routes/admin";
@@ -18,6 +19,8 @@ const server: http.Server = http.createServer(app).listen(8000, '127.0.0.1', () 
 export const wsServer: WebSocket.Server = new WebSocket.Server({ server }, () => {
   hconsole.log(`Initalizing WebSocket Server with the IP Address of ${server.address()}`);
 });
+
+app.set('view engine', 'pug');
 
 app.use((req, res, next) => {
   hconsole.log(`There a new connection from the IP Address ${req.connection.remoteAddress || req.header('x-forward-for')}`);

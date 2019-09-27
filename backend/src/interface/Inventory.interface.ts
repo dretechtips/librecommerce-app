@@ -5,6 +5,7 @@ export interface ProductConstructor
 {
   name: string,
   id: string,
+  baseID: string,
   categoryID: string, 
   price: Money,
   images: URL[],
@@ -24,6 +25,7 @@ export interface ProductConstructor
 export interface NewProductBody
 {
   name: string,
+  baseID: string,
   categoryID: string,
   price: number,
   brand: string,
@@ -55,8 +57,7 @@ export interface ProductSearchQuery
   stock?: string, 
 }
 
-export interface InventoryCategory 
-{
-  name: string,
-  id: string,
+export interface CategoryBody {
+  name: string;
+  id: string;
 }

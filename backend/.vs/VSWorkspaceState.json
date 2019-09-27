@@ -2,7 +2,7 @@
   "ExpandedNodes": [
     "",
     "\\src",
-    "\\src\\data",
+    "\\src\\controller",
     "\\src\\decorator",
     "\\src\\event",
     "\\src\\helper",
@@ -11,6 +11,6 @@
     "\\src\\model",
     "\\src\\routes"
   ],
-  "SelectedNode": "\\src\\event\\Order.event.ts",
+  "SelectedNode": "\\src\\routes\\landing.ts",
   "PreviewInSolutionExplorer": false
 }

@@ -1,90 +1,31 @@
-import { ColorConstructor } from "../interface/Color.interface";
+export type color = "black" | "blue" | "brown" | "cyan" | "green" | "grey" | "magenta" | "orange" | "pink" |
+  "violet" | "red" | "white" | "yellow";
 
 export class Color
 {
-  private _color: ColorConstructor;
-  private static _colorArray: string[] = 
-  ["black",
-  "blue",
-  "brown",
-  "cyan",
-  "green",
-  "grey",
-  "magenta",
-  "orange",
-  "pink",
-  "violet",
-  "red",
-  "white",
-  "yellow"];
-  constructor(color: ColorConstructor | string | string[])
+  private _color: color[];
+  private static _avalColor: color[] = ["black",
+    "blue",
+    "brown",
+    "cyan",
+    "green",
+    "grey",
+    "magenta",
+    "orange",
+    "pink",
+    "violet",
+    "red",
+    "white",
+    "yellow"];;
+  constructor(color: color[])
   {
-    if(typeof color === "string")
-    {
-      const colorConst = this.stringToColor(color);
-      this._color = colorConst;
-    }
-    else if (Array.isArray(color))
-    {
-      const colorConst = this.strArrayToColor(color);
-      this._color = colorConst;
-    }
-    else 
-    {
-      for(let cur in color)
-      {
-        if(color[cur] === undefined)
-        {
-          color[cur] === false;
-        }
-      }
-      this._color = color;
-    }
-  }
-  public static allToArray()
-  {
-    return this._colorArray;
+    this._color = color;
   }
   public toString(): string
   {
-    let colorArray: string[];
-    const colorsProp = Object.keys(this._color);
-    for(let i = 0 ; i < colorsProp.length; i++)
-    {
-      if(this._color[colorsProp[i]] === true)
-      {
-        colorArray.push(colorsProp[i]);
-      }
-    }
-    return colorArray.join('/');
+    return this._color.join('/');
   }
-  private stringToColor(color: string): ColorConstructor
-  {
-    const colorConst: ColorConstructor = {};
-    for(let cur of Color._colorArray)
-    {
-      if(color.search(cur) !== -1)
-      {
-        colorConst[cur] = true;
-      }
-      else
-      {
-        colorConst[cur] = false;
-      }
-    }
-    return colorConst;
-  }
-  private strArrayToColor(color: string[]): ColorConstructor
-  {
-    const colorConst: ColorConstructor = {};
-    for(let cur of Color._colorArray)
-    {
-      if(Color._colorArray.find(now => now === cur))
-      {
-        colorConst[cur] === true;
-      }
-      else colorConst[cur] === false;
-    }
-    return colorConst;
+  public static listAll(): color[] {
+    return this._avalColor;
   }
 }

@@ -1,98 +1,86 @@
 import { Request, Response } from "express";
-import { Inventory, Product } from "../model/Inventory";
+import { Inventory, Product, InventoryManager, Category, ProductManager } from "../model/Inventory";
 import { Color } from "../type/Color";
-import { InventoryCategory } from "../interface/Inventory.interface";
+import { HttpMethod } from "../decorator/HttpMethod";
+import { ClientError } from "../model/Error";
+import { NewProductBody, CategoryBody, ProductSearchQuery } from "../interface/Inventory.interface";
+import { NextFunction } from "connect";
 
-export class InventoryController extends Controller
+export class InventoryController
 {
-  private static _inventory = new Inventory([]);
+  private static _inventory: Inventory = InventoryManager.import();
+  @HttpMethod("POST", "The system was unable to add the product to the inventory.")
   public static add(req: Request, res: Response): void
   {
-    try {
-      const product: Product = Product.generate(req.body);
-      this.inventory.add(product);
-      res.send({success: true});
-    } catch (e) {
-      const ex: Error = e;
-      hconsole.error(ex);
-      res.send({success: false, error: "The system was unable to add the item to the inventory!"});
-    }
+    const bProduct: NewProductBody = req.body.product;
+    if (!bProduct)
+      throw new ClientError("Client didn't provide an product to add.");
+    const product: Product = Product.generate(bProduct);
+    this._inventory.add(product);
   }
+  @HttpMethod("DELETE", "System was unable to delete the product in the inventory.")
   public static remove(req: Request, res: Response): void
   {
-    try {
-      const product: Product = Product.From.id(req.body.id);
-      product.remove();
-      if(this.inventory.find(product.getValue().id))
-      {
-        this.inventory.remove(product.getValue().id);
-      }
-      res.send({success: true})
-    } catch (e) {
-      const ex: Error = e;
-      hconsole.error(ex);
-      res.send({success: false, error: "The system was unable to remove the item from the inventory!"});
+    const productID: string = req.body.product.id;
+    const product: Product | null = ProductManager.from.id(productID);
+    if (!product)
+      throw new ClientError("Client didn't specify a valid id.");
+    product.remove();
+    if (this._inventory.find(product.getID())) {
+      this._inventory.remove(product.getID());
     }
+    else
+      throw new ClientError("Client didn't provide a valid product id.");
   }
+  @HttpMethod("PATCH", "The system was unable to update the item in the inventory.")
   public static update(req: Request, res: Response): void
   {
-    try {
-      let product: Product = this.inventory.find(req.body.id);
-      if(product === null)
-        product = Product.From.id(req.body.id);
-      product.update(req.body);
-      product.save();
-      res.send({success: true});
-    } catch (e) {
-      const ex: Error = e;
-      hconsole.error(ex);
-      res.send({success: false, error: "The system was unable to update the item in the inventory!"});
-    }
+    const productID: string = req.body.product.id;
+    let product: Product | null = this._inventory.find(productID);
+    if (!product)
+      throw new ClientError("Client didn't provide a valid product id.");
+    product.update(req.body.product);
+    product.save();
   }
-  public static getColor(req: Request, res: Response): void
+  @HttpMethod("GET", "The system was unable to find the colors.")
+  public static listColor(req: Request, res: Response): void
   {
-    try {
-      const color: string[] = Color.allToArray();
-      res.send({success: true, colors: color});
-    } catch (e) {
-      const ex: Error = e;
-      hconsole.error(ex);
-      res.send({success: false, error: "The system couldn't find the products color!"});
-    }
+    const color: string[] = Color.listAll();
+    res.send({success: true, colors: color});
   }
-  public static getCategories(req: Request, res: Response)
+  @HttpMethod("GET", "The system could not find the inventory categories")
+  public static getCategories(req: Request, res: Response): void
   {
-    try {
-      const categories: InventoryCategory[] = Inventory.fetchCategories();
-      res.send({success: true, categories});
-    } catch (e) {
-      const ex: Error = e;
-      hconsole.error(ex);
-      res.send({success: false, error: "The system could not find the inventory categories"});
+    const categories: Category[] = this._inventory.getCategories();
+    const bCategories: CategoryBody[] = categories.map(cur => cur.toPrimObj());
+    res.send({success: true, categories: bCategories});
+  }
+  @HttpMethod("POST", "System was unable to add the inventory category.")
+  public static addCategory(req: Request, res: Response): void {
+    const categories: CategoryBody[] = req.body.inventory.categories;
+    for (let category of categories) {
+      this._inventory.addCategory(new Category(category.name, category.id));
     }
   }
+  @HttpMethod("POST", "System couldn't find the product from the item category")
   public static search(req: Request, res: Response)
   {
-    try {
-      const products: Product[] = Product.From.queries(req.body);
-      if(products.length === 0 ) throw new Error("Could not find the product within the system! Please try again.")
-      else res.send({success: true, products: products.map(cur => cur.toPrimitiveObj())});
-    } catch (e) {
-      const ex: Error = e;
-      hconsole.error(ex);
-      res.send({success: false, error: ex.message});
-    }
+    const query: ProductSearchQuery = req.body.product;
+    const products: Product[] | null = ProductManager.from.queries(query);
+    if(!products)
+      res.send({ success: true, products: [] });
+    else
+      res.send({ success: true, products: products.map(cur => cur.toPrimitiveObj()) });
   }
-  public static find(req: Request, res: Response)
-  {
-    try {
-      const product: Product = Product.From.id(req.body.id);
-      if(product === null) throw new Error("The product ID was doesn't exist within the system! Please try again.")
-      res.send({success: true, product: product.toPrimitiveObj()});
-    } catch (e) {
-      const ex: Error = e;
-      hconsole.error(ex);
-      res.send({success: false, error: ex.message})
+  public static list(req: Request, res: Response, next: NextFunction): Product[] | void {
+    const products: Product[] = this._inventory.list(-1);
+    if (next) {
+      next();
+      return products;
     }
+    else {
+      res.send({ success: true, products: products });
+    }
+    return;
   }
 }

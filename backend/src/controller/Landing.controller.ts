@@ -1,23 +1,25 @@
-import { Controller } from "./Controller";
-import pug = require('pug');
-import { Request, Response } from "express-serve-static-core";
+import { Request, Response, NextFunction } from "express";
+import { Product, Inventory } from "../model/Inventory";
+import { InventoryController } from "../controller/Inventory.controller";
+import { HttpMethod } from "../decorator/HttpMethod";
 
-export class LandingController extends Controller
+export class LandingController
 {
-  private static _viewDir: string = "";
+  @HttpMethod("GET", "System was unable to render the landing home page.")
   public static renderHome(req: Request, res: Response): void
   {
-    const page: string = pug.renderFile(this._viewDir + "/home.pug");
-    res.send(page);
+    res.render('./landing/home');
   }
-  public static renderShop(req: Request, res: Response): void
+  @HttpMethod("GET", "System was unable to render the landing shopping page.")
+  public static renderShop(req: Request, res: Response, next: NextFunction): void
   {
-    const page: string = pug.renderFile(this._viewDir + "/shop.pug");
-    res.send(page)
+    const products: Product[] | void = InventoryController.list(req, res, next);
+    if(products)
+      res.render('./landing/shop', {});
   }
+  @HttpMethod("GET", "System was unable to render the landing content page.")
   public static renderContract(req: Request, res: Response): void
   {
-    const page: string = pug.renderFile(this._viewDir + "/contact.pug");
-    res.send(page);
+    res.render('./landing/contact');
   }
 }
