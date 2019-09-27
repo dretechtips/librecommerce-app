@@ -36,6 +36,17 @@ export class ActiveSchedule
   }
 }
 
+export class ScheduleManager {
+  public static from = class {
+    public static id(scheduleID: string): Schedule | null {
+      
+    }
+    public static active(isActive: boolean): Schedule[] | null {
+
+    }
+  }
+}
+
 export class Schedule
 {
   private _value: ScheduleConstructor;
@@ -86,13 +97,5 @@ export class Schedule
   }
   public getID(): string {
     return this.getValue().scheduleID;
-  }
-  public static From = class {
-    public static id(scheduleID: string): Schedule {
-      
-    }
-    public static active(isActive: boolean): Schedule[] {
-
-    }
   }
 }

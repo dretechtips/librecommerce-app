@@ -11,6 +11,7 @@ import { default as SpyRoutes } from "./spy";
 import { default as UserRoutes } from "./user";
 import { AdminRoute as CartRoutes } from "./cart";
 import { default as ScheduleRoutes } from "./schedule";
+import { adminRoute as ShippingRoute } from "./shipping";
 import { default as SFRoute } from "./speechfilter";
 
 const router: express.Router = express.Router();
@@ -28,6 +29,7 @@ router.use('/api/promo', PromoRoutes);
 router.use('/api/spy', SpyRoutes);
 router.use('/api/cart', CartRoutes);
 router.use('/api/schedule', ScheduleRoutes);
+router.use('/api/shipping', ShippingRoute);
 router.use('/api/speech-filter', SFRoute);
 
 export default router;

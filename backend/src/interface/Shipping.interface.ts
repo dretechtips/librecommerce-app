@@ -3,10 +3,10 @@ import { Money } from "../type/Money";
 export interface ShippingConstructor
 {
   shippingID: string,
-  orderID?: string,
+  orderID: string,
   days: number,
   price: Money,
-  provider: "fedex" | "ups",
+  provider: ShippingProvider,
   cancelled: boolean
 }
 
@@ -14,7 +14,8 @@ export interface NewShippingBody
 {
   days: number,
   price: number,
-  provider: "fedex" | "ups",
+  provider: ShippingProvider,
+  orderID: string,
 }
 
 export interface ExistingShippingBody extends NewShippingBody
@@ -23,3 +24,5 @@ export interface ExistingShippingBody extends NewShippingBody
   orderID: string,
   cancelled: boolean,
 }
+
+export type ShippingProvider = "fedex" | "ups" | "usps";

@@ -10,12 +10,15 @@ export class Queue<T>
       this._values = [];
     }
   }
-  enqueue(val: T)
+  public enqueue(val: T)
   {
     this._values.push(val);
   }
-  dequeue(): T
+  public dequeue(): T
   {
     return this._values.pop();
+  }
+  public getValues(): T[] {
+    return this._values;
   }
 }

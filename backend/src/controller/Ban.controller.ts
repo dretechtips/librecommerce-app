@@ -12,7 +12,7 @@ export class BanController {
   private static _bans: BanList = new BanList();
   private static _appeals: BanAppealList = new BanAppealList();
   private static _filter: SpeechFilter =
-    SFController.import("BAN_REVIEW_AUTOMATION.txt");
+    SFController.import("BAN_REVIEW_AUTOMATION.txt").lock();
   public static Account = class {
     public static add(ban: Ban): void {
       BanController._bans.add(ban);

@@ -1,5 +1,5 @@
 import AmazonMWS = require("amazon-mws");
-import { Dimension } from "../model/Dimension";
+import { Dimension } from "../type/Dimension";
 
 export interface AmazonProduct {
   sku: string;

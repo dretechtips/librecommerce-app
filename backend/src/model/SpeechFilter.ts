@@ -2,11 +2,16 @@ import fs = require('fs');
 import cron = require('node-cron');
 import { DirManager, FileManager } from './FileManager';
 import { SpeechFilterBody } from "../interface/SpeechFilter.interface";
+import uuid = require('uuid/v4');
 
 export class SpeechFilter {
   private _file: FileManager;
   private _words: string[];
+  private _deletable: boolean;
+  private _id: string;
   constructor(words: string[], file: FileManager) {
+    this._id = uuid();
+    this._deletable = true;
     this._words = words;
     if (!words) this._words = [];
     this._file = file;
@@ -15,6 +20,16 @@ export class SpeechFilter {
   private setEvents(): void {
     process.on("beforeExit", () => this.save());
     cron.schedule('0 2 * * *', () => this.save());
+  }
+  public getID(): string {
+    return this._id;
+  }
+  public getFileName(): string {
+    return this._file.getFileName();
+  }
+  public lock(): SpeechFilter {
+    this._deletable = false;
+    return this;
   }
   public save(): void {
     this._file.writeToFile(this.getWords().toString(), "utf-8");
@@ -45,21 +60,19 @@ export class SpeechFilter {
 
 export class SFManager {
   private _dir: DirManager;
+  private _SFs: Map<string, SpeechFilter>;
   constructor(directory: string) {
     this._dir = new DirManager(directory);
+    this._SFs = new Map();
   }
   public import(filename: string): SpeechFilter {
-    try {
-      let file: FileManager = this._dir.getFile(filename);
-      if (!file)
-        file = this.add([], filename);
-      const content: string = file.getFileContent("utf-8");
-      return new SpeechFilter(content.split(","), file);
-    }
-    catch (e) {
-      const ex: Error = e;
-      hconsole.error(ex);
-    }
+    let file: FileManager = this._dir.getFile(filename);
+    if (!file)
+      file = this.add([], filename);
+    const content: string = file.getFileContent("utf-8");
+    const SF: SpeechFilter =  new SpeechFilter(content.split(","), file);
+    this._SFs.set(SF.getID(), SF);
+    return SF;
   }
   public importAll(): SpeechFilter[] {
     const files: FileManager[] = this._dir.getAllFile();

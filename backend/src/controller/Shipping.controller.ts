@@ -1,48 +1,53 @@
-import { Controller } from "./Controller";
-import { Actions } from "../interface/Dashboard.interface";
-import * as pug from "pug";
-import { Request, Response } from "express-serve-static-core";
+import { Request, Response, NextFunction } from "express";
 import { ShippingConstructor, NewShippingBody } from "../interface/Shipping.interface";
-import { OrderConstructor } from "../interface/Order.interface";
-import { Money } from "../model/Money";
-import { Shipping } from "../model/Shipping";
-const viewDir = "./admin/view";
-const shippingViewDir = viewDir + '/shipping';
+import { Shipping, ShippingManager, ShippingQueue } from "../model/Shipping";
+import { HttpMethod } from "../decorator/HttpMethod";
+import { ClientError } from "../model/Error";
 
-export class ShippingController extends Controller
+export class ShippingController
 {
-  protected static _dashboardActions: Actions[];
-  public static renderDashboard(req: Request, res: Response)
+  private static _queue: ShippingQueue = new ShippingQueue();
+  @HttpMethod("POST", "System was unable to add the shipping.")
+  public static add(req: Request, res: Response): void
   {
-    const page = pug.renderFile(viewDir + "/layouts/actions.pug",
-    {
-      actions: this._dashboardActions
-    });
-    res.send(page);
-  };
-  public static renderSearch(req: Request, res: Response)
-  {
-    
+    const bShipping: NewShippingBody =  req.body.shipping;
+    const shipping: Shipping = Shipping.generate(bShipping);
+    shipping.save();
   }
-  public static add(req: Request, res: Response)
-  {
-    
-  }
-  public static addFromOrder(order: OrderConstructor, body: NewShippingBody)
-  {
-    const shipping = this.generate(order, body);
-    Shipping.add(shipping);
-  }
-  private static generate(order: OrderConstructor, body: NewShippingBody): ShippingConstructor
-  {
-    const shipping: ShippingConstructor = 
-    {
-      orderID: order.id,
-      days: body.days,
-      price: new Money(body.price),
-      provider: body.provider,
-      cancelled: false,
+  @HttpMethod("DELETE", "System was unable to delete the shipping.")
+  public static cancel(req: Request, res: Response, next?: NextFunction): void {
+    const shippingID: string = req.body.shipping.id;
+    const shipping: Shipping[] = ShippingController._queue.getValues();
+    for(let i = 0 ; i < shipping.length ; i++) {
+      const cur: Shipping = shipping[i];
+      if(cur.getID() === shippingID) 
+        shipping.splice(i, 1);
     }
-    return shipping;
+  }
+  @HttpMethod("DELETE", "System was unable to delete order form the system.")
+  public static delete(req: Request, res: Response, next?: NextFunction): void {
+    ShippingController.cancel(req, res, next);
+    const shippingID: string = req.body.shipping.id;
+    const shipping: Shipping | null = ShippingManager.from.id(shippingID);
+    if(!shipping)
+      throw new ClientError("Client didn't provide a valid shipping ID.")
+    shipping.delete();
+  }
+  @HttpMethod("PATCH", "System was unable to to update the shipping.")
+  public static update(req: Request, res: Response) : void {
+    const shippingID: string = req.body.shipping.id;
+    const bShipping: any = req.body.shipping;
+    const shipping: Shipping | null = ShippingManager.from.id(shippingID);
+    if(!shipping)
+      throw new ClientError("Client didn't provide a valid client id.");
+    shipping.update(bShipping);
+  }
+  @HttpMethod("GET", "System was unable to get the shipping ID.")
+  public static getShippingID(req: Request, res: Response): void {
+    const shippingID: string = req.body.shipping.id;
+    const shipping: Shipping | null = ShippingManager.from.id(shippingID);
+    if(!shipping)
+      throw new ClientError("Client didn't provide a valid shipping ID.");
+    res.send({success: true, shipping: shipping.toPrimObj()});
   }
 }

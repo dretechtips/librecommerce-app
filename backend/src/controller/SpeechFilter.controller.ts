@@ -8,56 +8,33 @@ export class SFController {
   public static import(filename: string): SpeechFilter {
     return this._manager.import(filename);
   }
-  @HttpMethod("POST")
+  @HttpMethod("POST", "System was unable to add another speech filter.")
   public static add(req: Request, res: Response): void {
-    try {
-      const SFConfig: SpeechFilterBody = req.body.speechFilter;
-      this._manager.add(SFConfig.words.split(','), SFConfig.name);
-      res.send({ success: true });
-    }
-    catch (e) {
-      res.sendError(e, "System was unable to add another speech filter.");
-    }
+    const SFConfig: SpeechFilterBody = req.body.speechFilter;
+    this._manager.add(SFConfig.words.split(','), SFConfig.name);
   }
-  @HttpMethod("DELETE")
+  @HttpMethod("DELETE", "System was unable to delete the speech filter.")
   public static remove(req: Request, res: Response): void {
-    try {
-      const SFName: string = req.body.speechFilter.name;
-      const SFExists: boolean = this._manager.exists(SFName);
-      if (SFExists) {
-        this._manager.remove(SFName);
-      }
-      else throw new Error("This Speech Filter doesn't even exists.");
-      res.send({ success: true });
+    const SFName: string = req.body.speechFilter.name;
+    const SFExists: boolean = this._manager.exists(SFName);
+    if (SFExists) {
+      this._manager.remove(SFName);
     }
-    catch (e) {
-      res.sendError(e, "System was unable to delete the speech filter.");
-    }
+    else throw new Error("This Speech Filter doesn't even exists.");
   }
-  @HttpMethod("PATCH")
+  @HttpMethod("PATCH", "System was unable to update the speech filter.")
   public static update(req: Request, res: Response): void {
-    try {
-      const SFConfig: SpeechFilterBody = req.body.speechFilter;
-      const SFExists: boolean = this._manager.exists(SFConfig.name);
-      if (SFExists) {
-        const SF: SpeechFilter = this._manager.import(SFConfig.name);
-        SF.setWords(SFConfig.words.split(","));
-      }
-      res.send({ success: true });
-    }
-    catch (e) {
-      res.sendError(e, "System was unable to update the speech filter.");
+    const SFConfig: SpeechFilterBody = req.body.speechFilter;
+    const SFExists: boolean = this._manager.exists(SFConfig.name);
+    if (SFExists) {
+      const SF: SpeechFilter = this._manager.import(SFConfig.name);
+      SF.setWords(SFConfig.words.split(","));
     }
   }
-  @HttpMethod("GET")
+  @HttpMethod("GET", "System was unable to list the speech filter(s)")
   public static list(req: Request, res: Response): void {
-    try {
-      const SFs: SpeechFilter[] = this._manager.importAll();
-      const SFBodys: SpeechFilterBody[] = SFs.map(cur => cur.toPrimObj());
-      res.send({ success: true, speechfilters: SFBodys });
-    }
-    catch (e) {
-      res.sendError(e, "System was unable to list the speech filter(s)");
-    }
+    const SFs: SpeechFilter[] = this._manager.importAll();
+    const SFBodys: SpeechFilterBody[] = SFs.map(cur => cur.toPrimObj());
+    res.send({ success: true, speechFilters: SFBodys });
   }
 }
