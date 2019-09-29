@@ -7,9 +7,11 @@ export class SingleEvent implements ISingleEvent {
   private _name: string;
   private _hours: TimeRange;
   private _id: eventID;
-  constructor(name: string, hours: TimeRange) {
+  private _desc: string | null;
+  constructor(name: string, hours: TimeRange, desc?: string) {
     this._name = name;
     this._hours = hours;
+    this._desc = desc ? desc: null;
     this._id = uuid();
   }
   public getStart(): string {
@@ -88,12 +90,11 @@ export class WeekEvents implements IWeekEvents
     sat: DayEvents;
   }
   private _dayName: Day[] = Object.keys(this._days) as Day[];
-  constructor(dayEvents: DayEvents[], limits: number[])
+  constructor(dayEvents: DayEvents[])
   {
     for (let i = 0; i < this._dayName.length; i++) {
       const name: Day = this._dayName[i];
       this._days[name] = dayEvents[i];
-      this._days[name].setLimit(limits[i]);
     }
   }
   public static generate(events: SingleEventBody[], limit: number[]): WeekEvents {

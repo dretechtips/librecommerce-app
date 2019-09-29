@@ -1,46 +1,70 @@
 import { IPAddress, EmailAddress } from "../type/Location";
 import uuid = require("uuid/v4");
 import cron = require('node-cron');
-import { Customer } from "../model/Customer";
+import { User } from "../model/User";
+import { Account, AccountManager } from "../model/Account";
+import { ServerError } from "./Error";
 
+
+// @param list <accountID, Ban>
 export class BanList {
-  private _list: Map<Customer, Ban>;
+  private _list: Map<string, Ban>;
   constructor(bans?: Ban[]) {
     this._list = new Map();
     if (bans) {
       for (let i = 0; i < bans.length; i++) {
-        this._list.set(bans[i].getCustomer(), bans[i]);
+        try {
+          const account: Account | null = bans[i].getAccount();
+          if (!account)
+            throw new ServerError("System tried to initilize a ban list with an invalid account.")
+          this._list.set(account.getID(), bans[i]);
+        }
+        catch (e) {
+          const ex: Error = e;
+          hconsole.error(ex);
+        }
       }
     }
     this.setEvents();
   }
   public add(ban: Ban): void {
-    this._list.set(ban.getCustomer(), ban);
+    const account: Account | null = ban.getAccount();
+    if(!account)
+      this._list.set(ban.getAccount().getID(), ban);
   }
-  public remove(customer: Customer): void {
-    this._list.delete(customer);
+  public remove(accountID: string): void {
+    this._list.delete(accountID);
     return;
   }
   public save(): void {
-    
-    // write to db
+    // database method
   }
   private setEvents(): void {
     process.on("beforeExit", () => this.save());
     cron.schedule("0 2 * * *", () => this.save());
   }
-  public find(customer: Customer): Ban {
-    const ban: Ban = this._list.get(customer);
-    return ban ? ban : null;
+  public find(accountID: string): Ban | null {
+    const ban: Ban | undefined = this._list.get(accountID);
+    if (ban)
+      return ban;
+    else
+      return null;
   }
-  public findFromIP(ipAddress: IPAddress): Ban[] {
-    const customer: Customer[] = Customer.From.IPAddress(ipAddress);
-    const banList: Ban[] = new Array<Ban>(customer.length).fill(null);
-    for (let i = 0; i < customer.length; i++) {
-      const cur: Customer = customer[i];
-      banList[i] = this._list.get(cur);
+  public findFromIP(ipAddress: IPAddress): Ban[] | null {
+    const accounts: Account[] | null = AccountManager.from.ipAddress(ipAddress);
+    if (accounts) {
+      const banList: null[] | Ban[] = new Array(accounts.length).fill(null);
+      for (let i = 0; i < accounts.length; i++) {
+        const cur: Account = accounts[i];
+        const ban: Ban | undefined = this._list.get(cur.getID());
+        if(ban)
+          banList[i] = ban;
+      }
+      return banList as Ban[];
     }
-    return banList;
+    else {
+      return null;
+    }
   }
 }
 
@@ -60,8 +84,12 @@ export class BanAppealList {
   public remove(caseID: string): void {
     this._list.delete(caseID);
   }
-  public find(caseID: string): BanAppeal {
-    return this._list.get(caseID);
+  public find(caseID: string): BanAppeal | null {
+    const appeal: BanAppeal | undefined = this._list.get(caseID);
+    if (appeal)
+      return appeal;
+    else
+      return null;
   }
   public save(): void {
     // Save to db
@@ -73,22 +101,33 @@ export class BanAppealList {
 }
 
 export class Ban {
-  private readonly _customer: Customer;
+  private readonly _accountID: string;
   private readonly _timestamp: Date;
   private readonly _reason: string;
-  constructor(customer: Customer, reason: string) {
-    this._customer = customer;
+  constructor(accountID: string, reason: string) {
+    this._accountID = accountID;
     this._timestamp = new Date();
     this._reason = reason;
   }
-  public getAllIPAddress(): IPAddress[] {
-    return this._customer.getValue().associatedIP;
+  public getAccount(): Account | never {
+    const account: Account | null = AccountManager.from.id(this._accountID);
+    if (!account)
+      throw new ServerError("A ban cannot store an invalid account ID.");
+    else
+      return account;
+  }
+  public getIPs(): IPAddress[] {
+    const account: Account | null = this.getAccount();
+    if (account)
+      return account.getIPs();
+    else
+      return [];
   }
   public getTimestamp(): Date {
     return this._timestamp;
   }
-  public getCustomer(): Customer {
-    return this._customer;
+  public getAccountID(): string {
+    return this._accountID;
   }
 }
 
@@ -97,13 +136,13 @@ export class BanAppeal {
   private readonly _case: string;
   private readonly _ban: Ban;
   private readonly _timestamp: Date;
-  private _resolution: "resolve" | "reject" | null;
+  private _resolution: "resolve" | "reject" | "incomplete";
   constructor(msg: string, ban: Ban) {
     this._message = msg;
     this._case = uuid();
     this._ban = ban;
     this._timestamp = new Date();
-    this._resolution = null;
+    this._resolution = "incomplete";
   }
   public getMessage(): string {
     return this._message;
@@ -122,7 +161,7 @@ export class BanAppeal {
       return true;
     }
   }
-  public getResolution(): "resolve" | "reject" {
+  public getResolution(): "resolve" | "reject" | "incomplete" {
     return this._resolution;
   }
   public setResolution(res: "resolve" | "reject") {

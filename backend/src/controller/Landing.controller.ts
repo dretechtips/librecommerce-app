@@ -15,7 +15,7 @@ export class LandingController
   {
     const products: Product[] | void = InventoryController.list(req, res, next);
     if(products)
-      res.render('./landing/shop', {});
+      res.render('./landing/shop', {  products: products.map(cur => cur.toPrimitiveObj())  });
   }
   @HttpMethod("GET", "System was unable to render the landing content page.")
   public static renderContract(req: Request, res: Response): void

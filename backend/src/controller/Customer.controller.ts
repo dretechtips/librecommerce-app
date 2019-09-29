@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { Customer, ActiveCustomer, CustomerManager, PasswordResetList } from "../model/Customer";
+import { Customer, ActiveCustomer, CustomerManager } from "../model/Customer";
+import { PasswordResetList } from "../model/Account";
 import { HttpMethod } from "../decorator/HttpMethod";
-import { CustomerConstructor, CustomerPasswordReset } from "../interface/Customer.interface";
+import { CustomerConstructor, CustomerPasswordReset, CustomerBody } from "../interface/Customer.interface";
 import { ClientError, ServerError, DatabaseError } from "../model/Error";
 
 export class CustomerController
@@ -10,17 +11,17 @@ export class CustomerController
   private static _PRList = new PasswordResetList();
   @HttpMethod("ALL", "System couldn't verify the access token.")
   public static verify(req: Request, res: Response, next: NextFunction): void {
-    const accessToken: string = req.cookies.accessToken;
+    const accessToken: string = req.cookies.customer_access_token;
     if (!accessToken)
       throw new ClientError("Client didn't provide a customer access token.");
-    const customerID: string = this._session.fetch(accessToken);
+    const customerID: string | null = this._session.fetch(accessToken);
     if (customerID !== null)
       return next();
     else
       throw new ServerError("System couldn't find the access token with the sessions.");
   }
   @HttpMethod("POST", "System was unable to sign in the customer")
-  public static signin(req: Request, res: Response): Error {
+  public static signin(req: Request, res: Response): void {
     const clientID: string = req.body.customer.clientID;
     if (!clientID)
       throw new Error("Client didn't provide a client ID to sign-in.");
@@ -31,12 +32,12 @@ export class CustomerController
       res.send({ success: false, error: "Make sure a username and password was sent" });
       return;
     } 
-    const customer: Customer = CustomerManager.from.credientals(username, password);
+    const customer: Customer | null = CustomerManager.from.credientals(username, password) as Customer;
     if (!customer)
       throw new DatabaseError("Database cannot find the username and password.");
     else {
       const accessToken: string = this._session.add(customer);
-      res.cookie("accessToken" , accessToken).send({ success: true });
+      res.cookie("customer_access_token" , accessToken).send({ success: true });
     }
   }
   @HttpMethod("POST", "System was unable to add the customer.")
@@ -44,8 +45,9 @@ export class CustomerController
   {
     if (!req.body.customer)
       throw new ClientError("Client didn't provide the customer data.");
-    const cData: CustomerConstructor = req.body.customer;
-    CustomerManager.add(cData);
+    const cData: CustomerBody = req.body.customer;
+    const customer: Customer = Customer.generate(cData);
+    customer.save();
     res.send({ success: true });
   }
   @HttpMethod("DELETE", "System was unable to delete the customer.")
@@ -54,8 +56,9 @@ export class CustomerController
     const customerID: string = req.body.customer.id;
     if (!customerID)
       throw new ClientError("Client didn't provide a client ID to the system.");
-    CustomerManager.delete(customerID);
-    this._session.remove(customerID);
+    const customer: Customer | null = CustomerManager.from.id(customerID) as Customer;
+    if(customer)
+      this._session.delete(customerID);
   }
   @HttpMethod("PATCH", "System was unable to update the customer.")
   public static update(req: Request, res: Response): void
@@ -63,7 +66,7 @@ export class CustomerController
     const customerID: string = req.body.customer.id;
     if (!customerID)
       throw new ClientError("Client didn't send customer ID to the system.");
-    const customer: Customer = CustomerManager.from.id(customerID);
+    const customer: Customer | null = CustomerManager.from.id(customerID) as Customer;
     customer.update(req.body);
     customer.save();
   }
@@ -79,11 +82,11 @@ export class CustomerController
     const reset: CustomerPasswordReset = req.body.reset;
     if (!reset)
       throw new ClientError("Client didn't present a reset ID to the system.");
-    const customerID: string = this._PRList.fetch(reset.id);
+    const customerID: string | null = this._PRList.fetch(reset.id);
     if (!customerID)
       throw new Error("Password Reset List was unable to get the customer ID from the reset ID");
-    const customer: Customer = CustomerManager.from.id(customerID);
-    const isRemove: boolean = this._PRList.remove(reset.id);
+    const customer: Customer | null = CustomerManager.from.id(customerID) as Customer;
+    const isRemove: boolean = this._PRList.delete(reset.id);
     if (!isRemove)
       throw new ServerError("System couldn't find the client ID from the system.");
   }

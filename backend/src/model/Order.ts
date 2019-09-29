@@ -1,16 +1,17 @@
 import { default as Database } from "./Database";
-import { OrderConstructor, NewOrderBody, OrderProduct, ExistingOrderBody } from "../interface/Order.interface";
+import { IOrder } from "../interface/Order.interface";
 import { DatabaseKeyValue, DatabaseQueryConstructor } from "../interface/Database.interface";
 import { Queue } from "../data/Queue";
 import * as uuid from "uuid/v4";
 import {  EmailAddress, PhoneNum, Address, IPAddress  } from "../type/Location";
-import { Customer } from "./Customer";
-import { CustomerConstructor } from "../interface/Customer.interface";
+import { Customer, CustomerManager } from "./Customer";
+import { ICustomer } from "../interface/Customer.interface";
 import { Shipping } from "./Shipping";
 import axios = require("axios");
 import { Request } from "express-serve-static-core"
 import { Money } from "../type/Money";
-import { ShippingConstructor } from "../interface/Shipping.interface";
+import { IShipping } from "../interface/Shipping.interface";
+import { ProductVariationArray } from "./Inventory";
 
 export class OrderQueue extends Queue<Order>
 {
@@ -61,8 +62,8 @@ export class OrderQueue extends Queue<Order>
 
 export class Order
 {
-  private _value: OrderConstructor;
-  constructor(order: OrderConstructor)
+  private _value: IOrder.Constructor;
+  constructor(order: IOrder.Constructor)
   {
     this._value = order;
     this._value.shipping.setID(this._value.id);
@@ -107,10 +108,6 @@ export class Order
   {
 
   }
-  private deleteFromDatabase(): boolean
-  {
-    
-  }
   public cancel()
   {
     this._value.cancelled = true;
@@ -118,51 +115,25 @@ export class Order
   public update(body: any)
   {
     const value = this._value;
-    if(body.username) value.username = body.username
     if(body.products) value.products = body.products;
-    if(body.address) value.address = body.address;
-    if(body.email) value.email = body.email;
-    if(body.phone) value.phone = body.phone
+    if (body.address) value.address = body.address;
   }
-  public static generate(body: NewOrderBody, req: Request): Order
+  public static generate(body: IOrder.NewBody, req: Request): Order
   {
-    if(body.username)
+    const customer: Customer | null = CustomerManager.from.id(body.id) as Customer;
+    const order: IOrder.Constructor = 
     {
-      const customer: CustomerConstructor = Customer.From.username(body.username).getValue();
-      const order: OrderConstructor = 
-      {
-        id: uuid(),
-        username: customer.username,
-        timestamp: new Date(),
-        address: customer.address,
-        email: customer.email,
-        phone: customer.phone,
-        cancelled: false,
-        shipping: Shipping.generate(body.shipping),
-        ipAddress: IPAddress.generate(req),
-        products: body.products,
-        totalPay: new Money(6.6666666),
-        complete: false,
-      }
-      return new Order(order);
+      id: uuid(),
+      timestamp: new Date(),
+      address: customer.getAddress(),
+      cancelled: false,
+      shipping: Shipping.generate(body.shipping),
+      ipAddress: IPAddress.generate(req),
+      products: body.products,
+      cost: new ProductVariationArray(body.products).getTotalCost(),
+      complete: false,
     }
-    else
-    {
-      const order: OrderConstructor = 
-      {
-        id: uuid(),
-        timestamp: new Date(),
-        products: body.products,
-        address: new Address(body.address),
-        email: new EmailAddress(body.email),
-        phone: new PhoneNum(body.phone),
-        shipping: Shipping.generate(body.shipping),
-        cancelled: false,
-        ipAddress: IPAddress.generate(req),
-        totalPay: new Money(6.666666)
-      }
-      return new Order(order);
-    }
+    return new Order(order);
   }
   public toPrimObj(): ExistingOrderBody
   {

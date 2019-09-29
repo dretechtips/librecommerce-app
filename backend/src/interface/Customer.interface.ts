@@ -1,32 +1,14 @@
 import { Address, EmailAddress, PhoneNum, IPAddress } from "../type/Location";
+import { IAccount } from "./Account.interface";
 
-export interface CustomerConstructor
-{
-  isBan: boolean;
-  firstName: string;
-  lastName:  string;
-  readonly id: string;
-  ordersID: string[];
-  username: string;
-  password: string;
-  lastOrderDate?: Date;
-  address: Address;
-  email: EmailAddress;
-  phone: PhoneNum;
-  associatedIP: IPAddress[];
-}
-
-export interface NewCustomerBody {
-  firstName: string;
-  lastName: string;
-  username: string;
-  password: string;
-  address: string;
-  email: string;
-  phone: string;
-}
-
-export interface CustomerPasswordReset {
-  id: string;
-  password: string;
+export namespace ICustomer {
+  export interface Constructor extends IAccount.Constructor {
+    ordersID: string[];
+    lastOrderDate?: Date;
+  }
+  export interface NewBody extends IAccount.NewBody { }
+  export interface PasswordResetBody {
+    id: string;
+    password: string;
+  }
 }

@@ -1,28 +1,34 @@
 import { AddressConstructor, PhoneNumConstructor } from "../interface/Location.interface";
 import { Algorithms } from "../helper/Algorithms";
 import { Char } from "./Char";
-import hconsole from "../model/Console";
 import { AddressInfo, isIPv4, isIPv6 } from "net";
-import { Request } from "express-serve-static-core";
+import { Request } from "express";
 
-export class Address implements AddressConstructor
+export class Address
 {
-  streetNum = -1;
-  route = "N/A";
-  locatity = "N/A";
-  county = "N/A";
-  state = "N/A";
-  country = "N/A";
-  zipCode = -1;
-  constructor(address?: AddressConstructor)
+  private _streetNum: number = -1;
+  private _route: string = "DEFAULT";
+  private _locatity: string = "DEFAULT";
+  private _county: string = "DEFAULT";
+  private _state: string = "DEFAULT";
+  private _country: string = "DEFAULT";
+  private _zipCode: number = -1;
+  constructor(address?: AddressConstructor | string)
   {
-    this.streetNum = address.streetNum;
-    this.route = address.route;
-    this.locatity = address.locatity;
-    this.county = address.county;
-    this.state = address.state;
-    this.country = address.country;
-    this.zipCode = address.zipCode;
+    if (address) {
+      if (typeof address === "string") {
+
+      }
+      else {
+        this._streetNum = address.streetNum;
+        this._route = address.route;
+        this._locatity = address.locatity ? address.locatity : "DEFAULT";
+        this._county = address.county ? address.county : "DEFAULT";
+        this._state = address.state;
+        this._country = address.country;
+        this._zipCode = address.zipCode;
+      }
+    }
   };
   public static splitStreet(street: string): [number, string]
   {

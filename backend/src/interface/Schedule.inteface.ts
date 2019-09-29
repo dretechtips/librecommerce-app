@@ -15,3 +15,5 @@ export interface ScheduleBody {
   events: SingleEventBody[],
   hasOverTime: boolean,
 }
+
+

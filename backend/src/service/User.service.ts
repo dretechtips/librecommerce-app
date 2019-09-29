@@ -1,7 +1,7 @@
 import { Tree, TREE_STATUS } from "../data/Tree";
 import { User } from "../model/User";
 
-export class UserManager {
+export class UserSM {
   private _employees: Tree<User>;
   constructor() {
     const head: User = User.From.id();

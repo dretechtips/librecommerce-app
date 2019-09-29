@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express-serve-static-core";
+import { Request, Response, NextFunction } from "express";
 import { CartSession, Cart } from "../model/Cart";
 import { Product } from "../model/Inventory";
 import { OrdersController } from "./Orders.controller";

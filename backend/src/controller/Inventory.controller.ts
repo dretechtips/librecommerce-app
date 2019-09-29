@@ -1,10 +1,9 @@
-import { Request, Response } from "express";
-import { Inventory, Product, InventoryManager, Category, ProductManager } from "../model/Inventory";
+import { Request, Response, NextFunction } from "express";
+import { Inventory, Product, InventoryManager, Category, ProductManager, ProductVariation } from "../model/Inventory";
 import { Color } from "../type/Color";
 import { HttpMethod } from "../decorator/HttpMethod";
 import { ClientError } from "../model/Error";
-import { NewProductBody, CategoryBody, ProductSearchQuery } from "../interface/Inventory.interface";
-import { NextFunction } from "connect";
+import { IProduct, IProductVariation, ISearchQuery, ICategory } from "../interface/Inventory.interface";
 
 export class InventoryController
 {
@@ -12,11 +11,18 @@ export class InventoryController
   @HttpMethod("POST", "The system was unable to add the product to the inventory.")
   public static add(req: Request, res: Response): void
   {
-    const bProduct: NewProductBody = req.body.product;
+
+    const bProduct: IProduct.NewBody = req.body.product;
+    const product: Product = Product.generate(bProduct);
+    product.save();
+  }
+  @HttpMethod("POST", "System was unable to add the product to the base product.")
+  public static addOnBase(req: Request, res: Response): void {
+    const bProduct: IProductVariation.NewBody = req.body.product;
     if (!bProduct)
       throw new ClientError("Client didn't provide an product to add.");
-    const product: Product = Product.generate(bProduct);
-    this._inventory.add(product);
+    const product: ProductVariation = ProductVariation.generate(bProduct);
+    product.save();
   }
   @HttpMethod("DELETE", "System was unable to delete the product in the inventory.")
   public static remove(req: Request, res: Response): void
@@ -52,12 +58,12 @@ export class InventoryController
   public static getCategories(req: Request, res: Response): void
   {
     const categories: Category[] = this._inventory.getCategories();
-    const bCategories: CategoryBody[] = categories.map(cur => cur.toPrimObj());
+    const bCategories: ICategory.Body[] = categories.map(cur => cur.toPrimObj());
     res.send({success: true, categories: bCategories});
   }
   @HttpMethod("POST", "System was unable to add the inventory category.")
   public static addCategory(req: Request, res: Response): void {
-    const categories: CategoryBody[] = req.body.inventory.categories;
+    const categories: ICategory.Body[] = req.body.inventory.categories;
     for (let category of categories) {
       this._inventory.addCategory(new Category(category.name, category.id));
     }
@@ -65,7 +71,7 @@ export class InventoryController
   @HttpMethod("POST", "System couldn't find the product from the item category")
   public static search(req: Request, res: Response)
   {
-    const query: ProductSearchQuery = req.body.product;
+    const query: ISearchQuery.Product = req.body.product;
     const products: Product[] | null = ProductManager.from.queries(query);
     if(!products)
       res.send({ success: true, products: [] });

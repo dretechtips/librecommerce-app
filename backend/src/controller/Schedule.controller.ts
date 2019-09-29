@@ -1,4 +1,4 @@
-import { Request, Response } from "express-serve-static-core";
+import { Request, Response } from "express";
 import { HttpMethod } from "../decorator/HttpMethod";
 import { Schedule, ActiveSchedule, ScheduleManager } from "../model/Schedule";
 import { ScheduleBody } from "../interface/Schedule.inteface";
@@ -21,23 +21,18 @@ export class ScheduleController {
     if(!schedule)
       throw new ClientError("Client provided a schedule ID that doesn't exist in the system.");
     this._schedules.delete(scheduleID);
-    return;
   }
   @HttpMethod("PATCH", "System was unable to update the schedule.")
   public static update(req: Request, res: Response): void {
     const scheduleID: string = req.body.schedule.scheduleID;
-    if(!scheduleID){
-      res.send({success: false, error: "Client didn't provide a schedule ID."});
-      return;
-    }
-    const schedule: Schedule = Schedule.From.id(scheduleID);
-    if(!schedule){
-      res.send({success: false, error: "Schedule ID doesn't exist in the system."});
-      return;
-    }
+    if (!scheduleID)
+      throw new ClientError("Client didn't provide a schedule ID.");
+    const schedule: Schedule | null = this._schedules.get(scheduleID);
+    if (!schedule)
+      throw new ClientError("Schedule ID doesn't exist in the system.");
     schedule.update(req.body.schedule);
-    this.activeSchedule.delete(scheduleID);
-    this.activeSchedule.add(schedule);
-    return;
-}
+  }
+  public static partion(req: Request, res: Response): void {
+
+  }
 }
