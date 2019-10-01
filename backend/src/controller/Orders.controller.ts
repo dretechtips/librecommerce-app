@@ -19,8 +19,8 @@ export class OrdersController
   @HttpMethod("POST", "System was unable to add the order." )
   public static add(req: Request, res: Response): void
   {
-    const bOrder: 
-    const order: Order = Order.generate(req.body.order, req);
+    const bOrder: IOrder.NewBody = req.body.order;
+    const order: Order = Order.generate(bOrder, req);
     this._queue.enqueue(order);
     this._events.add(order);
     order.save();

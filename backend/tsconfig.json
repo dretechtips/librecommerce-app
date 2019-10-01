@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "outDir": "./build/v0.0.1a",
+    "outFile": "server.js",
     "module": "commonjs",
     "noImplicitAny": true,
     "removeComments": true,

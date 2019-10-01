@@ -132,6 +132,9 @@ export class Schedule
       hconsole.error(ex);
     }
   }
+  public getUserID(): string {
+    return this._value.userID;
+  }
   public update(body: any): void {
     if(body.scheduleID) this._value.scheduleID = body.scheduleID;
     if(body.userID) this._value.userID = body.userID;

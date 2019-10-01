@@ -1,34 +1,44 @@
-import { Money } from "../model/Money";
+import { Money } from "../type/Money";
 
-interface BasePayroll
-{
-  firstName: string,
-  lastName: string,
-  paypalMe?: URL,
-  bankingAccount?: string,
-  online: boolean,
-  payment: Money,
+export namespace IPayroll {
+  export interface CheckingAccount {
+    routing: number;
+    account: number;
+  }
+  export enum Absence {
+    EXCUSSED,
+    UNEXCUESSED
+  }
+  export type PaymentType = "wage" | "salary" | "commission" ;
+  export interface PaymentInfo {
+    paypalMe?: URL,
+    checking?: CheckingAccount,
+    online: boolean,
+    details: WageConstructor | SalaryConstructor | CommissionConstructor
+  }
+  export interface BaseConstructor {
+    hoursEachWeek: number[],
+  }
+  export interface WageConstructor extends BaseConstructor {
+    hourly: Money,
+    type: "wage",
+  }
+  export interface SalaryConstructor extends BaseConstructor {
+    salary: Money,
+    deducation: Money[],
+    type: "salary"
+  }
+  export interface CommissionConstructor extends BaseConstructor {
+    percent: number,
+    total: Money,
+    type: "commission",
+  }
+  export interface Body {
+    userID: string,
+    paypalMe?: string,
+    checking?: CheckingAccount,
+    online: boolean,
+    type: PaymentType,
+    total: number,
+  }
 }
-
-export interface WagePayroll extends BasePayroll
-{
-  timeframeInWeeks: number, 
-}
-
-export interface SalaryPayoll extends BasePayroll
-{
-  deducation: number,
-}
-
-export interface CommissionPayroll extends BasePayroll
-{
-  percent: number,
-  total: Money,
-}
-
-export enum Absence
-{
-  EXCUSSED,
-  UNEXCUESSED
-}
-

@@ -1,5 +1,5 @@
 import { default as Database } from "./Database";
-import { UserConstructor, UserBody } from "../interface/User.interface";
+import { IUser } from "../interface/User.interface";
 import uuid = require('uuid/v4');
 import { UserSM } from "../service/User.service";
 import { EmailAddress, Address, PhoneNum, IPAddress } from "../type/Location";
@@ -9,6 +9,7 @@ import { Ban } from "../model/Ban";
 import { ActiveAccount, AccountManager, Account } from "./Account";
 import { Password } from "../type/Password";
 import { Schedule } from "./Schedule";
+import { IPayroll } from "../interface/Payroll.interface";
 
 export class ActiveUsers extends ActiveAccount { }
 
@@ -16,10 +17,17 @@ export class UserManager extends AccountManager { }
 
 export class User extends Account
 {
-  protected _value: UserConstructor;
-  constructor(user: UserConstructor)
+  protected _value: IUser.Value;
+  constructor(user: IUser.Constructor)
   {
-    super(user);
+    const value: IUser.Value = {
+      ...user,
+      rank: "RANK_2",
+    }
+    super(value);
+  }
+  public getPayment(): IPayroll.PaymentInfo {
+    return this._value.payment;
   }
   public save(): void {
 
@@ -30,8 +38,8 @@ export class User extends Account
   public update(): void {
 
   }
-  public static generate(body: UserBody): User {
-    const user: UserConstructor = {
+  public static generate(body: IUser.NewBody): User {
+    const user: IUser.Constructor = {
       id: uuid(),
       firstName: body.firstName,
       lastName: body.lastName,
@@ -44,8 +52,8 @@ export class User extends Account
       schedule: Schedule.generate(body.schedule),
       position: body.position,
       alerts: [],
-      rank: "RANK_2",
       associatedIPs: [],
+      payment: body.payment,
     }
     return new User(user);
   }

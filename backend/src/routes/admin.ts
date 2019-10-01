@@ -7,12 +7,14 @@ import { AdminRoute as  CustomerRoutes } from "./customer";
 import { AdminRoute as InventoryRoutes } from "./inventory";
 import { AdminRoute as OrderRoutes } from "./order";
 import { default as PromoRoutes } from "./promo";
+import { default as PayrollRoutes } from "./payroll";
 import { default as SpyRoutes } from "./spy";
 import { default as UserRoutes } from "./user";
 import { AdminRoute as CartRoutes } from "./cart";
 import { default as ScheduleRoutes } from "./schedule";
 import { adminRoute as ShippingRoute } from "./shipping";
 import { default as SFRoute } from "./speechfilter";
+import { default as SubscriptionRoutes } from "./subscription";
 
 const router: express.Router = express.Router();
 
@@ -26,6 +28,7 @@ router.use('/api/customer', CustomerRoutes);
 router.use('/api/billing', BillingRoutes);
 router.use('/api/coupon', CouponRoutes);
 router.use('/api/promo', PromoRoutes);
+router.use('/api/payroll', PayrollRoutes);
 router.use('/api/spy', SpyRoutes);
 router.use('/api/cart', CartRoutes);
 router.use('/api/schedule', ScheduleRoutes);

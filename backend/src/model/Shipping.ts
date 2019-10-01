@@ -52,6 +52,9 @@ export class Shipping
   {
     return this._values;
   }
+  public complete(): void {
+
+  }
   public static generate(body: NewShippingBody): Shipping
   {
     const shipping: ShippingConstructor = 

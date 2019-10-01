@@ -13,7 +13,7 @@ export namespace IAccount {
     emailAddress: EmailAddress,
     phoneNum: PhoneNum,
     address: Address;
-    alerts: Alert[]s
+    alerts: Alert[];
   }
   export interface NewBody {
     firstName: string,

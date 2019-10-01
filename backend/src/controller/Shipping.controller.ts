@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { ShippingConstructor, NewShippingBody } from "../interface/Shipping.interface";
+import { IShipping } from "../interface/Shipping.interface";
 import { Shipping, ShippingManager, ShippingQueue } from "../model/Shipping";
 import { HttpMethod } from "../decorator/HttpMethod";
 import { ClientError } from "../model/Error";
@@ -10,7 +10,7 @@ export class ShippingController
   @HttpMethod("POST", "System was unable to add the shipping.")
   public static add(req: Request, res: Response): void
   {
-    const bShipping: NewShippingBody =  req.body.shipping;
+    const bShipping: IShipping.NewBody =  req.body.shipping;
     const shipping: Shipping = Shipping.generate(bShipping);
     shipping.save();
   }
@@ -41,6 +41,7 @@ export class ShippingController
     if(!shipping)
       throw new ClientError("Client didn't provide a valid client id.");
     shipping.update(bShipping);
+    shipping.save();
   }
   @HttpMethod("GET", "System was unable to get the shipping ID.")
   public static getShippingID(req: Request, res: Response): void {
