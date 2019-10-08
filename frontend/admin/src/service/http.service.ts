@@ -24,3 +24,5 @@ export class Http
     return this._instance.delete(this._value.baseURL + path , config);
   }
 }
+
+export type HttpMethod = "GET" | "POST" | "PATCH" | "DELETE";

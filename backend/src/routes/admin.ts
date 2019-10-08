@@ -14,13 +14,15 @@ import { AdminRoute as CartRoutes } from "./cart";
 import { default as ScheduleRoutes } from "./schedule";
 import { adminRoute as ShippingRoute } from "./shipping";
 import { default as SFRoute } from "./speechfilter";
-import { default as SubscriptionRoutes } from "./subscription";
+import { adminRoute as SubscriptionRoutes } from "./subscription";
+import { adminRoute as AlertRoutes } from "./alert"; 
 
 const router: express.Router = express.Router();
 
-// The Root URL will be used for downloading the react.js file
 router.get('/interface', (req, res) => AdminController.getAdminJS(req, res));
 router.use('/api', (req, res, next) => AdminController.monitor(req, res, next));
+// Add Ban
+router.use('/api/alert', AlertRoutes)
 router.use('/api/user', UserRoutes);
 router.use('/api/inventory', InventoryRoutes);
 router.use('/api/order', OrderRoutes);
@@ -34,5 +36,6 @@ router.use('/api/cart', CartRoutes);
 router.use('/api/schedule', ScheduleRoutes);
 router.use('/api/shipping', ShippingRoute);
 router.use('/api/speech-filter', SFRoute);
+router.use('/api/subscription', SubscriptionRoutes);
 
 export default router;

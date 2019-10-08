@@ -6,14 +6,14 @@ export interface TabsProps
 
 export interface TabsState
 {
-  active: number
+  active: number;
+  content: React.ReactChildren;
 }
 
 export interface TabsPill
 {
   name: string,
-  change: TabsChangeStateFunc,
-  changeArg: string,
+  children: React.ReactChildren;
 }
 
 export interface TabsChangeStateFunc

@@ -11,6 +11,6 @@
     "\\src\\service",
     "\\src\\type"
   ],
-  "SelectedNode": "\\src\\controller",
+  "SelectedNode": "\\src\\interface\\Customer.interface.ts",
   "PreviewInSolutionExplorer": false
 }

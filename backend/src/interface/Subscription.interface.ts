@@ -1,8 +1,17 @@
+// Remove package 
+
 export namespace ISubscription {
-  export interface Constructor {
-
+  export namespace Admin {
+    export interface Body {
+      name: string;
+      productsID: string[];
+      discount: number;
+    }
   }
-  export interface Body {
-
+  export namespace Client {
+    export interface Body {
+      name: string;
+      productsID: string[];
+    }
   }
 }

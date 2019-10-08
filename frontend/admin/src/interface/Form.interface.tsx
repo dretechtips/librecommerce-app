@@ -11,8 +11,6 @@ export interface FormState
 
 export interface FormQuestion
 {
-  label: string,
-  type: "input" | "textarea" | "select" | "checkbox",
-  inputType?: string,
-  options?: string[]
+  question: string,
+  input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement,
 }

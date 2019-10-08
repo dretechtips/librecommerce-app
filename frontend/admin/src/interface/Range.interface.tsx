@@ -2,7 +2,7 @@ export interface RangeProps
 {
   min: number,
   max: number,
-  prepend: string,
+  unit: string,
 }
 
 export interface RangeState

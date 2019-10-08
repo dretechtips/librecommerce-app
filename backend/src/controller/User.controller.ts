@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { ActiveUsers, User, UserManager } from "../model/User";
 import uuid = require('uuid/v4');
 import { HttpMethod } from "../decorator/HttpMethod";
-import { ClientError, ServerError } from "../model/Error";
+import { ClientError, ServerError } from "../type/Error";
 import { PasswordResetList } from "../model/Account";
 
 export class UserController

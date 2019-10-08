@@ -1,3 +1,5 @@
+import { Discount } from "./Discount";
+
 export class Money
 {
   private _value: number;
@@ -25,5 +27,8 @@ export class Money
   {
     this._value += this._value * 0.0725;
     return this;
+  }
+  public reduce(discount: Discount): Money {
+    return new Money(parseInt(discount.apply(this._value).toFixed(2)));
   }
 }

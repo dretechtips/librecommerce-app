@@ -1,11 +1,8 @@
 import { default as Database, DatabaseQuery } from './Database';
-import {  CustomerConstructor, CustomerBody  } from '../interface/Customer.interface';
+import {  ICustomer  } from '../interface/Customer.interface';
 import { QueryResult, FieldDef } from 'pg';
 import uuid = require('uuid/v4');
 import { Address, EmailAddress, PhoneNum, IPAddress } from "../type/Location";
-import { BanController } from '../controller/Ban.controller';
-import { Ban } from "../model/Ban";
-import { Time } from "../type/Time";
 import { ActiveAccount, Account, AccountManager } from "../model/Account";
 import { Password } from '../type/Password';
 
@@ -15,16 +12,26 @@ export class CustomerManager extends AccountManager {  }
 
 export class Customer extends Account
 {
-  protected _value: CustomerConstructor;
-  constructor(customer: CustomerConstructor)
+  protected _value: ICustomer.Value;
+  constructor(customer: ICustomer.Constructor)
   {
-    super(customer);
+    const value: ICustomer.Value = {
+      ...customer,
+      subscriptionsID: [],
+    }
+    super(value);
   }
   public save(): void {
-
+    // Database Method
   }
   public delete(): void {
-
+    // Database Method
+  }
+  public getSubscriptionPackagesID(): string[] {
+    return this._value.subscriptionsID;
+  }
+  public removeSubPackages(pID: string): void {
+    this._value.subscriptionsID = this._value.subscriptionsID.filter(cur => cur === pID);
   }
   public update(body: any): void
   {
@@ -35,8 +42,8 @@ export class Customer extends Account
     if (body.email) this._value.emailAddress = new EmailAddress(body.email);
     if (body.phone) this._value.phoneNum = new PhoneNum(body.phoneNum);
   }
-  public static generate(body: CustomerBody): Customer {
-    const customer: CustomerConstructor = {
+  public static generate(body: ICustomer.NewBody): Customer {
+    const customer: ICustomer.Constructor = {
       firstName: body.firstName,
       lastName: body.lastName,
       id: uuid(),

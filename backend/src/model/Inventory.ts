@@ -111,7 +111,9 @@ export class ProductManager {
 
 export class ProductVariationManager {
   public static from = class {
+    public static id(id: string): ProductVariation {
 
+    }
   }
 }
 

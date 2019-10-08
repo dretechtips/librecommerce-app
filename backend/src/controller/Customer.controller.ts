@@ -2,13 +2,33 @@ import { Request, Response, NextFunction } from "express";
 import { Customer, ActiveCustomer, CustomerManager } from "../model/Customer";
 import { PasswordResetList } from "../model/Account";
 import { HttpMethod } from "../decorator/HttpMethod";
-import { CustomerConstructor, CustomerPasswordReset, CustomerBody } from "../interface/Customer.interface";
-import { ClientError, ServerError, DatabaseError } from "../model/Error";
+import { ICustomer } from "../interface/Customer.interface";
+import { ClientError, ServerError, DatabaseError } from "../type/Error";
 
 export class CustomerController
 {
   private static _session = new ActiveCustomer();
   private static _PRList = new PasswordResetList();
+  public static reverify(req: Request): Customer | null {
+    try {
+      const accessToken = req.cookies.customer_access_token;
+      const cID: string | null = this._session.fetch(accessToken);
+      if (cID) {
+        const customer: Customer | null = CustomerManager.from.id(cID) as Customer;
+        if (customer)
+          return customer;
+        else
+          throw new ServerError("System was unable to find the customer from the customer id.");
+      }
+      else
+        throw new ClientError("Access token provided doesn't have a customer ID.");
+    }
+    catch (e) {
+      const ex: Error = e;
+      hconsole.error(ex);
+      return null;
+    }
+  }
   @HttpMethod("ALL", "System couldn't verify the access token.")
   public static verify(req: Request, res: Response, next: NextFunction): void {
     const accessToken: string = req.cookies.customer_access_token;
