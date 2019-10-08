@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Route, Switch, BrowserRouter } from "react-router-dom";
-import Dashboard from '../routes/Dashboard';
+import Dashboard from './Dashboard';
 import './css/MainPanel.css';
 import { InventoryDashboardProps } from "../routes/inventory/Dashboard";
 import { OrderDashboardProps } from "../routes/order/Dashboard";
