@@ -1,9 +1,13 @@
-import { DashboardProps } from "../../interface/routes/Dashboard.interface";
+import { DashboardProps } from "../../interface/Dashboard.interface";
 
-export const UserDashboardProps: DashboardProps = {
+const Dashboard: DashboardProps = {
     title: "User",
     basePath: "/user",
     icons: [{name: "Manage Account", icon: "fas fa-user", path: "/account"},
         {name: "Reset Password", icon: "fas fa-key", path: "/reset"},
-        {name: "View Active Account", icon: "fas fa-chart-line", path: "/active"}]
+        { name: "View Active Account", icon: "fas fa-chart-line", path: "/active" },
+        { name: "Communication", icon: "fas fa-envelope-square", path: "/communicate" },
+        { name: "Manage Human Resource", icon: "fas fa-users", path: "/resource"}]
 }
+
+export default Dashboard;

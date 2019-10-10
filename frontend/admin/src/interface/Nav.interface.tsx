@@ -1,5 +1,6 @@
 export interface NavProps {
   logoURL: string;
-  adminURL: string;
-  adminName: string;
+  leftItems?: JSX.Element[];
+  rightItems?: JSX.Element[];
 }
+

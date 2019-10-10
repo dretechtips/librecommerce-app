@@ -1,7 +1,9 @@
-import { DashboardProps } from "../../interface/routes/Dashboard.interface";
+import { DashboardProps } from "../../interface/Dashboard.interface";
 
-export const SubscriptionDashboardProps: DashboardProps = {
+const Dashboard: DashboardProps = {
   title: "Subscription",
   basePath: "/subscription",
   icons: [{name: "Manage Subscriptions", icon: "fas fa-mouse-pointer", path: "/"}]
 }
+
+export default Dashboard;

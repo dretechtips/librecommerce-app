@@ -1,12 +1,12 @@
-import SidePanel from "../containers/SidePanel";
-import { SidePanelItem } from "./SidePanel.interface";
+import { ProfileProps } from "../interface/Profile.interface";
 
 export interface AppState
 {
-  hasLogin: boolean;
+  login: boolean;
+  profile: ProfileProps;
 }
 
 export interface AppProps
 {
-  
+  logoURL: string;
 }

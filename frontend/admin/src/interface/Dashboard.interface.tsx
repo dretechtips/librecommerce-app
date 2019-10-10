@@ -6,6 +6,7 @@ export interface DashboardProps {
 
 export interface DashboardPropsManager {
   actions: DashboardProps[];
+  search?: string;
 }
 
 export interface DashboardIcons {
@@ -16,4 +17,9 @@ export interface DashboardIcons {
 
 export interface DashboardState {
   display: DashboardProps[];
+  search: string;
+}
+
+export interface DashboardSearch {
+  (value: string): void;
 }

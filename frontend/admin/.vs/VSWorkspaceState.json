@@ -1,0 +1,14 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\components",
+    "\\src\\containers",
+    "\\src\\interface",
+    "\\src\\interface\\routes",
+    "\\src\\routes",
+    "\\src\\routes\\user"
+  ],
+  "SelectedNode": "\\src\\interface\\Alert.interface.tsx",
+  "PreviewInSolutionExplorer": false
+}
