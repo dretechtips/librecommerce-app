@@ -2,7 +2,7 @@ import React, { Component, ReactNode } from 'react';
 import "./css/App.css";
 import { AppState, AppProps } from "../interface/App.interface";
 import Login from "../containers/Login";
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, withRouter } from 'react-router-dom';
 
 export class App extends Component<AppProps, AppState> {
   static defaultState: AppState = {
@@ -51,4 +51,4 @@ export class App extends Component<AppProps, AppState> {
   }
 }
 
-export default App
+export default App;

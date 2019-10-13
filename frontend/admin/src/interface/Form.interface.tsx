@@ -1,16 +1,21 @@
 export interface FormProps
 {
-  questions: FormQuestion[],
-  modifier: "read" | "write",
+  questions: FormQuestion[];
+  modifier: FormModifier;
+  submit?: (inputs: any[]) => void;
 }
 
 export interface FormState
 {
-  modifier: "read" | "write",
+  modifier: FormModifier,
 }
+
+export type FormModifier = "read" | "write";
 
 export interface FormQuestion
 {
   question: string,
-  input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement,
+  input: "text" | "textarea" | "textarea-list" | "select" | "date" | "date-range",
+  placeholder?: string;
+  options?: string[];
 }

@@ -4,16 +4,13 @@ import { FormQuestion } from "./Form.interface";
 import { AxiosRequestConfig } from "axios";
 import { HttpMethod } from "../service/http.service";
 
-export interface SearchContainerProps
+export interface SearchProps
 {
   title: string;
   questions: FormQuestion[];
-  url: string;
-  config: AxiosRequestConfig;
-  method: HttpMethod;
 }
 
-export interface SearchProps extends SearchContainerProps {
+export interface SearchUIProps extends SearchProps {
   result: string | number | boolean[][];
 }
 

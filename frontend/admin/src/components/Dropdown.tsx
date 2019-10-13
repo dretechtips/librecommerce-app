@@ -20,7 +20,7 @@ function Dropdown(props: DropdownProps) {
           else 
             return (
             <Link to={cur.path} className="dropdown-item">
-              {cur.icon ? (<i className={cur.icon}></i>) : ""}
+              {cur.icon ? (<i className={cur.icon + " mr-2"}></i>) : ""}
               {cur.name ? cur.name : ""}
             </Link>)
         })}

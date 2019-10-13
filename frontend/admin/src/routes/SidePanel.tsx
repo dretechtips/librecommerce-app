@@ -19,5 +19,5 @@ const items: SidePanelItem[] = [
 ]
 
 export default () => {
-  return (<SidePanel items={items}></SidePanel>)
+  return (<SidePanel items={items} dashboardPath={"/"}></SidePanel>)
 }

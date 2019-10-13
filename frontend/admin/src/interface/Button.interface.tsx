@@ -1,12 +1,14 @@
 export interface ButtonProps {
   value: string;
   color: ButtonColor;
-  action: Function;
-  actionArgs: any[];
-  hasOutline: boolean;
+  action: (...args: any[]) => any;
+  icon?: string;
+  actionArgs?: any[];
+  hasOutline?: boolean;
   size?: "sm" | "lg";
-  active: boolean;
-  disabled: boolean;
+  active?: boolean;
+  disabled?: boolean;
+  className?: string;
 }
 
 export type ButtonColor = "primary" | "secondary" | "danger" | "success" | "warning" | "info" | "light" | "dark" | "link"

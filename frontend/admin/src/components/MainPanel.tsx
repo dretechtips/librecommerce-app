@@ -8,7 +8,7 @@ export default (props: MainPanelProps) => {
     <main className="col-md-10 p-4 main-view">
       <Switch>
         {props.routes.map(cur => (
-          <Route extact path={cur.path} component={cur.component}></Route>
+          <Route exact path={cur.path} component={cur.component} />
         ))}
       </Switch>
     </main>

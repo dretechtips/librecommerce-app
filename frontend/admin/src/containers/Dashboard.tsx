@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { Searchbar } from '../components/Searchbar';
 
 class Dashboard extends Component<DashboardPropsManager, DashboardState> {
-  static contextType = React.createContext<DashboardSearch>(() => { console.log("This is a test") });
+  static contextType = React.createContext<DashboardSearch>(() => { console.log("Dashboard has not updated.") });
   constructor(props: DashboardPropsManager) {
     super(props);
     this.state = {

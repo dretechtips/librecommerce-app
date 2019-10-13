@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Form } from "../components/Form";
+import FormUI from "../components/Form";
 import { FormProps, FormState } from '../interface/Form.interface';
 
-export class FormContainer extends Component<FormProps, FormState> {
+export class Form extends Component<FormProps, FormState> {
   constructor(props: FormProps) {
     super(props);
     this.state = {
@@ -11,7 +11,7 @@ export class FormContainer extends Component<FormProps, FormState> {
   }
   render() {
     return (
-      <Form modifier={this.state.modifier} questions={this.props.questions} />
+      <FormUI questions={this.props.questions} modifier={this.props.modifier} submit={this.props.submit} />
     )
   }
 }
