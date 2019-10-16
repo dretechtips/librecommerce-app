@@ -3,6 +3,7 @@ import Form from "../../containers/Form";
 import { FormQuestion } from '../../interface/Form.interface';
 import Card from '../../components/Card';
 import { Button } from '../../components/Button';
+import Axios, { AxiosResponse } from 'axios';
 
 export class Bug extends Component {
   private _questions: FormQuestion[];
@@ -19,9 +20,8 @@ export class Bug extends Component {
       {question: "Build Type", input: "select", options: ["Development", "Testing", "Production"]}
     ]
   }
-  send = (inputs: any[]) => {
-    // Http Method to server
-    console.log("Create");
+  send = async (inputs: any[]): Promise<AxiosResponse> => {
+    return Axios.get("https://httpbin.org/get");
   }
   render() {
     return (

@@ -15,10 +15,10 @@ export default (props: LoginUIProps) => {
   }
   return (
     <div>
-      <section className="m-5 p-5">
+      <section className="m-md-5 p-md-5 p-">
         <div className="container">
           <div className="row justify-content-center">
-            <div className="col-md-5">
+            <div className="col-md-6">
               <div className="card px-5 py-3">
                 <div className="card-body text-center">
                   <img width="128" src={props.logoURL} alt="Logo" className="mb-3" />

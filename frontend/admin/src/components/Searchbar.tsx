@@ -34,3 +34,5 @@ export function Searchbar(props: SearchbarProps): JSX.Element {
     </div>
   )
 }
+
+export default Searchbar;

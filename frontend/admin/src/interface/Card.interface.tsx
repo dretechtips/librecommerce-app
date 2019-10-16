@@ -3,7 +3,7 @@ import { ReactChild } from "react";
 export interface CardProps
 {
   theme: "primary" | "secondary" | "success" | "danger" | "warning" | "info" | "light" | "dark" | "white",
-  title: string,
+  title?: string,
   children: ReactChild | ReactChild[];
   className?: string,
 }

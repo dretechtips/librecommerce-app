@@ -3,6 +3,7 @@ import Card from '../../components/Card'
 import FormUI from "../../containers/Form";
 import { FormQuestion } from '../../interface/Form.interface';
 import { FormProps } from '../../interface/routes/Order.interface';
+import ProductTable from '../inventory/ProductTable';
 
 function Form(props: FormProps) {
   const qCustomer: FormQuestion[] = [
@@ -10,9 +11,6 @@ function Form(props: FormProps) {
     {question: "Account Password", input: "text"},
     {question: "Caller First Name", input: "text"},
     {question: "Caller Last Name", input: "text"},
-  ]
-  const qProducts: FormQuestion[] = [
-    {question: "Products", input: "textarea"},
   ]
   const qShipping: FormQuestion[] = [
     {question: "Address", input: "text"},
@@ -31,7 +29,7 @@ function Form(props: FormProps) {
         <FormUI questions={qCustomer} modifier={props.modifer} />
       </Card>
       <Card title="Product Details" theme="success">
-        <FormUI questions={qProducts} modifier={props.modifer} />
+        <ProductTable />
       </Card>
       <Card title="Shipping Details" theme="success">
         <FormUI questions={qShipping} modifier={props.modifer}/>

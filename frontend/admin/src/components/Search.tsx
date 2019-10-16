@@ -7,10 +7,10 @@ function Search(props: SearchUIProps) {
   return (
     <div className="row">
       <div className="col-12">
-        <Card className="mb-4" title={props.title + " Query"} theme="success">
-          <Form questions={props.questions} modifier="write"/>
+        <Card className="mb-4" title={props.title} theme="success">
+          <Form questions={props.questions} modifier="write" submit={props.search}/>
         </Card>
-        <Card title={props.title + " Result"} theme="success">
+        <Card theme="success">
           // Search Result
         </Card>
       </div>
