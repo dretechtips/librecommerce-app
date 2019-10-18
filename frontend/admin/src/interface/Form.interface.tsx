@@ -28,7 +28,7 @@ export type FormModifier = "read" | "write";
 export interface FormQuestion
 {
   question: string,
-  input: "text" | "textarea" | "textarea-list" | "select" | "date" | "date-range",
+  input: "text" | "textarea" | "textarea-list" | "select" | "date" | "date-range" | "barcode",
   placeholder?: string;
   options?: string[];
 }

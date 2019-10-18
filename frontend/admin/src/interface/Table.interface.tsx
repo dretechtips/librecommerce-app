@@ -11,6 +11,7 @@ export interface TableProps {
   small?: boolean;
   allowAdd?: boolean;
   allowSelect?: boolean;
+  allowDelete?: boolean;
 }
 
 export type TableItem = (string | number | boolean | JSX.Element);
@@ -18,6 +19,7 @@ export type TableItem = (string | number | boolean | JSX.Element);
 export interface TableUIProps extends TableProps {
   add?: TableAdd;
   select?: TableSelect;
+  delete?: TableDelete;
 }
 
 export interface TableAdd extends ModalAction {
@@ -25,13 +27,20 @@ export interface TableAdd extends ModalAction {
 }
 
 export interface TableSelect {
-  toggleSelect: (index: number) => void;
-  toggleSelectAll: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  values: Number[];
+  toggleCheckbox: (index: number) => void;
+  toggleCheckboxAll: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  values: number[];
+  canSelect: boolean;
+  toggleSelect: () => void;
+}
+
+export interface TableDelete {
+  execute: () => void;
 }
 
 export interface TableState {
   items: TableItem[][];
   add: boolean;
-  selected: Number[];
+  selected: number[];
+  select: boolean;
 }

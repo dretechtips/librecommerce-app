@@ -13,16 +13,17 @@ export class Table extends Component<TableProps, TableState> {
       items: this.props.items,
       add: false,
       selected: new Array<number>(),
+      select: false,
     }
   }
-  addItems = (items: TableItem[]) => {
+  addItems = (items: TableItem[]): void => {
     this.state.items.push(items);
     this.setState({...this.state});
   }
-  toggleAddModal = () => {
+  toggleAddModal = (): void => {
     this.setState({...this.state, add: !this.state.add});
   }
-  toggleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
+  toggleCheckboxAll = (e: React.ChangeEvent<HTMLInputElement>): void => {
     console.log(this.state.items);
     if(!e.target.checked)
       this.setState({...this.state, selected: []});
@@ -32,7 +33,7 @@ export class Table extends Component<TableProps, TableState> {
         .fill(0)
         .map((cur, index) => index)});
   }
-  toggleSelect = (index: number) => {
+  toggleCheckbox = (index: number): void => {
     if(this.state.selected.indexOf(index) > -1) {
       this.state.selected.splice(this.state.selected.indexOf(index), 1);
       this.setState({...this.state});
@@ -40,7 +41,18 @@ export class Table extends Component<TableProps, TableState> {
     else
       this.state.selected.push(index);
       this.setState({...this.state});
-    console.log(this.state.selected);
+  }
+  toggleSelect = (): void => {
+    this.setState({...this.state, select: !this.state.select});
+    return;
+  }
+  delete = (): void => {
+    for(let i = 0 ; i < this.state.selected.length; i++) {
+      const itemPos: number = this.state.selected[i];
+      this.state.selected.splice(i, 1);
+      this.state.items.splice(itemPos, 1);
+    }
+    this.setState({...this.state});
   }
   render() {
     return <TableUI {...this.props} 
@@ -52,10 +64,15 @@ export class Table extends Component<TableProps, TableState> {
         toggle: this.toggleAddModal} :
         undefined}
       select={this.props.allowSelect ?
-        {toggleSelect: this.toggleSelect,
+        {canSelect: this.state.select,
+        toggleCheckbox: this.toggleCheckbox,
         values: this.state.selected,
-        toggleSelectAll: this.toggleSelectAll} :
-        undefined} />
+        toggleCheckboxAll: this.toggleCheckboxAll,
+        toggleSelect: this.toggleSelect} :
+        undefined}
+      delete={this.state.select && this.props.allowDelete 
+        ? {execute: this.delete} 
+        : undefined} />
   }
 }
 

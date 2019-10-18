@@ -9,8 +9,6 @@ function Form(props: FormProps) {
   const qCustomer: FormQuestion[] = [
     {question: "Account Username", input: "text"},
     {question: "Account Password", input: "text"},
-    {question: "Caller First Name", input: "text"},
-    {question: "Caller Last Name", input: "text"},
   ]
   const qShipping: FormQuestion[] = [
     {question: "Address", input: "text"},

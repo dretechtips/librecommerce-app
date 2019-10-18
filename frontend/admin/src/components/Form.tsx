@@ -3,6 +3,7 @@ import React, { useRef, MutableRefObject } from "react";
 import Button from "../components/Button";
 import TextAreaList from "../components/TextBoxList";
 import Alert from "./Alert";
+import BarcodeScannerBox from "../containers/BarcodeScannerBox";
 
 export default (props: FormUIProps) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -83,6 +84,9 @@ export default (props: FormUIProps) => {
             </div>
           </div>
         );
+        break;
+      case "barcode":
+        el = <BarcodeScannerBox />
         break;
       default:
         el = <input type="text" className="form-control" readOnly={props.modifier === "read" ? true : false}/>;
