@@ -14,12 +14,13 @@ function Modal(props: ModalProps) {
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <div className="modal-body">
+          <div className="modal-body" style={{maxHeight: "80%", overflowY: "auto"}}>
             {props.body}
           </div>
+          {props.footer && 
           <div className="modal-footer">
             {props.footer}
-          </div>
+          </div>}
         </div>
       </div>
     </div>

@@ -38,7 +38,7 @@ class Dashboard extends Component<DashboardPropsManager, DashboardState> {
           <Card title={props.title} theme="success">
             <div className="row">
               {props.icons.map(cur => (
-                <Link to={props.basePath +  cur.path} className="text-secondary col-md-2">
+                <Link to={props.basePath +  cur.path} className="text-secondary col-6 col-sm-4 col-lg-3">
                 <div className="p-3 text-center">
                   <i className={cur.icon + " fa-fw fa-3x mb-3"}></i>
                   <h5>{cur.name.trim().replace(/ /gi, '\n')}</h5>

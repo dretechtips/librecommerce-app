@@ -329,7 +329,8 @@ declare module "quagga" {
                 /**
                  * Explicitly set the camera to the user's choice
                  */
-                deviceId?: string
+                deviceId?: string;
+                
             };
 
             /**

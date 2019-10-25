@@ -8,6 +8,7 @@ export class List extends Component<ListProps, ListState> {
     this.state = {
       modifier: "read",
       selected: [],
+      popover: -1,
     }
   }
   modify = (modifier: ListModifier) => {
@@ -26,9 +27,19 @@ export class List extends Component<ListProps, ListState> {
   add() {
 
   }
+  togglePopover = (index: number) => {
+    if(index  === this.state.popover) 
+      this.setState({...this.state, popover: -1});
+    else
+      this.setState({...this.state, popover: index});
+  }
   render() {
     return (
       <ListUI {...this.props} 
+      popover={{
+        toggle: this.togglePopover,
+        value: this.state.popover
+      }}
       modify={this.modify} 
       selected={this.state.selected} 
       selecting={this.select} 

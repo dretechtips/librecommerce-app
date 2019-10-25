@@ -1,6 +1,7 @@
 import React from "react";
 import SidePanel from "../containers/SidePanel";
 import { SidePanelItem } from "../interface/SidePanel.interface";
+import App from "../containers/App";
 
 const items: SidePanelItem[] = [
   { name: "Ban", icon: "fas fa-hammer" },
@@ -19,5 +20,5 @@ const items: SidePanelItem[] = [
 ]
 
 export default () => {
-  return (<SidePanel items={items} dashboardPath={"/"}></SidePanel>)
+  return <SidePanel items={items} dashboardPath={"/"} />;
 }

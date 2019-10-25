@@ -4,6 +4,10 @@ import Button from './Button';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheckCircle as fasCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import { faCheckCircle as farCheckCircle } from "@fortawesome/free-regular-svg-icons";
+import {Manager, Reference, Popper} from "react-popper";
+import Popover from './Popover';
+import { PopoverMenuItem } from '../interface/Popover.interface';
+import PopoverMenu from './PopoverMenu';
 
 function List(props: ListUIProps) {
   switch(props.modifier) {
@@ -23,19 +27,43 @@ function List(props: ListUIProps) {
             </div>
           </div>
           <ul className="list-group">
-            {props.items.elements.map(cur => (
-              <li className="list-group-item" key={cur.id}>
-                <div className="d-flex justify-content-between align-items-center">
-                  <div>
-                    {cur.value}
-                  </div>
-                  <div>
-                    {props.items.actions 
-                    ? (props.items.actions.map(x => (<Button className="ml-2" size="sm" color="primary" value={x.name} icon={x.icon} action={() => x.func(cur.id)}/>)))
-                    : ""}
-                  </div>
-                </div>
-              </li>
+            {props.items.elements.map((cur, index) => (
+              <Manager>
+                <Reference>
+                  {({ref}) => <li 
+                    className="list-group-item" 
+                    key={cur.id} 
+                    ref={ref}
+                    onClick={e => props.popover.toggle(index)}
+                    onTouchStart={e => props.popover.toggle(index)}>
+                    <div className="d-flex justify-content-between align-items-center">
+                      <div>
+                        {cur.value}
+                      </div>
+                      <div>
+                        
+                      </div>
+                    </div>
+                  </li>}
+                </Reference>
+                {props.items.actions && (props.popover.value === index) &&
+                <Popper placement="bottom">
+                  {popper => (
+                    <Popover popper={popper} body={
+                      <PopoverMenu items={
+                        props.items.actions!.map(el => {
+                          const props: PopoverMenuItem = {
+                            name: el.name,
+                            icon: el.icon,
+                            action: () => el.func(cur.id)
+                          }
+                          return props;
+                        })
+                      } />
+                    }/>
+                  )}
+                </Popper>}
+              </Manager>
             ))}
           </ul>
         </div>

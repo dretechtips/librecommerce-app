@@ -4,6 +4,8 @@ import Button from "../components/Button";
 import TextAreaList from "../components/TextBoxList";
 import Alert from "./Alert";
 import BarcodeScannerBox from "../containers/BarcodeScannerBox";
+import FileUpload from "../containers/FileUpload";
+import PhotoUpload from "../containers/PhotoUpload";
 
 export default (props: FormUIProps) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -87,6 +89,12 @@ export default (props: FormUIProps) => {
         break;
       case "barcode":
         el = <BarcodeScannerBox />
+        break;
+      case "file":
+        el = <FileUpload message="Please upload the files into here."  />
+        break;
+      case "photo":
+        el = <PhotoUpload />;
         break;
       default:
         el = <input type="text" className="form-control" readOnly={props.modifier === "read" ? true : false}/>;

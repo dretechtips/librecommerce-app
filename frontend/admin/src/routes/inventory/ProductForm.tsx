@@ -12,7 +12,13 @@ function ProductForm(props: ProductFormProps): JSX.Element {
     {question: "UPC (Universal Product Code)", input: "barcode"}
   ];
   const qVariate: FormQuestion[] = [
-
+    {question: "Name", input: "text"},
+    {question: "Base Product ID", input: "text"},
+    {question: "Price", input: "text"},
+    {question: "Images", input: "photo"},
+    {question: "Stock Quantity", input: "text"},
+    {question: "Size", input: "text"},
+    {question: "Color", input: "text"}
   ]
   switch(props.type) {
     case "base":

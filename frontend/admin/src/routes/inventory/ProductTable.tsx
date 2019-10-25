@@ -9,6 +9,7 @@ export function ProductTable() {
     items={[["1", "Demo Item", "Blue", "437282740", <Button size="sm" value="Details" icon="fas fa-ellipsis-v fa-fw" color="primary" action={() => {}}   />]]}
     stripped
     bordered={false}
+    small
     allowAdd
     allowSelect 
     allowDelete />

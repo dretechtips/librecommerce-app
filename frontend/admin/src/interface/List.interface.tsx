@@ -9,11 +9,18 @@ export interface ListUIProps extends ListProps {
   modify: (modifer: ListModifier) => void;
   selecting: (index: number) => void;
   selected: number[];
+  popover: ListPopover;
+}
+
+export interface ListPopover {
+  toggle: (index: number) =>  void;
+  value: number;
 }
 
 export interface ListState {
   modifier: ListModifier;
   selected: number[];
+  popover: number;
 }
 
 export interface ListItems {

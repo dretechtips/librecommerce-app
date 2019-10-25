@@ -5,7 +5,7 @@ import ProductForm from './ProductForm'
 function ProductAdd() {
   return (
     <Card title="Add a new product" theme="success">
-      <ProductForm modifer="write" type="base" />
+      <ProductForm modifer="write" type="variation" />
     </Card>
   )
 }

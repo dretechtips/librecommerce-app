@@ -10,7 +10,6 @@ import Dropdown from "../components/Dropdown";
 import { BrowserRouter } from "react-router-dom";
 
 export default () => {
-  const logoURL: string = "https://upload.wikimedia.org/wikipedia/en/thumb/a/af/Medicine_Hat_Tigers_Logo.svg/1200px-Medicine_Hat_Tigers_Logo.svg.png";
   const dropdown: DropdownProps = {
     element: <Profile />,
     items: [{name: "Account Setting", icon: "fas fa-cog", path: "/setting"},
@@ -19,11 +18,11 @@ export default () => {
       {name: "Logout", icon: "fas fa-sign-out-alt", path: "/signout"}]
   }
   return(
-    <App logoURL={logoURL}>
+    <App 
+    logoURL={"https://upload.wikimedia.org/wikipedia/en/thumb/a/af/Medicine_Hat_Tigers_Logo.svg/1200px-Medicine_Hat_Tigers_Logo.svg.png"}>
       <Nav
-          logoURL={logoURL}
-          rightItems={[<Dropdown {...dropdown}/>]}
-          dashboardPath="/"/>
+        rightItems={[<Dropdown {...dropdown}/>]}
+        dashboardPath="/"/>
       <div className="row no-gutters App-Content">
         <SidePanel />
         <MainPanel />

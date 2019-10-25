@@ -9,7 +9,7 @@ export function Button(props: ButtonProps): JSX.Element {
         props.action(...props.actionArgs)
       else
         props.action();
-    }}>{props.icon ? (<i className={props.icon + " mr-2"}></i>) : ""}{props.value}</button>
+    }}>{props.icon ? (<i className={props.icon + (props.value !== "" ? " mr-2": "" ) }></i>) : ""}{props.value}</button>
   else
     return <button className={"btn btn-" + props.color + (props.size ? " btn-" + props.size  : "") + (props.active ? " active" : "") + " "
     + props.className} onClick={(e: React.MouseEvent) => {
@@ -17,7 +17,7 @@ export function Button(props: ButtonProps): JSX.Element {
       props.action(...props.actionArgs)
     else
       props.action();  
-    }}>{props.icon ? (<i className={props.icon + " mr-2"}></i>) : ""}{props.value}</button>
+    }}>{props.icon ? (<i className={props.icon + (props.value !== "" ? " mr-2": "" )}></i>) : ""}{props.value}</button>
 }
 
 export default Button;

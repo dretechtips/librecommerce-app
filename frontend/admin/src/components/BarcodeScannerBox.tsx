@@ -1,7 +1,9 @@
 import React from 'react';
-import { BarcodeScannerUIProps } from "../interface/BarcodeScannerBox.interface";
+import { BarcodeScannerUIProps, BarcodeScannerType } from "../interface/BarcodeScannerBox.interface";
 import Modal from '../components/Modal';
 import Alert from '../components/Alert';
+import Button from './Button';
+import List from '../containers/List';
 
 function BarcodeScannerBox(props: BarcodeScannerUIProps): JSX.Element {
   const inputBoxEl: JSX.Element = (
@@ -9,7 +11,7 @@ function BarcodeScannerBox(props: BarcodeScannerUIProps): JSX.Element {
       <input type="text" className="form-control" defaultValue={props.value}/>
       <div className="input-group-append" onClick={() => props.start() }>
         <span className="input-group-text">
-          <i className="fas fa-barcode"></i>
+          <i className="fas fa-eye"></i>
         </span>
       </div>
     </div>
@@ -24,8 +26,7 @@ function BarcodeScannerBox(props: BarcodeScannerUIProps): JSX.Element {
         title="Unable to scan for barcode!"
         body={(<Alert 
           message={props.error ? props.error.message : "There was an error with the barcode scanner."}
-          theme="danger" />)}
-        footer={[]}/>
+          theme="danger" />)} />
     case "scanning":
       return <Modal 
         display
@@ -34,12 +35,39 @@ function BarcodeScannerBox(props: BarcodeScannerUIProps): JSX.Element {
         body={(
           <div className="row">
             <div className="col" ref={(ref) => props.init(ref)}>
-              <canvas className="w-100" width={window.innerWidth} height={window.innerHeight} style={{position: "absolute"}} />
-              <video className="w-100" width={window.innerWidth} height={window.innerHeight} autoPlay preload="auto" src="" />
+              <div style={{position: "absolute", right: "2rem", top: "2rem"}}>
+                <Button icon="fas fa-compress" value="Fullscreen" color="success" action={() => props.fullscreen()}/>
+              </div>
+              <video className="w-100" width={window.innerWidth}  autoPlay preload="auto" src="" ref={(ref) => props.cameraSetup(ref)}  />
+              <canvas className="drawingBuffer d-none" style={{position: "absolute", top: 0, left: 0}}></canvas>
             </div>
           </div>
-        )}
-        footer={[]}/>;
+        )}/>;
+    case "selecting":
+      return <Modal 
+      display
+      toggle={() => props.exit()}
+      title="Select Reader Type"
+      body={(
+        <div className="row">
+          <div className="col">
+            <List 
+            items={{
+              elements: 
+                [{value: "EAN", id: "ean"},
+                {value: "UPC", id: "upc"},
+                {value: "CODE 128", id: "code_128"},
+                {value: "CODE 39", id: "code_39"},
+                {value: "CODE 93", id: "code_93"},
+                {value: "CODABAR", id: "codabar"},
+                {value: "I2 OF 5", id: "i2of5"}],
+              actions: [
+                {name: "Select", icon: "fas fa-check-circle", func: (id) => props.updateScanner(id as BarcodeScannerType)}
+              ]}}/>
+          </div>
+        </div>
+      )}
+      />
     default:
       return inputBoxEl;
   }

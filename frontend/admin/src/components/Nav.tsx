@@ -1,13 +1,16 @@
 import { NavProps } from "../interface/Nav.interface";
 import React from "react";
-import { Link } from "react-router-dom";
+import App from "../containers/App";
 
 export function Nav(props: NavProps) {
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light border-bottom border-success">
-      <Link to={props.dashboardPath} className="navbar-brand">
-        <img src={props.logoURL} width="40" alt="Logo"/>
-      </Link>
+    <nav className="navbar navbar-expand navbar-light bg-light border-bottom border-success">
+      <App.contextType.Consumer>
+        {state => <div onClick={() => state.actions.toggleSidePanel()}>
+          {console.log(state)}
+          <i className="fas fa-bars text-success fa-fw fa-2x"></i>
+          </div>}
+      </App.contextType.Consumer>
       <button className="navbar-toggler" data-toggle="collapse" data-target="navbarPanel">
         <span className="navbar-toggler-icon"></span>
       </button>
