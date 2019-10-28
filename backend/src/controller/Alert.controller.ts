@@ -1,21 +1,14 @@
-import { Request, Response } from "express";
-import { HttpMethod } from "../decorator/HttpMethod";
+import { Request, Response, RequestHandler } from "express";
+import { HttpMethod, HttpFunction } from "../decorator/HttpMethod";
 
-export class AlertController {
-  @HttpMethod("POST", "System was unable to create a new alert.")
-  public static add(req: Request, res: Response): void {
-    
-  }
-  @HttpMethod("DELETE", "System was unable to delete an existing alert.")
-  public static remove(req: Request, res: Response): void {
+export const add = HttpFunction("GET", "System was unable to create a new alert.", (req, res) => {
+  
+});
 
-  }
-  @HttpMethod("PATCH", "System was unable to update an existing alert.")
-  public static update(req: Request, res: Response): void {
+export const remove = HttpFunction("DELETE", "System was unable to create a new alert.", (req, res) => {
 
-  }
-  @HttpMethod("GET", "System was unable to list this users alerts.")
-  public static list(req: Request, res: Response): void {
+}); 
 
-  }
-}
+export const list = HttpFunction("GET", "System was unable to list this users alerts.", (req, res) => {
+
+});

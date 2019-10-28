@@ -1,47 +1,25 @@
 import { DateRange } from "../type/Range";
-import { Transaction } from "../model/BIlling";
+import { Transaction } from "../model/Transaction";
 import { IPAddress, EmailAddress } from "../type/Location";
 import { Money } from "../type/Money";
+import * as ITransaction from "../interface/Transaction.interface";
 
-export interface BillingConstructor
-{
+export interface Constructor {
   ipAddress: IPAddress,
   timestamp: Date,
   dateRange: DateRange,
-  transactions: BillingDate[],
 }
 
-export interface TransactionConstructor
-{
-  ipAddress: IPAddress,
-  orderID: string,
-  shippingID: string,
-  transactionID: string,
-}
-
-export interface BillingDate
-{
-  date: Date,
-  transactions: Transaction[]
-}
-
-export interface BillingDateBody {
-  date: string,
-  transactions: TransactionBody[],
-}
-
-export interface BillingBody
-{
+export interface Body {
   timestamp: string,
   startDate: string,
   endDate: string,
-  transactions: BillingDateBody[],
+  transactions: ITransaction.Body[],
 }
 
-export interface TransactionBody
-{
-  ipAddress: string,
-  orderID: string,
-  shippingID: string,
-  transactionID: string,
+export interface Value extends Constructor {
+  transactions: Transaction[],
 }
+
+
+

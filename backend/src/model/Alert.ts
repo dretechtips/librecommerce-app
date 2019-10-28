@@ -1,6 +1,4 @@
-﻿
-
-enum TYPE {
+﻿enum TYPE {
   SERVER = "SERVER",
   DATABASE = "DATABASE",
   CLIENT = "CLIENT",
@@ -40,7 +38,7 @@ class AlertManager {
   private _alerts: Map<string, Alert>;
   constructor(alerts?: Alert[]) {
     this._alerts = new Map();
-    if (!isNotSet(alerts)) {
+    if (alerts) {
       for (let i = 0; i < alerts.length; i++) {
         const alert: Alert = alerts[i];
         this._alerts.set(alert.getID(), alert);
@@ -51,7 +49,7 @@ class AlertManager {
     // Get Message From Database
   }
   public add(alert: Alert, userID?: string[]) {
-    if()
+    
   }
   public remove() {
     

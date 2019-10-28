@@ -11,8 +11,8 @@ import { clientRoute as AlertRoutes } from "./alert";
 
 const router: express.Router = express.Router();
 
-router.get('/interface', (req, res) => ClientController.getFrontend(req, res));
-router.use('/api', (req, res, next) => ClientController.monitor(req, res, next));
+router.get('/interface', ClientController.getInterface);
+router.use('/api', ClientController.verify);
 router.use('/api/account', CustomerRoutes);
 router.use('/api/alert', AlertRoutes);
 router.use('/api/shop', ShoppingRoutes);

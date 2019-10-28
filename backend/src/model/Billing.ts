@@ -1,123 +1,81 @@
 import { Money } from "../type/Money"
 import { DateRange } from "../type/Range";
-import { BillingConstructor, TransactionConstructor, BillingDate, BillingBody, TransactionBody, BillingDateBody } from "../interface/Billing.interface";
+import { Value, Body } from "../interface/Billing.interface";
 import { Request } from "express-serve-static-core";
 import { IPAddress } from "../type/Location";
 import { DatabaseQuery } from "./Database";
 import { Order } from "./Order";
-import { OrderConstructor } from "../interface/Order.interface";
 import uuid = require("uuid/v4");
+import Transaction from "./Transaction";
+import { Constructor } from "../interface/Billing.interface";
+import { Time } from "../type/Time";
+import { ServerError } from "../type/Error";
 
 export class Billing
 {
-  private _value: BillingConstructor;
+  private _value: Value;
   constructor(dateRange: DateRange, req: Request)
   {
-    this._value.ipAddress = new IPAddress(req.header('x-forward-for') || req.connection.remoteAddress);
+    this._value.ipAddress = new IPAddress(req.header('x-forward-for') || req.connection.remoteAddress || req.ip);
     this._value.timestamp = new Date();
     this._value.dateRange = dateRange;
+    this._value.transactions = [];
+    this.transactions();
   }
-  private findTransactionsOnDate(date: Date): BillingDate
+  private transactions(): Transaction[] | null
   {
-    const group: BillingDate = {
-      date: date,
-      transactions: Transaction.From.date(date)
+    try {
+      const range: DateRange = this._value.dateRange;
+      let cur: Date = range.getStartDate();
+      let final: Date = range.getEndDate();
+      const time: Time = new Time(1, "d");
+      time.toMilliSeconds();
+      const length: number = (range.getEndDate().getMilliseconds() - cur.getMilliseconds()) / time.getAmount();
+      let counter: number = 0;
+      this._value.transactions = new Array<Transaction>(length);
+      while (cur !== final) {
+        const trans: Transaction | null = Transaction.from.date(cur);
+        if (!trans) throw new ServerError("System was unable to find the transaction for date " + cur + " is missing")
+        this._value.transactions[counter] = trans;
+        cur.setDate(cur.getDate() + 1);
+      }
+      return this._value.transactions;
     }
-    return group;
-  }
-  public findTransactionsOnRange(): BillingDate[]
-  {
-    let cur: Date = this._value.dateRange.getStartDate();
-    const bill: BillingDate[] = [];
-    while(cur !== this._value.dateRange.getEndDate())
-    {
-      let map: BillingDate = this.findTransactionsOnDate(cur);
-      bill.push(map);
-      cur.setDate(cur.getDate() + 1);
+    catch (e) {
+      return null;
     }
-    return bill;
   }
-  public getValue(): BillingConstructor
+  public orders(): Order[] | null {
+    const trans: Transaction[] = this._value.transactions;
+    const orders: (Order | null)[] = trans.map(cur => Order.from.id(cur.orderID()));
+    orders.forEach((cur, index) => {
+      try {
+        if (!cur) throw new ServerError(trans[index].toString() + " has an invalid order ID");
+      }
+      catch (e) {
+        const ex: Error = e;
+        hconsole.error(ex);
+      }
+    });
+    return orders.indexOf(null) > -1
+      ? null
+      : orders as Order[];
+  }
+  public getValue(): Value
   {
     return this._value;
   }
-  public toPrimObj(): BillingBody
+  public toPrimObj(): Body
   {
-    const billing: BillingBody =
+    const range: DateRange = this._value.dateRange;
+    const billing: Body =
     {
-      startDate: this._value.dateRange.getStartDate().toLocaleDateString(),
-      endDate: this._value.dateRange.getEndDate().toLocaleDateString(),
+      startDate: range.getStartDate().toLocaleDateString(),
+      endDate: range.getEndDate().toLocaleDateString(),
       timestamp: this._value.timestamp.toLocaleDateString(),
-      transactions: this.primitizeDate(),
+      transactions: this._value.transactions.map(cur => cur.toPrimObj()),
     }
     return billing;
   }
-  private primitizeDate(): BillingDateBody[]
-  {
-    return this._value.transactions.map(cur => {
-      const body: BillingDateBody = {
-        date: cur.date.toLocaleDateString(),
-        transactions: cur.transactions.map(cur => cur.toPrimObj())
-      }
-      return body;
-    }) as BillingDateBody[];
-  }
 }
 
-export class Transaction
-{
-  private _value: TransactionConstructor;
-  constructor(transaction: TransactionConstructor)
-  {
-    this._value = transaction;
-  }
-  public save()
-  {
-    
-  }
-  public delete()
-  {
-
-  }
-  private deleteFromDatabase()
-  {
-    
-  }
-  public refund()
-  {
-    
-  }
-  public toPrimObj(): TransactionBody
-  {
-    const trans: TransactionBody =
-    {
-      ipAddress: this._value.ipAddress.toString(),
-      orderID: this._value.orderID,
-      shippingID: this._value.shippingID,
-      transactionID: this._value.transactionID
-    }
-    return trans;
-  }
-  public static From = class
-  {
-    public static id(id: string)
-    {
-
-    }
-    public static order(order: Order): Transaction
-    {
-      const orderVal: OrderConstructor = order.getValue();
-      const trans: TransactionConstructor = {
-        shippingID: orderVal.shipping.getValue().shippingID,
-        ipAddress: orderVal.ipAddress,
-        orderID: orderVal.id,
-        transactionID: uuid()
-      }
-      return new Transaction(trans);
-    }
-    public static date(date: Date): Transaction[]
-    {
-      
-    }
-  }
-}

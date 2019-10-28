@@ -155,13 +155,13 @@ export class Order
     }
     return order;
   }
-  public static From = class
+  public static from = class
   {
-    public static body(body: any): Order[]
+    public static body(body: any): Order[] | null
     {
       
     }
-    public static id(id: string): Order
+    public static id(id: string): Order | null
     {
       
     }

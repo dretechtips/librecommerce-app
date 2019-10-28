@@ -1,13 +1,15 @@
 {
   "compilerOptions": {
-    "outDir": "./build/v0.0.1a",
-    "outFile": "server.js",
+    "experimentalDecorators": true,
     "module": "commonjs",
     "noImplicitAny": true,
-    "removeComments": true,
+    "baseUrl": ".",
+    "paths": {
+      "database": [ "src/libs/database" ]
+    },
     "preserveConstEnums": true,
+    "removeComments": true,
     "sourceMap": true,
-    "experimentalDecorators": true,
     "strictNullChecks": true
   },
   "include": [

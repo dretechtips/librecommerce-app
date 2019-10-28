@@ -70,3 +70,5 @@ export class Time {
     return this._unit;
   }
 }
+
+export default Time;

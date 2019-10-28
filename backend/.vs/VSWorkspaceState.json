@@ -1,16 +1,16 @@
 {
   "ExpandedNodes": [
     "",
-    "\\build",
     "\\src",
     "\\src\\controller",
-    "\\src\\decorator",
     "\\src\\interface",
+    "\\src\\libs",
+    "\\src\\manage",
     "\\src\\model",
     "\\src\\routes",
     "\\src\\service",
     "\\src\\type"
   ],
-  "SelectedNode": "\\src\\interface\\Customer.interface.ts",
+  "SelectedNode": "\\tsconfig.json",
   "PreviewInSolutionExplorer": false
 }

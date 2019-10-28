@@ -1,35 +1,42 @@
-﻿export class ProgramError extends Error {
-  private _isMsgForClient: boolean;
-  constructor(msg: string, isMsgForClient?: boolean) {
+﻿export class HttpError extends Error {
+  private _notifyClient: boolean;
+  constructor(msg: string, notifyClient?: boolean) {
     super(msg);
     this.name = "Program Error";
-    if (isMsgForClient)
-      this._isMsgForClient = true;
+    if (notifyClient)
+      this._notifyClient = true;
     else
-      this._isMsgForClient = false;
+      this._notifyClient = false;
   }
-  public isMsgForClient(): boolean {
-    return this._isMsgForClient;
+  public canNofifyClient(): boolean {
+    return this._notifyClient;
   }
 }
 
-export class ServerError extends ProgramError {
-  constructor(msg: string, isMsgForClient?: boolean) {
-    super(msg, isMsgForClient);
+export class ServerError extends HttpError {
+  constructor(msg: string, notifyClient?: boolean) {
+    super(msg, notifyClient);
     this.name = "Server Error";
   }
 }
 
-export class ClientError extends ProgramError {
-  constructor(msg: string, isMsgForClient?: boolean) {
-    super(msg, isMsgForClient);
+export class ClientError extends HttpError {
+  constructor(msg: string, notifyClient?: boolean) {
+    super(msg, notifyClient);
     this.name = "Client Error";
   }
 }
 
-export class DatabaseError extends ProgramError {
-  constructor(msg: string, isMsgForClient?: boolean) {
-    super(msg, isMsgForClient);
+export class DatabaseError extends HttpError {
+  constructor(msg: string, notifyClient?: boolean) {
+    super(msg, notifyClient);
     this.name = "Database Error";
+  }
+}
+
+export class UserError extends HttpError {
+  constructor(msg: string, notifyClient?: boolean) {
+    super(msg, notifyClient);
+    this.name = "User Error";
   }
 }

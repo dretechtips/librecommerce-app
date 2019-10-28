@@ -36,3 +36,5 @@ export class Color
     return this._selectable;
   }
 }
+
+export default Color;

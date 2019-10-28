@@ -1,5 +1,6 @@
 /// <reference path="../libs/global.d.ts" />
 import { Response } from "express";
+import { HttpError } from "../type/Error";
 
 export type HttpErrorHandler = (error: any, clientMsg: string) => Response; 
 
@@ -7,7 +8,10 @@ export function httpErrorHandler(error: any, clientMsg: string): Response {
   try {
     const ex: Error = error;
     hconsole.error(ex);
-    this.send({ success: false, error: clientMsg });
+    if (ex instanceof HttpError && ex.canNofifyClient())
+      this.send({ success: false, error: ex.message });
+    else
+      this.send({ success: false, error: clientMsg });
     return this;
   }
   catch (e) {

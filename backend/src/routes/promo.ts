@@ -1,5 +1,6 @@
 import * as express from "express";
 import { PromoController } from "../controller/Promo.controller";
+
 const router = express.Router();
 
 router.post('/add', (req, res) => PromoController.add(req, res));

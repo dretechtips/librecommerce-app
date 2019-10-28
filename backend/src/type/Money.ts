@@ -32,3 +32,5 @@ export class Money
     return new Money(parseInt(discount.apply(this._value).toFixed(2)));
   }
 }
+
+export default Money;

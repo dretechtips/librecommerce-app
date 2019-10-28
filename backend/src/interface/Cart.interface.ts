@@ -1,18 +1,21 @@
-import { Product } from "../model/Inventory";
-import { ExistingProductBody } from "./Inventory.interface";
+import Product from "../model/Product";
+import * as IProduct from "../interface/Product.interface";
 
-export interface CartConstructor
+export interface Constructor
 {
   items: Product[],
-  id: string,
 }
 
-export interface NewCartBody
+export interface Value extends Constructor {
+  id: string
+}
+
+export interface NewBody
 {
   items: string[]
 }
 
-export interface ExistingCartBody {
-  items: ExistingProductBody[];
+export interface ExistingBody {
+  items: IProduct.ExistingBody[];
   id: string;
 }

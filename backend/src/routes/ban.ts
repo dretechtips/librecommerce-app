@@ -1,15 +1,14 @@
 import express = require("express");
-import { BanController } from "../controller/Ban.controller";
+import * as BanController from "../controller/Ban.controller";
 
 const landingRoute: express.Router = express.Router();
 const adminRoute: express.Router = express.Router();
 
-landingRoute.use('/', (req, res, next) => BanController.verify(req, res, next));
-landingRoute.post('/ban/appeal', (req, res) => BanController.appeal(req, res));
+landingRoute.use('/', BanController.verify);
+landingRoute.post('/ban/appeal', BanController.appeal);
 
-adminRoute.post('/add', (req, res) => BanController.add(req, res));
-adminRoute.delete('/remove', (req, res) => BanController.remove(req, res));
-adminRoute.post('/review', (req, res) => BanController.review(req, res));
-
+adminRoute.post('/add', BanController.add);
+adminRoute.delete('/remove', BanController.remove);
+adminRoute.post('/review', BanController.review);
 
 export { landingRoute, adminRoute };

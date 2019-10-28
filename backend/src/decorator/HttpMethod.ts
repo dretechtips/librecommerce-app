@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction, response } from "express";
-import { ProgramError } from "../model/Error";
+import { ServerError, HttpError } from "../type/Error";
+import { RequestHandler, Dictionary } from "express-serve-static-core";
 
 // Reference Catch Decorator TS
 
@@ -64,3 +65,34 @@ export function HttpMethod(method: "GET" | "PATCH" | "POST" | "DELETE" | "ALL", 
     }
   }
 }
+
+type Methods = "GET" | "PATCH" | "POST" | "DELETE" | "ALL";
+
+
+
+export const HttpFunction
+  = (m: Methods, errMsg: string, cb: (req: Request, res: Response, next: NextFunction) => any) => {
+    return (req: Request, res: Response, next?: NextFunction) => {
+      try {
+        if (req.method !== m)
+          throw new HttpError("The specified method and the actual methods are not equal.");
+        if (req && res && next) {
+          const result = cb.call(this, req, res, next);
+          res.send({ success: true });
+          return result;
+        }
+        else if (req && res) {
+          const result =  cb.call(this, req, res);
+          res.send({ success: true });
+          return result;
+        }
+        else if (req)
+          throw new HttpError("Server has no response!");
+        
+      }
+      catch (e) {
+        res.sendError(e, errMsg);
+      }
+    }
+}
+

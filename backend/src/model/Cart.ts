@@ -1,53 +1,15 @@
-import { CartConstructor, NewCartBody, ExistingCartBody } from "../interface/Cart.interface";
+import { Constructor, NewBody, ExistingBody, Value } from "../interface/Cart.interface";
 import uuid = require('uuid/v4');
-import { Product } from "./Inventory";
+import { Product } from "./Product";
 import { Time } from "../type/Time";
-
-export class CartSession
-{
-  private _value: Map<string, Cart>;
-  private _timeout: Time;
-  constructor()
-  {
-    this._timeout = new Time(7, "d");
-    this._timeout.toMilliSeconds();
-  }
-  public add(cart: Cart)
-  {
-    this._value.set(cart.getID(), cart);
-    setTimeout(() => this.remove(cart.getID()), this._timeout.getAmount())
-  }
-  public remove(id: string)
-  {
-    if(this._value.has(id))
-      this._value.delete(id);
-  }
-  public length(): number
-  {
-    return this._value.entries.length;
-  }
-  public find(id: string): Cart
-  {
-    return this._value.get(id);
-  }
-  public update(id: string, cart: Cart)
-  {
-    this._value.delete(id);
-    this._value.set(id, cart);
-  }
-  public getAll(): Cart[]
-  {
-    return Array.from(this._value.values());
-  }
-}
 
 export class Cart
 {
-  private _value: CartConstructor;
-  constructor(products: Product[])
+  private _value: Value;
+  constructor(value: Constructor)
   {
     this._value = {
-      items: products,
+      ...value, 
       id: uuid(),
     }
   }
@@ -55,23 +17,27 @@ export class Cart
   {
     return this._value.items;
   }
-  public getID(): string {
+  public id(): string {
     return this._value.id;
   }
-  public static generate(body: NewCartBody): Cart
+  public static generate(body: NewBody): Cart
   {
-    const cart: CartConstructor =
+    const cart: Constructor =
     {
-      items: body.items.map(cur => Product.From.id(cur)),
-      id: uuid(),
+      items: body
+        .items
+        .map(cur => Product.search({ id: cur }))
+        .reduce((prev, cur) => prev.concat(cur)),
     }
     return new Cart(cart);
   }
-  public toPrimObj(): CartBody {
-    const cart: CartBody = {
+  public toPrimObj(): ExistingBody {
+    const cart: ExistingBody = {
       items: this._value.items.map(cur => cur.toPrimitiveObj()),
       id: this._value.id,
     }
     return cart;
   }
 }
+
+export default Cart;

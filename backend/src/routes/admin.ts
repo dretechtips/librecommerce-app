@@ -1,5 +1,5 @@
 import * as express from "express";
-import { AdminController } from "../controller/Admin.controller";
+import * as AdminController from "../controller/Admin.controller";
 
 import { default as BillingRoutes } from "./billing";
 import { default as CouponRoutes } from "./coupon";
@@ -19,7 +19,7 @@ import { adminRoute as AlertRoutes } from "./alert";
 
 const router: express.Router = express.Router();
 
-router.get('/interface', (req, res) => AdminController.getAdminJS(req, res));
+router.get('/interface', (req, res) => AdminController.getInterface(req, res));
 router.use('/api', (req, res, next) => AdminController.monitor(req, res, next));
 // Add Ban
 router.use('/api/alert', AlertRoutes)

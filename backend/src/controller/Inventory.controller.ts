@@ -1,9 +1,14 @@
 import { Request, Response, NextFunction } from "express";
-import { Inventory, Product, InventoryManager, Category, ProductManager, ProductVariation } from "../model/Inventory";
+import { Inventory } from "../model/Inventory";
+import Product from "../model/Product";
+import ProductVariation from "../model/ProductVariation";
+import ProductCategory from "../model/ProductCategory";
 import { Color } from "../type/Color";
-import { HttpMethod } from "../decorator/HttpMethod";
-import { ClientError } from "../model/Error";
-import { IProduct, IProductVariation, ISearchQuery, ICategory } from "../interface/Inventory.interface";
+import { HttpMethod, HttpFunction } from "../decorator/HttpMethod";
+import { ClientError } from "../type/Error";
+
+export const inventory: Inventory = Inventory.fetch();
+
 
 export class InventoryController
 {
