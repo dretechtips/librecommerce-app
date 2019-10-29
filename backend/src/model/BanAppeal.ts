@@ -1,14 +1,18 @@
-import Ban from "./Ban";
-import uuid = require("uuid/v4");
-import { Constructor, AppealBody , SearchQuery } from "../interface/BanAppeal.interface"
+import Ban from './Ban';
+import uuid = require('uuid/v4');
+import {
+  Constructor,
+  AppealBody,
+  SearchQuery
+} from '../interface/BanAppeal.interface';
 
 export class BanAppeal {
   private readonly _message: string;
   private readonly _case: string;
   private readonly _ban: Ban;
   private readonly _timestamp: Date;
-  private _resolution: "resolve" | "reject" | "incomplete";
-  public static search(query: Partial<SearchQuery>): BanAppeal[] | null {
+  private _resolution: 'resolve' | 'reject' | 'incomplete';
+  public static search(query: Partial<SearchQuery>): BanAppeal[] {
     // Database Method
   }
   constructor(value: Constructor) {
@@ -16,7 +20,7 @@ export class BanAppeal {
     this._case = uuid();
     this._ban = value.ban;
     this._timestamp = new Date();
-    this._resolution = "incomplete";
+    this._resolution = 'incomplete';
   }
   public getMessage(): string {
     return this._message;
@@ -30,15 +34,14 @@ export class BanAppeal {
   public hasResolution(): boolean {
     if (!this._resolution) {
       return false;
-    }
-    else {
+    } else {
       return true;
     }
   }
-  public getResolution(): "resolve" | "reject" | "incomplete" {
+  public getResolution(): 'resolve' | 'reject' | 'incomplete' {
     return this._resolution;
   }
-  public setResolution(res: "resolve" | "reject") {
+  public setResolution(res: 'resolve' | 'reject') {
     this._resolution = res;
   }
   public add() {
@@ -51,8 +54,8 @@ export class BanAppeal {
     return {
       ban: this._ban.toPrimObj(),
       caseID: this._case,
-      message: this._message,
-    }
+      message: this._message
+    };
   }
 }
 

@@ -3,16 +3,14 @@
     "experimentalDecorators": true,
     "module": "commonjs",
     "noImplicitAny": true,
-    "baseUrl": ".",
+    "baseUrl": "./src",
     "paths": {
-      "database": [ "src/libs/database" ]
+      "database": ["libs/database"]
     },
     "preserveConstEnums": true,
     "removeComments": true,
     "sourceMap": true,
     "strictNullChecks": true
   },
-  "include": [
-    "./src/*"
-  ]
+  "include": ["./src/*"]
 }

@@ -1,13 +1,18 @@
-import { Request, Response, NextFunction } from "express";
-import { HttpMethod } from "../decorator/HttpMethod";
+import { Request, Response, NextFunction } from 'express';
+import { HttpMethod, HttpFunction } from '../decorator/HttpMethod';
 
-export class ClientController {
-  @HttpMethod("GET", "System was unable to fetch the client front end files.")
-  public static getInterface(req: Request, res: Response): void {
+export const getInterface = HttpFunction(
+  'GET',
+  'System was unable to fetch the client front end files.',
+  (req, res) => {
     return;
   }
-  @HttpMethod("ALL", "System was unable to verify this client.")
-  public static verify(req: Request, res: Response, next: NextFunction): void {
+);
+
+export const verify = HttpFunction(
+  'ALL',
+  'System was unable to verify this client.',
+  (req, res, next) => {
     return;
   }
-}
+);

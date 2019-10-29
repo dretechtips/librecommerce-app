@@ -1,4 +1,9 @@
-import { Search, SearchValue, Operation, SearchResult, DatabaseValue } from "../interface/DatabaseFunction.interface";
+import {
+  Search,
+  SearchValue,
+  Operation,
+  DatabaseValue
+} from '../interface/DatabaseFunction.interface';
 
 export abstract class DatabaseFunction {
   private _db: any;
@@ -14,37 +19,33 @@ export default DatabaseFunction;
 
 export class Insert extends DatabaseFunction {
   private _value: DatabaseValue[] | DatabaseValue[][];
-  constructor(db: any, collection: string, values: DatabaseValue[] | DatabaseValue[][]) {
+  constructor(
+    db: any,
+    collection: string,
+    values: DatabaseValue[] | DatabaseValue[][]
+  ) {
     super(db, collection);
   }
-  async run(): Promise<void> {
-
-  }
+  async run(): Promise<void> {}
 }
 
 export class Find extends DatabaseFunction {
   constructor(db: any, collection: string) {
     super(db, collection);
   }
-  async run(): Promise<void> {
-
-  }
+  async run(): Promise<void> {}
 }
 
 export class Update extends DatabaseFunction {
   constructor(db: any, collection: string) {
     super(db, collection);
   }
-  async run(): Promise<void> {
-
-  }
+  async run(): Promise<void> {}
 }
 
 export class Delete extends DatabaseFunction {
   constructor(db: any, collection: string) {
     super(db, collection);
   }
-  async run(): Promise<void> {
-
-  }
+  async run(): Promise<void> {}
 }

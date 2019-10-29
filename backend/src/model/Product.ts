@@ -1,23 +1,26 @@
-import { Constructor, NewBody, ExistingBody, SearchQuery } from "../interface/Product.interface";
-import uuid = require("uuid/v4");
+import {
+  Constructor,
+  NewBody,
+  ExistingBody,
+  SearchQuery
+} from '../interface/Product.interface';
+import uuid = require('uuid/v4');
 
 export class Product {
   private _values: Constructor;
   constructor(product: Constructor) {
     this._values = product;
   }
-  public add() {
+  public add(): void {
     // Database Method
   }
-  public remove() {
+  public remove(): void {
     // Database Method
   }
-  public save() {
+  public save(): void {
     // Database Method
   }
-  public static search(query: Partial<SearchQuery>): (Product | null)[] {
-
-  }
+  public static search(query: Partial<SearchQuery>): Product[] {}
   public getValue(): Constructor {
     return this._values;
   }
@@ -28,8 +31,7 @@ export class Product {
     this._values = { ...this._values, ...body };
   }
   public static generate(body: NewBody): Product {
-    const product: Constructor =
-    {
+    const product: Constructor = {
       name: body.name,
       id: uuid(),
       categoryID: body.categoryID,
@@ -41,13 +43,13 @@ export class Product {
       brand: body.brand,
       rating: 5.0,
       ratingAmount: 0
-    }
+    };
     return new Product(product);
   }
   public toPrimitiveObj(): ExistingBody {
     const product: ExistingBody = {
-      ...this._values,
-    }
+      ...this._values
+    };
     return product;
   }
 }

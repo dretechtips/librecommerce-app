@@ -1,36 +1,43 @@
-import { Request, Response } from "express";
-import uuid = require("uuid/v4");
-import { Discount } from "../type/Discount";
-import { DateRange } from "../type/Range";
-import { HttpMethod } from "../decorator/HttpMethod";
-import { IPromo } from "../interface/Promo.interface";
-import { PromoManager, Promo } from "../model/Promo";
-import { ClientError } from "../model/Error";
+import { Request, Response } from 'express';
+import uuid = require('uuid/v4');
+import { Discount } from '../type/Discount';
+import { DateRange } from '../type/Range';
+import { HttpMethod, HttpFunction } from '../decorator/HttpMethod';
+import Promo from '../model/Promo';
+import PromoCoupon from '../model/PromoCoupon';
+import { ClientError } from '../type/Error';
+import {
+  Constructor,
+  NewBody,
+  ExistingBody
+} from '../interface/PromoCoupon.interface';
 
-export class PromoController {
-  @HttpMethod("POST", "System was unable to add a new promotion.")
-  public static add(req: Request, res: Response): void {
-    const bPromo: IPromo.NewBody = req.body.promo;
-    const promo: Promo = Promo.generate(bPromo);
-    promo.save();
+export const add = HttpFunction(
+  'POST',
+  'System was unable to add a new coupon.',
+  (req, res) => {
+    const body: NewBody = req.body.promo;
+    const promo: PromoCoupon = PromoCoupon.generate(body);
+    promo.add();
   }
-  @HttpMethod("PATCH", "System was unable to update a promotion.")
-  public static update(req: Request, res: Response): void {
-    const promoID: string = req.body.promo.id;
-    const promo: Promo | null = PromoManager.from.id(promoID);
-    if (promo)
-      promo.update(req.body.promo);
-    else
-      throw new ClientError("Client provided an invalid promo ID");
-  }
-  @HttpMethod("DELETE", "System was unable to delete a promotion.")
-  public static delete(req: Request, res: Response): void {
-    const promoID: string = req.body.promo.id;
-    const promo: Promo | null = PromoManager.from.id(promoID);
-    if (promo)
-      promo.delete();
-    else
-      throw new ClientError("Client provided an invalid promo ID");
-  }
-}
+);
 
+export const update = HttpFunction(
+  'PATCH',
+  'System was unable to update a coupon.',
+  (req, res) => {
+    const { id } = req.body.promo as Pick<ExistingBody, 'id'>;
+    const promo: PromoCoupon = PromoCoupon.search({ id });
+    promo.update(req.body.promo);
+  }
+);
+
+export const remove = HttpFunction(
+  'DELETE',
+  'System was unable to delete a coupon.',
+  (req, res) => {
+    const { id } = req.body.promo as Pick<ExistingBody, 'id'>;
+    const promo: PromoCoupon = PromoCoupon.search({ id });
+    promo.delete();
+  }
+);

@@ -8,16 +8,12 @@ import { IPAddress } from '../type/Location';
 import { SFController } from './SpeechFilter.controller';
 import { SpeechFilter } from '../model/SpeechFilter';
 import { ServerError, ClientError, UserError } from '../type/Error';
-import { AppealBody, AppealReview } from 'src/interface/BanAppeal.interface';
+import { AppealBody, AppealReview } from '../interface/BanAppeal.interface';
 import * as database from 'database';
 
 const filter: SpeechFilter = SFController.import(
   'BAN_REVIEW_AUTOMATION.txt'
 ).lock();
-
-export const Access = class {
-  public static add(ban: Ban) {}
-};
 
 /**
  *
@@ -119,12 +115,14 @@ export const appeal = HttpFunction(
         "System couldn't find any customer from the id specified."
       );
     const ban: Ban[] = Ban.search({ customerID: customer.getID() });
-
-    if (ban.length)
-      if (!ban) throw new Error('This customer has no ban on his account.');
-    const banAppeal: BanAppeal = new BanAppeal(appeal.message, ban);
+    if (!ban.length)
+      throw new Error('This customer has no ban on his account.');
+    const banAppeal: BanAppeal = new BanAppeal({
+      msg: appeal.message,
+      ban: ban[0]
+    });
     const isSafe: boolean = filter.isSafe(banAppeal.getMessage());
-    if (isSafe) appeals.add(banAppeal);
+    if (isSafe) banAppeal.add();
   }
 );
 
@@ -135,11 +133,11 @@ export const review = HttpFunction(
     const review: AppealReview = req.body.banAppealView;
     if (!review)
       throw new Error("The system didn't recieve the review from the client.");
-    const banAppeal: BanAppeal | null = appeals.find(review.caseID);
-    if (!banAppeal)
+    const banAppeal: BanAppeal[] = BanAppeal.search({ caseID: review.caseID });
+    if (!banAppeal || banAppeal.length === 0)
       throw new Error(
         'System could not find the ban appeal with the case id specified.'
       );
-    banAppeal.setResolution(review.resolution);
+    banAppeal[0].setResolution(review.resolution);
   }
 );

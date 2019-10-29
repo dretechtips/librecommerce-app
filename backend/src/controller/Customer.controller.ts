@@ -1,12 +1,31 @@
-import { Request, Response, NextFunction } from "express";
-import { Customer, ActiveCustomer, CustomerManager } from "../model/Customer";
-import { PasswordResetList } from "../model/Account";
-import { HttpMethod } from "../decorator/HttpMethod";
-import { ICustomer } from "../interface/Customer.interface";
-import { ClientError, ServerError, DatabaseError } from "../type/Error";
+import { Request, Response, NextFunction } from 'express';
+import { Customer, ActiveCustomer, CustomerManager } from '../model/Customer';
+import AccountReset from '../model/AccountReset';
+import { HttpMethod } from '../decorator/HttpMethod';
+import {} from '../interface/Customer.interface';
+import { ClientError, ServerError, DatabaseError } from '../type/Error';
 
-export class CustomerController
-{
+const session: ActiveCustomer = new ActiveCustomer();
+
+const PasswordResetList: AccountReset = new AccountReset();
+
+PasswordResetList;
+
+const reverify;
+
+const verify;
+
+const signin;
+
+const add;
+
+const update;
+
+const email;
+
+const resetPassword;
+
+export class CustomerController {
   private static _session = new ActiveCustomer();
   private static _PRList = new PasswordResetList();
   public static reverify(req: Request): Customer | null {
@@ -14,55 +33,66 @@ export class CustomerController
       const accessToken = req.cookies.customer_access_token;
       const cID: string | null = this._session.fetch(accessToken);
       if (cID) {
-        const customer: Customer | null = CustomerManager.from.id(cID) as Customer;
-        if (customer)
-          return customer;
+        const customer: Customer | null = CustomerManager.from.id(
+          cID
+        ) as Customer;
+        if (customer) return customer;
         else
-          throw new ServerError("System was unable to find the customer from the customer id.");
-      }
-      else
-        throw new ClientError("Access token provided doesn't have a customer ID.");
-    }
-    catch (e) {
+          throw new ServerError(
+            'System was unable to find the customer from the customer id.'
+          );
+      } else
+        throw new ClientError(
+          "Access token provided doesn't have a customer ID."
+        );
+    } catch (e) {
       const ex: Error = e;
       hconsole.error(ex);
       return null;
     }
   }
-  @HttpMethod("ALL", "System couldn't verify the access token.")
+  @HttpMethod('ALL', "System couldn't verify the access token.")
   public static verify(req: Request, res: Response, next: NextFunction): void {
     const accessToken: string = req.cookies.customer_access_token;
     if (!accessToken)
       throw new ClientError("Client didn't provide a customer access token.");
     const customerID: string | null = this._session.fetch(accessToken);
-    if (customerID !== null)
-      return next();
+    if (customerID !== null) return next();
     else
-      throw new ServerError("System couldn't find the access token with the sessions.");
+      throw new ServerError(
+        "System couldn't find the access token with the sessions."
+      );
   }
-  @HttpMethod("POST", "System was unable to sign in the customer")
+  @HttpMethod('POST', 'System was unable to sign in the customer')
   public static signin(req: Request, res: Response): void {
     const clientID: string = req.body.customer.clientID;
     if (!clientID)
       throw new Error("Client didn't provide a client ID to sign-in.");
-    const bCustomer: Buffer = Buffer.from(clientID, "base64");
+    const bCustomer: Buffer = Buffer.from(clientID, 'base64');
     const sCustomer: string = bCustomer.toString();
-    const [username, password] = sCustomer.split(":");
+    const [username, password] = sCustomer.split(':');
     if (!username || !password) {
-      res.send({ success: false, error: "Make sure a username and password was sent" });
+      res.send({
+        success: false,
+        error: 'Make sure a username and password was sent'
+      });
       return;
-    } 
-    const customer: Customer | null = CustomerManager.from.credientals(username, password) as Customer;
+    }
+    const customer: Customer | null = CustomerManager.from.credientals(
+      username,
+      password
+    ) as Customer;
     if (!customer)
-      throw new DatabaseError("Database cannot find the username and password.");
+      throw new DatabaseError(
+        'Database cannot find the username and password.'
+      );
     else {
       const accessToken: string = this._session.add(customer);
-      res.cookie("customer_access_token" , accessToken).send({ success: true });
+      res.cookie('customer_access_token', accessToken).send({ success: true });
     }
   }
-  @HttpMethod("POST", "System was unable to add the customer.")
-  public static add(req: Request, res: Response): void
-  {
+  @HttpMethod('POST', 'System was unable to add the customer.')
+  public static add(req: Request, res: Response): void {
     if (!req.body.customer)
       throw new ClientError("Client didn't provide the customer data.");
     const cData: CustomerBody = req.body.customer;
@@ -70,44 +100,50 @@ export class CustomerController
     customer.save();
     res.send({ success: true });
   }
-  @HttpMethod("DELETE", "System was unable to delete the customer.")
-  public static remove(req: Request, res: Response): void
-  {
+  @HttpMethod('DELETE', 'System was unable to delete the customer.')
+  public static remove(req: Request, res: Response): void {
     const customerID: string = req.body.customer.id;
     if (!customerID)
       throw new ClientError("Client didn't provide a client ID to the system.");
-    const customer: Customer | null = CustomerManager.from.id(customerID) as Customer;
-    if(customer)
-      this._session.delete(customerID);
+    const customer: Customer | null = CustomerManager.from.id(
+      customerID
+    ) as Customer;
+    if (customer) this._session.delete(customerID);
   }
-  @HttpMethod("PATCH", "System was unable to update the customer.")
-  public static update(req: Request, res: Response): void
-  {
+  @HttpMethod('PATCH', 'System was unable to update the customer.')
+  public static update(req: Request, res: Response): void {
     const customerID: string = req.body.customer.id;
     if (!customerID)
       throw new ClientError("Client didn't send customer ID to the system.");
-    const customer: Customer | null = CustomerManager.from.id(customerID) as Customer;
+    const customer: Customer | null = CustomerManager.from.id(
+      customerID
+    ) as Customer;
     customer.update(req.body);
     customer.save();
   }
-  @HttpMethod("POST", "System was unable to email the customer their password")
-  public static emailPassword(req: Request, res: Response): void
-  {
+  @HttpMethod('POST', 'System was unable to email the customer their password')
+  public static emailPassword(req: Request, res: Response): void {
     // A request has been sent to change your password. Here a link to change your password
     // https://rufftiger.com/client/resetpassword
-    // Note: The link will expire in 24 hours. 
+    // Note: The link will expire in 24 hours.
   }
-  @HttpMethod("PATCH", "System was unable to reset your password.")
+  @HttpMethod('PATCH', 'System was unable to reset your password.')
   public static passwordReset(req: Request, res: Response): void {
     const reset: CustomerPasswordReset = req.body.reset;
     if (!reset)
       throw new ClientError("Client didn't present a reset ID to the system.");
     const customerID: string | null = this._PRList.fetch(reset.id);
     if (!customerID)
-      throw new Error("Password Reset List was unable to get the customer ID from the reset ID");
-    const customer: Customer | null = CustomerManager.from.id(customerID) as Customer;
+      throw new Error(
+        'Password Reset List was unable to get the customer ID from the reset ID'
+      );
+    const customer: Customer | null = CustomerManager.from.id(
+      customerID
+    ) as Customer;
     const isRemove: boolean = this._PRList.delete(reset.id);
     if (!isRemove)
-      throw new ServerError("System couldn't find the client ID from the system.");
+      throw new ServerError(
+        "System couldn't find the client ID from the system."
+      );
   }
 }

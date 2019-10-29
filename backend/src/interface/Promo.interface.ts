@@ -1,42 +1,14 @@
-import { Discount } from "../type/Discount";
-import { DateRange } from "../type/Range";
-import { Week } from "../type/Week";
+import { Discount } from '../type/Discount';
+import { DateRange } from '../type/Range';
+import { Week } from '../type/Week';
+import Product from '../model/Product';
 
-export namespace IPromo {
-  export interface Constructor {
-    name: string;
-    id: string;
-    productsID?: string[];
-    categoriesID?: string[];
-    all?: boolean;
-    code: string;
-    deal: Discount;
-    dateRange: DateRange;
-    interval?: Week;
-  }
-
-  export interface NewBody {
-    name: string,
-    id: string,
-    productsID?: string[];
-    categoriesID?: string[];
-    all?: boolean;
-    deal: number;
-    dateStart: string;
-    dateEnd: string,
-    interval?: Week;
-    code: string
-  }
-
-  export interface ExistingBody extends NewBody {
-
-  }
+export interface Constructor {
+  discount: Discount;
+  range: DateRange;
+  productID: string;
 }
 
-
-
-
-
-
-
-
+export interface Value extends Constructor {
+  timestamp: Date;
+}
