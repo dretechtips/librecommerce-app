@@ -1,4 +1,4 @@
-import { ClientError } from "../model/Error";
+import { ClientError } from '../model/Error';
 import crypto = require('crypto');
 
 export class Password {
@@ -7,11 +7,11 @@ export class Password {
     try {
       const valid: boolean = this.verify(password);
       if (!valid)
-        throw new ClientError("Client provided a password that doesn't match the criteria.");
-      else
-        this._value = password;
-    }
-    catch (e) {
+        throw new ClientError(
+          "Client provided a password that doesn't match the criteria."
+        );
+      else this._value = password;
+    } catch (e) {
       const ex: Error = e;
       hconsole.error(ex);
     }
@@ -19,13 +19,11 @@ export class Password {
   private verify(pw: string): boolean {
     // 6 - 12 Character
     // NO "" or '' or / \
-    if (pw.length < 6 || pw.length > 12)
-      return false;
-    const filter: string[] = ['"', "'", "`", "\"", "/"];
+    if (pw.length < 6 || pw.length > 12) return false;
+    const filter: string[] = ['"', "'", '`', '"', '/'];
     for (let term of filter) {
       const index: number = this._value.search(term);
-      if (index !== -1)
-        return false;
+      if (index !== -1) return false;
     }
     return true;
   }
@@ -33,9 +31,9 @@ export class Password {
     // Write Crypto Method
   }
   public decrypt(): string {
-   // Write crypto method
+    // Write crypto method
   }
-  public getValue(): string {
-
+  public toString(): string {
+    return this._value;
   }
 }

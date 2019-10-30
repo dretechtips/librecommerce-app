@@ -10,7 +10,10 @@ export interface Value extends Constructor {
   subscriptionsID: string[];
 }
 
-export interface NewBody extends IAccount.NewBody {
-  id: string;
-  password: string;
-}
+export interface NewBody extends IAccount.NewBody {}
+
+export interface ExistingBody extends IAccount.ExistingBody {}
+
+export interface Cookies extends IAccount.Cookies {}
+
+export interface SearchQuery extends IAccount.SearchQuery {}

@@ -1,17 +1,19 @@
-import { ICustomer } from '../interface/Customer.interface';
+import {
+  Value,
+  Constructor,
+  SearchQuery,
+  NewBody
+} from '../interface/Customer.interface';
 import uuid = require('uuid/v4');
 import { Address, EmailAddress, PhoneNum, IPAddress } from '../type/Location';
-import { ActiveAccount, Account, AccountManager } from '../model/Account';
+import Account from '../model/Account';
+import AccountActive from '../model/AccountActive';
 import { Password } from '../type/Password';
 
-export class ActiveCustomer extends ActiveAccount {}
-
-export class CustomerManager extends AccountManager {}
-
 export class Customer extends Account {
-  protected _value: ICustomer.Value;
-  constructor(customer: ICustomer.Constructor) {
-    const value: ICustomer.Value = {
+  protected _value: Value;
+  constructor(customer: Constructor) {
+    const value: Value = {
       ...customer,
       subscriptionsID: []
     };
@@ -39,8 +41,8 @@ export class Customer extends Account {
     if (body.email) this._value.emailAddress = new EmailAddress(body.email);
     if (body.phone) this._value.phoneNum = new PhoneNum(body.phoneNum);
   }
-  public static generate(body: ICustomer.NewBody): Customer {
-    const customer: ICustomer.Constructor = {
+  public static generate(body: NewBody): Customer {
+    const customer: Constructor = {
       firstName: body.firstName,
       lastName: body.lastName,
       id: uuid(),
@@ -56,4 +58,7 @@ export class Customer extends Account {
     };
     return new Customer(customer);
   }
+  public static search(query: Partial<SearchQuery>): Customer[] {}
 }
+
+export default Customer;

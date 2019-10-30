@@ -1,56 +1,103 @@
 import { Request, Response, NextFunction } from 'express';
-import { Customer, ActiveCustomer, CustomerManager } from '../model/Customer';
+import Customer from '../model/Customer';
+import ActiveCustomer from '../model/CustomerActive';
 import AccountReset from '../model/AccountReset';
-import { HttpMethod } from '../decorator/HttpMethod';
-import {} from '../interface/Customer.interface';
+import { HttpMethod, HttpFunction } from '../decorator/HttpMethod';
+import { Cookies } from '../interface/Customer.interface';
 import { ClientError, ServerError, DatabaseError } from '../type/Error';
+import { ExistingBody } from '../interface/Customer.interface';
+import CookieFactory from '../factory/Cookie.factory';
+import { CookieStorage } from '../interface/Account.interface';
 
 const session: ActiveCustomer = new ActiveCustomer();
 
 const PasswordResetList: AccountReset = new AccountReset();
 
-PasswordResetList;
+const cf: CookieFactory = new CookieFactory('customer');
 
-const reverify;
+const cs: CookieStorage = {
+  accessToken: cf.new('accessToken')
+};
 
-const verify;
+export const verify = HttpFunction(
+  'ALL',
+  'System was unable to verify the customer account.',
+  (req, res, next) => {
+    const accessToken: string = req.cookies[cs.accessToken.string()] as string;
+    const cID: string | null = session.fetch(accessToken);
+    if (null) return;
+    const customer: Customer[] = Customer.search({ id: cID ? cID : undefined });
+    if (customer.length !== 1)
+      throw new ServerError("Server didn't fetch one customer account");
+    return customer[0];
+  }
+);
 
-const signin;
+const signin = HttpFunction(
+  'POST',
+  'System was unable to sign in the customer',
+  (req, res) => {
+    const { id } = req.body.customer as Pick<ExistingBody, 'id'>;
+    const details = Customer.decrypt(id);
+    if (!details)
+      throw new ServerError(
+        "Client didn't provide a valid username or password",
+        true
+      );
+    const [username, password] = details;
+    const customer: Customer[] = Customer.search({ username: username });
+    if (customer.length !== 1)
+      throw new ServerError("Server didn't fetch one customer account");
+    if (customer[0].isPassword(password)) {
+      const accessToken: string = session.add(customer[0]);
+      res.cookie(cs.accessToken.string(), accessToken);
+    }
 
-const add;
+    if (!customer)
+      throw new DatabaseError(
+        'Database cannot find the username and password.'
+      );
+    else {
+      const accessToken: string = this._session.add(customer);
+      res.cookie('customer_access_token', accessToken).send({ success: true });
+    }
+  }
+);
 
-const update;
+const add = HttpFunction(
+  'POST',
+  'System was unable to add the customer.',
+  (req, res) => {}
+);
 
-const email;
+const update = HttpFunction(
+  'PATCH',
+  'System was unable to update the customer.',
+  (req, res) => {}
+);
 
-const resetPassword;
+const remove = HttpFunction(
+  'DELETE',
+  'System was unable to delete the customer account',
+  (req, res) => {}
+);
+
+const email = HttpFunction(
+  'POST',
+  'System was unable to email the customer their password',
+  (req, res) => {}
+);
+
+const reset = HttpFunction(
+  'PATCH',
+  'System was unable to reset your password.',
+  (req, res) => {}
+);
 
 export class CustomerController {
   private static _session = new ActiveCustomer();
   private static _PRList = new PasswordResetList();
-  public static reverify(req: Request): Customer | null {
-    try {
-      const accessToken = req.cookies.customer_access_token;
-      const cID: string | null = this._session.fetch(accessToken);
-      if (cID) {
-        const customer: Customer | null = CustomerManager.from.id(
-          cID
-        ) as Customer;
-        if (customer) return customer;
-        else
-          throw new ServerError(
-            'System was unable to find the customer from the customer id.'
-          );
-      } else
-        throw new ClientError(
-          "Access token provided doesn't have a customer ID."
-        );
-    } catch (e) {
-      const ex: Error = e;
-      hconsole.error(ex);
-      return null;
-    }
-  }
+  public static reverify(req: Request): Customer | null {}
   @HttpMethod('ALL', "System couldn't verify the access token.")
   public static verify(req: Request, res: Response, next: NextFunction): void {
     const accessToken: string = req.cookies.customer_access_token;
@@ -64,33 +111,7 @@ export class CustomerController {
       );
   }
   @HttpMethod('POST', 'System was unable to sign in the customer')
-  public static signin(req: Request, res: Response): void {
-    const clientID: string = req.body.customer.clientID;
-    if (!clientID)
-      throw new Error("Client didn't provide a client ID to sign-in.");
-    const bCustomer: Buffer = Buffer.from(clientID, 'base64');
-    const sCustomer: string = bCustomer.toString();
-    const [username, password] = sCustomer.split(':');
-    if (!username || !password) {
-      res.send({
-        success: false,
-        error: 'Make sure a username and password was sent'
-      });
-      return;
-    }
-    const customer: Customer | null = CustomerManager.from.credientals(
-      username,
-      password
-    ) as Customer;
-    if (!customer)
-      throw new DatabaseError(
-        'Database cannot find the username and password.'
-      );
-    else {
-      const accessToken: string = this._session.add(customer);
-      res.cookie('customer_access_token', accessToken).send({ success: true });
-    }
-  }
+  public static signin(req: Request, res: Response): void {}
   @HttpMethod('POST', 'System was unable to add the customer.')
   public static add(req: Request, res: Response): void {
     if (!req.body.customer)
