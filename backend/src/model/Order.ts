@@ -1,128 +1,77 @@
-import { default as Database } from "./Database";
-import { IOrder } from "../interface/Order.interface";
-import { DatabaseKeyValue, DatabaseQueryConstructor } from "../interface/Database.interface";
-import { Queue } from "../data/Queue";
-import * as uuid from "uuid/v4";
-import {  EmailAddress, PhoneNum, Address, IPAddress  } from "../type/Location";
-import { Customer, CustomerManager } from "./Customer";
-import { ICustomer } from "../interface/Customer.interface";
-import { Shipping } from "./Shipping";
-import axios = require("axios");
-import { Request } from "express-serve-static-core"
-import { Money } from "../type/Money";
-import { IShipping } from "../interface/Shipping.interface";
-import { ProductVariationArray } from "./Inventory";
+import {
+  Constructor,
+  NewBody,
+  ExistingBody,
+  Value,
+  OrderProduct,
+  SearchQuery
+} from '../interface/Order.interface';
+import { Queue } from '../data/Queue';
+import * as uuid from 'uuid/v4';
+import { EmailAddress, PhoneNum, Address, IPAddress } from '../type/Location';
+import Customer from './Customer';
+import { ICustomer } from '../interface/Customer.interface';
+import { Shipping } from './Shipping';
+import axios = require('axios');
+import { Request } from 'express-serve-static-core';
+import { Money } from '../type/Money';
+import { IShipping } from '../interface/Shipping.interface';
+import ProductVariation from './ProductVariation';
 
-export class OrderQueue extends Queue<Order>
-{
-  private _hold: Map<string, Order>;
-  constructor(vals?: Order[])
-  {
-    super(vals);
-  }
-  public getAllOrders(): Order[] {
-    return this._values;
-  }
-  public enqueue(order: Order): void
-  {
-    this._values.push(order);
-  }
-  public dequeue(): Order
-  {
-    const val: Order = this._values.shift();
-    return val;
-  }
-  public getNext(): Order
-  {
-    return this._values[1];
-  }
-  public getNextOrderID(): string
-  {
-    return this.getNext().getValue().id;
-  }
-  public hold(): void
-  {
-    const order: Order = this._values.shift();
-    this._hold.set(order.getValue().id, order);
-  }
-  public unhold(id: string): boolean
-  {
-    const order: Order = this._hold.get(id);
-    if(order === undefined)
-      return false;
-    else 
-      return true;
-  }
-  public getHoldList(): Order[]
-  {
-    const orders: Order[] = Array.from(this._hold.values());
-    return orders;
-  }
-}
-
-export class Order
-{
-  private _value: IOrder.Constructor;
-  constructor(order: IOrder.Constructor)
-  {
-    this._value = order;
+export class Order {
+  private _value: Value;
+  constructor(order: Constructor) {
+    this._value = {
+      ...order
+    };
     this._value.shipping.setID(this._value.id);
   }
-  public complete() {
+  public complete(): void {
     this._value.complete = true;
   }
   public getID(): string {
     return this._value.id;
   }
-  public transact()
-  {
+  public transact(): void {
     // Talk to paypal api
-    
   }
-  public async save()
-  {
+  public save(): void {
     // Add Into Database
   }
-  public refund()
-  {
+  public refund(): void {
     // Talk to paypal api // Paypal API refund
     // note it into the database
   }
-  public getValue()
-  {
-    return this._value;
-  }
-  public getShipping(): Shipping
-  {
+  public addProduct(): void {}
+  public getShipping(): Shipping {
     return this._value.shipping;
   }
-  public getProducts(): OrderProduct[]
-  {
+  public getProducts(): OrderProduct[] {
     return this._value.products;
   }
-  public getTotalPay(): Money
-  {
-    return this._value.totalPay;
+  public getTotalCost(): Money {
+    return this._value.cost;
   }
-  public delete(): boolean
-  {
-
+  public delete(): boolean {
+    // Database Method
+    // Create
   }
-  public cancel()
-  {
+  public cancel(): void {
     this._value.cancelled = true;
   }
-  public update(body: any)
-  {
+  public update(body: any): void {
     const value = this._value;
-    if(body.products) value.products = body.products;
+    if (body.products) value.products = body.products;
     if (body.address) value.address = body.address;
   }
-  public static generate(body: IOrder.NewBody, req: Request): Order
-  {
-    const customer: Customer | null = CustomerManager.from.id(body.id) as Customer;
-    const order: IOrder.Constructor = 
-    {
+  public static generate(body: NewBody, req: Request): Order {
+    const customers: Customer[] = Customer.search({ id: body.customerID });
+    const customer: Customer = customers[0];
+    const products: ProductVariation[] = body.products.reduce(
+      (prev, cur) => ProductVariation.search({ id: cur.id }).concat(prev),
+      [] as ProductVariation[]
+    );
+    const order: Constructor = {
       id: uuid(),
       timestamp: new Date(),
       address: customer.getAddress(),
@@ -130,40 +79,33 @@ export class Order
       shipping: Shipping.generate(body.shipping),
       ipAddress: IPAddress.generate(req),
       products: body.products,
-      cost: new ProductVariationArray(body.products).getTotalCost(),
-      complete: false,
-    }
+      cost: new Money(
+        products.reduce((prev, cur) => prev + cur.getCost().getValue(), 0)
+      ),
+      complete: false
+    };
     return new Order(order);
   }
-  public toPrimObj(): ExistingOrderBody
-  {
+  public toPrimObj(): ExistingBody {
     const shipping: ShippingConstructor = this._value.shipping.getValue();
-    const order: ExistingOrderBody = {
+    const order: ExistingBody = {
       ...this._value,
       timestamp: this._value.timestamp.toDateString(),
       ipAddress: this._value.ipAddress.toString(),
-      totalPay: this._value.totalPay.getValue(),
+      totalCost: this._value.cost.getValue(),
       shipping: {
         ...shipping,
         price: shipping.price.getValue(),
         orderID: shipping.orderID,
-        cancelled: shipping.cancelled,
+        cancelled: shipping.cancelled
       },
       address: this._value.address.getValue(),
       email: this._value.email.toString(),
-      phone: this._value.phone.toString(),
-    }
+      phone: this._value.phone.toString()
+    };
     return order;
   }
-  public static from = class
-  {
-    public static body(body: any): Order[] | null
-    {
-      
-    }
-    public static id(id: string): Order | null
-    {
-      
-    }
-  }
+  public static search(query: Partial<SearchQuery>): Order[] {}
 }
+
+export default Order;

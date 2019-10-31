@@ -46,3 +46,7 @@ export interface SearchQuery {
   emailAddress: string;
   address: string;
 }
+
+export interface ResetPassword {
+  credientals: string;
+}

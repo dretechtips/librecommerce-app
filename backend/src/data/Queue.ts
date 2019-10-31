@@ -1,24 +1,22 @@
-export class Queue<T>
-{
+export class Queue<T> {
   protected _values: T[];
-  constructor(vals?: T[])
-  {
-    if (vals !== undefined || vals !== null) {
+  constructor(vals?: T[]) {
+    if (vals) {
       this._values = vals;
-    }
-    else {
+    } else {
       this._values = [];
     }
   }
-  public enqueue(val: T)
-  {
+  public enqueue(val: T) {
     this._values.push(val);
   }
-  public dequeue(): T
-  {
-    return this._values.pop();
+  public dequeue(): T | null {
+    const val = this._values.pop();
+    return val ? val : null;
   }
   public getValues(): T[] {
     return this._values;
   }
 }
+
+export default Queue;

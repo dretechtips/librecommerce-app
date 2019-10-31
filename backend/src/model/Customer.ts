@@ -22,9 +22,10 @@ export class Customer extends Account {
   public save(): void {
     // Database Method
   }
-  public delete(): void {
+  public remove(): void {
     // Database Method
   }
+  public add(): void {}
   public getSubscriptionPackagesID(): string[] {
     return this._value.subscriptionsID;
   }
@@ -33,14 +34,7 @@ export class Customer extends Account {
       cur => cur === pID
     );
   }
-  public update(body: any): void {
-    if (body.firstName) this._value.firstName = body.firstName;
-    if (body.lastName) this._value.lastName = body.lastName;
-    if (body.username) this._value.username = body.username;
-    if (body.address) this._value.address = new Address(body.address);
-    if (body.email) this._value.emailAddress = new EmailAddress(body.email);
-    if (body.phone) this._value.phoneNum = new PhoneNum(body.phoneNum);
-  }
+  public update(body: Partial<NewBody>): void {}
   public static generate(body: NewBody): Customer {
     const customer: Constructor = {
       firstName: body.firstName,

@@ -1,5 +1,5 @@
 import { IPAddress, Address } from '../type/Location';
-import { Constructor } from '../interface/Account.interface';
+import { Constructor, NewBody } from '../interface/Account.interface';
 import { Ban } from '../model/Ban';
 import * as BanController from '../controller/Ban.controller';
 import { Time } from '../type/Time';
@@ -12,6 +12,10 @@ export abstract class Account {
   constructor(constructor: Constructor) {
     this._value = constructor;
   }
+  public abstract add(): void;
+  public abstract remove(): void;
+  public abstract save(): void;
+  public abstract update(body: Partial<NewBody>): void;
   public getIPs(): IPAddress[] {
     return this._value.associatedIPs;
   }
@@ -32,7 +36,6 @@ export abstract class Account {
   public isPassword(password: string): boolean {
     return this._value.password.toString() == password;
   }
-  public static search() {}
   /**
    *
    * @param id Account ID

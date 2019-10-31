@@ -1,25 +1,31 @@
-import { Request, Response, NextFunction } from "express";
-import { Product, Inventory } from "../model/Inventory";
-import { InventoryController } from "../controller/Inventory.controller";
-import { HttpMethod } from "../decorator/HttpMethod";
+import { Request, Response, NextFunction } from 'express';
+import { InventoryController } from '../controller/Inventory.controller';
+import { HttpMethod, HttpFunction } from '../decorator/HttpMethod';
 
-export class LandingController
-{
-  @HttpMethod("GET", "System was unable to render the landing home page.")
-  public static renderHome(req: Request, res: Response): void
-  {
+export const home = HttpFunction(
+  'GET',
+  'System was unable to render the landing home page.',
+  (req, res) => {
     res.render('./landing/home');
   }
-  @HttpMethod("GET", "System was unable to render the landing shopping page.")
-  public static renderShop(req: Request, res: Response, next: NextFunction): void
-  {
+);
+
+export const shop = HttpFunction(
+  'GET',
+  'System was unable to render the landing shopping page.',
+  (req, res) => {
     const products: Product[] | void = InventoryController.list(req, res, next);
-    if(products)
-      res.render('./landing/shop', {  products: products.map(cur => cur.toPrimitiveObj())  });
+    if (products)
+      res.render('./landing/shop', {
+        products: products.map(cur => cur.toPrimitiveObj())
+      });
   }
-  @HttpMethod("GET", "System was unable to render the landing content page.")
-  public static renderContract(req: Request, res: Response): void
-  {
+);
+
+export const contact = HttpFunction(
+  'GET',
+  'System was unable to render the landing content page.',
+  (req, res) => {
     res.render('./landing/contact');
   }
-}
+);
