@@ -1,28 +1,24 @@
-import { Request, Response, NextFunction, response } from 'express';
-import { ServerError, HttpError } from '../type/Error';
-import { RequestHandler, Dictionary } from 'express-serve-static-core';
+import { Request, Response, NextFunction, response } from "express";
+import { ServerError, HttpError } from "../type/Error";
+import { RequestHandler, Dictionary } from "express-serve-static-core";
 
 // Reference Catch Decorator TS
 
-function ErrorHandler(res: Response, err: Error, clientMsg: string) {
-  res.sendError(err, clientMsg);
-}
-
 export function HttpMethod(
-  method: 'GET' | 'PATCH' | 'POST' | 'DELETE' | 'ALL',
+  method: "GET" | "PATCH" | "POST" | "DELETE" | "ALL",
   ClientErrorMsg: string
 ): Function {
   return function(
     target: Object,
     key: string | symbol,
     descriptor: PropertyDescriptor
-  ): PropertyDescriptor {
+  ) {
     try {
       const original: Function = descriptor.value;
       if (
         original.arguments[0] instanceof Request &&
         original.arguments[1] instanceof Response &&
-        typeof original.arguments[2] === 'function'
+        typeof original.arguments[2] === "function"
       ) {
         descriptor.value = function(
           req: Request,
@@ -30,57 +26,61 @@ export function HttpMethod(
           next: NextFunction
         ) {
           try {
-            if (req.method !== method && method != 'ALL') {
-              throw new ProgramError(
+            if (req.method !== method && method != "ALL") {
+              throw new ServerError(
                 method.toUpperCase() + " method wasn't implemented correctly."
               );
             } else {
               const next = original.apply(this, [req, res]);
               if (
                 next &&
-                typeof next.then === 'function' &&
-                typeof next.catch === 'function'
+                typeof next.then === "function" &&
+                typeof next.catch === "function"
               ) {
                 return next.catch((error: Error) => {
-                  ErrorHandler(res, error, ClientErrorMsg);
+                  next(error);
                 });
               }
               res.send({ success: true });
             }
           } catch (e) {
-            ErrorHandler(res, e, ClientErrorMsg);
+            next(e);
           }
         };
       } else if (
         original.arguments[0] instanceof Request &&
         original.arguments[2] instanceof Response
       ) {
-        descriptor.value = function(req: Request, res: Response) {
+        descriptor.value = function(
+          req: Request,
+          res: Response,
+          next: NextFunction
+        ) {
           try {
-            if (req.method !== method && method != 'ALL') {
-              throw new ProgramError(
+            if (req.method !== method && method != "ALL") {
+              throw new ServerError(
                 method.toUpperCase() + " method wasn't implemented correctly."
               );
             } else {
               const next = original.apply(this, [req, res]);
               if (
                 next &&
-                typeof next.then === 'function' &&
-                typeof next.catch === 'function'
+                typeof next.then === "function" &&
+                typeof next.catch === "function"
               ) {
                 return next.catch((error: Error) => {
-                  ErrorHandler(res, error, ClientErrorMsg);
+                  next(error);
                 });
               }
               res.send({ success: true });
             }
           } catch (e) {
-            ErrorHandler(res, e, ClientErrorMsg);
+            next(e);
           }
         };
       } else
-        throw new ProgramError(
-          'The arguments passed into the function cannot be accepted.'
+        throw new ServerError(
+          "The arguments passed into the function cannot be accepted."
         );
 
       return descriptor;
@@ -91,7 +91,7 @@ export function HttpMethod(
   };
 }
 
-type Methods = 'GET' | 'PATCH' | 'POST' | 'DELETE' | 'ALL';
+type Methods = "GET" | "PATCH" | "POST" | "DELETE" | "ALL";
 
 export const HttpFunction = (
   errMsg: string,

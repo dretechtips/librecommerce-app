@@ -4,27 +4,27 @@ import {
   ExistingBody,
   Value,
   SearchQuery
-} from '../interface/Order.interface';
-import { Queue } from '../data/Queue';
-import * as uuid from 'uuid/v4';
-import { EmailAddress, PhoneNum, Address, IPAddress } from '../type/Location';
-import Customer from './Customer';
-import * as ICustomer from '../interface/Customer.interface';
-import { Shipping } from './Shipping';
-import axios = require('axios');
-import { Request } from 'express-serve-static-core';
-import { Money } from '../type/Money';
-import * as IShipping from '../interface/Shipping.interface';
-import ProductVariation from './ProductVariation';
-import Model from './Model';
+} from "../interface/Order.interface";
+import { Queue } from "../data/Queue";
+import * as uuid from "uuid/v4";
+import { EmailAddress, PhoneNum, Address, IPAddress } from "../type/Location";
+import Customer from "./Customer";
+import * as ICustomer from "../interface/Customer.interface";
+import { Shipping } from "./Shipping";
+import axios = require("axios");
+import { Request } from "express-serve-static-core";
+import { Money } from "../type/Money";
+import * as IShipping from "../interface/Shipping.interface";
+import ProductVariation from "./ProductVariation";
+import Model from "./Model";
 
 export class Order extends Model<
   Value,
   ExistingBody,
-  Pick<ExistingBody, 'cancelled' | 'cart'>
+  Pick<ExistingBody, "cancelled" | "cart">
 > {
-  constructor(order: Constructor) {
-    super('order');
+  constructor(order: Constructor | string) {
+    super("order");
     this._value = {
       ...order,
       id: uuid(),

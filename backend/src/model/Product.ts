@@ -2,14 +2,20 @@ import {
   Constructor,
   NewBody,
   ExistingBody,
-  SearchQuery
-} from '../interface/Product.interface';
-import uuid = require('uuid/v4');
+  SearchQuery,
+  Value
+} from "../interface/Product.interface";
+import uuid = require("uuid/v4");
 
 export class Product {
-  private _values: Constructor;
+  private _values: Value;
   constructor(product: Constructor) {
-    this._values = product;
+    this._values = {
+      ...product,
+      id: uuid(),
+      rating: 5.0,
+      ratingAmount: 0
+    };
   }
   public add(): void {
     // Database Method
