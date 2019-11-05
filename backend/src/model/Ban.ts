@@ -2,9 +2,9 @@ import { IPAddress, EmailAddress } from '../type/Location';
 import uuid = require('uuid/v4');
 import cron = require('node-cron');
 import { User } from '../model/User';
-import { Account, AccountManager } from '../model/Account';
+import Account from '../model/Account';
 import { ServerError } from '../type/Error';
-import { Body } from '../interface/Ban.interface';
+import { NewBody } from '../interface/Ban.interface';
 import { SearchQuery } from '../interface/Ban.interface';
 import * as database from 'database';
 
@@ -48,7 +48,7 @@ export class Ban {
   }
   public toPrimObj(): Body {
     return {
-      customerID: this._accountID,
+      id: this._accountID,
       reason: this._reason
     };
   }

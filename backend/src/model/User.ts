@@ -1,43 +1,32 @@
-import { default as Database } from "./Database";
-import { IUser } from "../interface/User.interface";
+import { default as Database } from './Database';
+import { IUser } from '../interface/User.interface';
 import uuid = require('uuid/v4');
-import { UserSM } from "../service/User.service";
-import { EmailAddress, Address, PhoneNum, IPAddress } from "../type/Location";
-import { BanController } from "../controller/Ban.controller";
-import { Time } from "../type/Time";
-import { Ban } from "../model/Ban";
-import { ActiveAccount, AccountManager, Account } from "./Account";
-import { Password } from "../type/Password";
-import { Schedule } from "./Schedule";
-import { IPayroll } from "../interface/Payroll.interface";
+import { UserSM } from '../service/User.service';
+import { EmailAddress, Address, PhoneNum, IPAddress } from '../type/Location';
+import * as BanController from '../controller/Ban.controller';
+import { Time } from '../type/Time';
+import { Ban } from '../model/Ban';
+import Account from './Account';
+import AccountActive from './AccountActive';
+import { Password } from '../type/Password';
+import { Schedule } from './Schedule';
+import Payment from '../type/Payment';
 
-export class ActiveUsers extends ActiveAccount { }
-
-export class UserManager extends AccountManager { }
-
-export class User extends Account
-{
+export class User extends Account {
   protected _value: IUser.Value;
-  constructor(user: IUser.Constructor)
-  {
+  constructor(user: IUser.Constructor) {
     const value: IUser.Value = {
       ...user,
-      rank: "RANK_2",
-    }
+      rank: 'RANK_2'
+    };
     super(value);
   }
-  public getPayment(): IPayroll.PaymentInfo {
+  public getPayment(): Payment {
     return this._value.payment;
   }
-  public save(): void {
-
-  }
-  public delete(): void {
-
-  }
-  public update(): void {
-
-  }
+  public save(): void {}
+  public delete(): void {}
+  public update(): void {}
   public static generate(body: IUser.NewBody): User {
     const user: IUser.Constructor = {
       id: uuid(),
@@ -53,9 +42,11 @@ export class User extends Account
       position: body.position,
       alerts: [],
       associatedIPs: [],
-      payment: body.payment,
-    }
+      payment: body.payment
+    };
     return new User(user);
   }
+  public static search(): User[] {}
 }
 
+export default User;

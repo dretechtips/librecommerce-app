@@ -1,6 +1,6 @@
-import Ban from "../model/Ban";
-import * as IBan from "../interface/Ban.interface";
-import { IPAddress } from "src/type/Location";
+import Ban from '../model/Ban';
+import * as IBan from '../interface/Ban.interface';
+import { IPAddress } from '../type/Location';
 
 export interface Constructor {
   msg: string;
@@ -8,19 +8,18 @@ export interface Constructor {
 }
 
 export interface AppealBody {
-  caseID: string,
-  message: string,
-  ban: IBan.Body,
+  id: string;
+  message: string;
 }
 
 export interface AppealReview {
-  caseID: string;
-  resolution: "resolve" | "reject";
+  id: string;
+  resolution: 'resolve' | 'reject';
 }
 
 export interface SearchQuery {
-  customerID: string,
-  date: Date,
-  ipAddress: IPAddress[],
-  caseID: string;
+  customerID: string;
+  date: Date;
+  ipAddress: IPAddress[];
+  id: string;
 }

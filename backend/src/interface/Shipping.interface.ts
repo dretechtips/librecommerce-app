@@ -1,11 +1,15 @@
 import { Money } from '../type/Money';
+import { NamespaceKey } from '../factory/Namespace.factory';
 
 export interface Constructor {
-  shippingID: string;
   orderID: string;
   days: number;
-  price: Money;
   provider: Provider;
+}
+
+export interface Value extends Constructor {
+  id: string;
+  price: Money;
   cancelled: boolean;
 }
 
@@ -17,8 +21,19 @@ export interface NewBody {
 }
 
 export interface ExistingBody extends NewBody {
-  shippingID: string;
+  id: string;
   cancelled: boolean;
 }
 
 export type Provider = 'fedex' | 'ups' | 'usps';
+
+export interface SearchQuery {
+  id: string;
+  shippingID: string;
+  orderID: string;
+  provider: Provider;
+}
+
+export interface ParamStorage {
+  id: NamespaceKey;
+}

@@ -1,11 +1,9 @@
-import { ActiveSchedule } from "../model/Schedule";
+import Schedule, { ActiveSchedule } from '../model/Schedule';
 
-export class ScheduleManager {
-  private _schedules: ActiveSchedule;
-  private _maxSchedules: number;
-  
-  constructor(schedules: ActiveSchedule) {
-    this._schedules = schedules;
-  }
-  
-}
+function load(): Schedule[] {}
+
+function highPerformanceHighBudget(): Schedule[] {}
+
+function lowPerformanceLowBudget(): Schedule[] {}
+
+function avgPerformanceAvgBudget(): Schedule[] {}

@@ -1,12 +1,17 @@
-import { IPAddress } from "../type/Location";
+import { IPAddress } from '../type/Location';
 
-export interface Body {
+export interface NewBody {
   customerID: string;
   reason: string;
 }
 
+export interface ExistingBody extends NewBody {
+  id: string;
+}
+
 export interface SearchQuery {
   customerID: string;
-  date: Date,
-  ipAddress: IPAddress[],
+  date: Date;
+  ipAddress: IPAddress[];
+  id: string;
 }

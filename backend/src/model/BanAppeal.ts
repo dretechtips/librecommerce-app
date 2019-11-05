@@ -5,6 +5,7 @@ import {
   AppealBody,
   SearchQuery
 } from '../interface/BanAppeal.interface';
+import Account from './Account';
 
 export class BanAppeal {
   private readonly _message: string;
@@ -22,6 +23,7 @@ export class BanAppeal {
     this._timestamp = new Date();
     this._resolution = 'incomplete';
   }
+  public getAccount(): Account {}
   public getMessage(): string {
     return this._message;
   }

@@ -3,9 +3,9 @@
     "experimentalDecorators": true,
     "module": "commonjs",
     "noImplicitAny": true,
-    "baseUrl": "./src",
+    "baseUrl": "./src/libs",
     "paths": {
-      "database": ["libs/database"]
+      "database": ["database"]
     },
     "preserveConstEnums": true,
     "removeComments": true,

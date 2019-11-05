@@ -1,54 +1,80 @@
-import { Request, Response, NextFunction } from "express";
-import { IShipping } from "../interface/Shipping.interface";
-import { Shipping, ShippingManager, ShippingQueue } from "../model/Shipping";
-import { HttpMethod } from "../decorator/HttpMethod";
-import { ClientError } from "../model/Error";
+import { Request, Response, NextFunction } from 'express';
+import {
+  NewBody,
+  ExistingBody,
+  ParamStorage
+} from '../interface/Shipping.interface';
+import { Shipping, ShippingQueue } from '../model/Shipping';
+import { ClientError, ServerError } from '../type/Error';
+import { HttpFunction } from '../decorator/Http.decorator';
+import NamespaceFactory from '../factory/Namespace.factory';
 
-export class ShippingController
-{
-  private static _queue: ShippingQueue = new ShippingQueue();
-  @HttpMethod("POST", "System was unable to add the shipping.")
-  public static add(req: Request, res: Response): void
-  {
-    const bShipping: IShipping.NewBody =  req.body.shipping;
-    const shipping: Shipping = Shipping.generate(bShipping);
-    shipping.save();
-  }
-  @HttpMethod("DELETE", "System was unable to delete the shipping.")
-  public static cancel(req: Request, res: Response, next?: NextFunction): void {
-    const shippingID: string = req.body.shipping.id;
-    const shipping: Shipping[] = ShippingController._queue.getValues();
-    for(let i = 0 ; i < shipping.length ; i++) {
-      const cur: Shipping = shipping[i];
-      if(cur.getID() === shippingID) 
-        shipping.splice(i, 1);
+declare global {
+  namespace Express {
+    interface Request {
+      shipping: Shipping;
     }
   }
-  @HttpMethod("DELETE", "System was unable to delete order form the system.")
-  public static delete(req: Request, res: Response, next?: NextFunction): void {
-    ShippingController.cancel(req, res, next);
-    const shippingID: string = req.body.shipping.id;
-    const shipping: Shipping | null = ShippingManager.from.id(shippingID);
-    if(!shipping)
-      throw new ClientError("Client didn't provide a valid shipping ID.")
-    shipping.delete();
-  }
-  @HttpMethod("PATCH", "System was unable to to update the shipping.")
-  public static update(req: Request, res: Response) : void {
-    const shippingID: string = req.body.shipping.id;
-    const bShipping: any = req.body.shipping;
-    const shipping: Shipping | null = ShippingManager.from.id(shippingID);
-    if(!shipping)
-      throw new ClientError("Client didn't provide a valid client id.");
-    shipping.update(bShipping);
-    shipping.save();
-  }
-  @HttpMethod("GET", "System was unable to get the shipping ID.")
-  public static getShippingID(req: Request, res: Response): void {
-    const shippingID: string = req.body.shipping.id;
-    const shipping: Shipping | null = ShippingManager.from.id(shippingID);
-    if(!shipping)
-      throw new ClientError("Client didn't provide a valid shipping ID.");
-    res.send({success: true, shipping: shipping.toPrimObj()});
-  }
 }
+
+const name = new NamespaceFactory('shipping');
+
+const params: ParamStorage = {
+  id: name.new('id')
+};
+
+export const get = HttpFunction(
+  'System was unable to fetch a shipping',
+  (req, res, next) => {
+    const id: string = req.param(params.id.string());
+    if (!id)
+      throw new ClientError(
+        'Client did not provide an id to fetch the shipping for param ' +
+          params.id.string()
+      );
+    const shippings: Shipping[] = Shipping.search({ id });
+    if (shippings.length !== 1)
+      throw new ServerError(
+        'Server has found more or less than 1 shippings from 1 id.'
+      );
+    req.shipping = Shipping.search({ id })[0];
+    return next();
+  }
+);
+
+export const add = HttpFunction(
+  'System was unable to add the shipping.',
+  (req, res, next) => {
+    const bShipping: NewBody = req.body.shipping;
+    const shipping: Shipping = Shipping.generate(bShipping);
+    shipping.save();
+    return next();
+  }
+);
+
+export const cancel = HttpFunction(
+  'System was unable to delete the shipping.',
+  (req, res, next) => {
+    req.shipping.update({ cancelled: true });
+    return next();
+  }
+);
+
+export const remove = [
+  cancel,
+  HttpFunction(
+    'System was unable to delete order form the system.',
+    (req, res, next) => {
+      req.shipping.delete();
+      return next();
+    }
+  )
+];
+
+export const getID = HttpFunction(
+  'System was unable to get the shipping ID.',
+  (req, res, next) => {
+    res.send({ success: true, shipping: { id: req.shipping.getID() } });
+    return next();
+  }
+);

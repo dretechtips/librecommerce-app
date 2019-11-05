@@ -1,7 +1,7 @@
 import { IPAddress, EmailAddress, PhoneNum, Address } from '../type/Location';
 import { Alert } from '../model/Alert';
 import { Password } from '../type/Password';
-import { CookieKey } from '../factory/Cookie.factory';
+import { NamespaceKey } from '../factory/Namespace.factory';
 
 export interface Constructor {
   readonly id: string;
@@ -34,7 +34,7 @@ export interface ExistingBody extends NewBody {
 }
 
 export interface CookieStorage {
-  accessToken: CookieKey;
+  accessToken: NamespaceKey;
 }
 
 export interface SearchQuery {

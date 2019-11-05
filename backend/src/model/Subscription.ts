@@ -1,10 +1,9 @@
-import { ISubscription } from "../interface/Subscription.interface";
-import { Product, ProductManager, ProductVariation, ProductVariationManager } from "./Inventory";
-import { Money } from "../type/Money";
-import { Discount } from "../type/Discount";
+import { ISubscription } from '../interface/Subscription.interface';
+import { Money } from '../type/Money';
+import { Discount } from '../type/Discount';
 import uuid = require('uuid/v4');
-import { ServerError } from "../type/Error";
-import { Customer, CustomerManager } from "./Customer";
+import { ServerError } from '../type/Error';
+import Customer from './Customer';
 
 export class Subscription {
   private _customerID: string;
@@ -15,22 +14,19 @@ export class Subscription {
     this._packages = Array<Package>(this._packages.length);
     for (let i = 0; i < this._packages.length; i++) {
       const pack: Package | null = PackageManager.from.id(packageIDs[i]);
-      if (pack)
-        this._packages[i] = pack;
+      if (pack) this._packages[i] = pack;
     }
     this.finder = new PackageFinder(this._packages);
     this._customerID = customer.getID();
   }
-  public toPrimObj(): void {
-
-  }
+  public toPrimObj(): void {}
   public listPackages(): Package[] {
     return this._packages;
   }
   public static generate(sub: ISubscription.Customer.Body): Subscription {
     const obj: ISubscription.Customer.Constructor = {
       ...sub
-    }
+    };
     return new Subscription(obj);
   }
 }
@@ -52,7 +48,7 @@ export class PackageManager {
     public static admin(): Package[] | null {
       // Databasem
     }
-  }
+  };
 }
 
 class PackageFinder {
@@ -61,21 +57,19 @@ class PackageFinder {
     this._packages = packages;
   }
   public id(id: string): Package | null {
-    const pack: Package | undefined = this._packages.find(cur => cur.getID() === id);
-    if (pack)
-      return pack;
-    else
-      return null;
+    const pack: Package | undefined = this._packages.find(
+      cur => cur.getID() === id
+    );
+    if (pack) return pack;
+    else return null;
   }
   public index(index: number): Package | null {
-    if (index > this._packages.length - 1)
-      return null;
-    else
-      return this._packages[index];
+    if (index > this._packages.length - 1) return null;
+    else return this._packages[index];
   }
 }
 
-export type PackageOwner = "client" | "admin"
+export type PackageOwner = 'client' | 'admin';
 
 export class Package {
   private _productsID: string[];
@@ -88,9 +82,10 @@ export class Package {
       this._name = name;
       this._id = uuid();
       if (productsID.length === 0)
-        throw new ServerError("A subscription package cannot be created with zero products.");
-    }
-    catch (e) {
+        throw new ServerError(
+          'A subscription package cannot be created with zero products.'
+        );
+    } catch (e) {
       const ex: Error = e;
       hconsole.error(ex);
     }
@@ -107,9 +102,7 @@ export class Package {
   public getType(): PackageOwner {
     return this._type;
   }
-  public update(body: any): void {
-
-  }
+  public update(body: any): void {}
   public delete(): void {
     // Database Method
   }
@@ -117,18 +110,16 @@ export class Package {
     let tPrice: Money = new Money(0);
     for (let i = 0; i < this._productsID.length; i++) {
       const curID: string = this._productsID[i];
-      const cur: ProductVariation | null = ProductVariationManager.from.id(curID);
+      const cur: ProductVariation | null = ProductVariationManager.from.id(
+        curID
+      );
       if (cur) {
         const cost: Money = cur.getCost();
         tPrice = tPrice.add(cost);
       }
     }
-    if (this._discount)
-      return tPrice.reduce(this._discount);
-    else
-      return tPrice;
+    if (this._discount) return tPrice.reduce(this._discount);
+    else return tPrice;
   }
-  public toPrimObj(): void {
-
-  }
+  public toPrimObj(): void {}
 }

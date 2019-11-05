@@ -1,33 +1,36 @@
 import { EmailAddress, PhoneNum, Address } from '../type/Location';
-import { IShipping } from './Shipping.interface';
+import * as IShipping from './Shipping.interface';
 import { Shipping } from '../model/Shipping';
 import { IPAddress } from '../type/Location';
 import { Money } from '../type/Money';
 import { AddressConstructor } from './Location.interface';
 import * as ICustomer from './Customer.interface';
+import ProductVariation from '../model/ProductVariation';
 
 export interface Constructor {
-  id: string;
-  timestamp: Date;
-  products: OrderProduct[];
+  products: ProductVariation[];
   address: Address;
-  cancelled: boolean;
   shipping: Shipping;
   ipAddress: IPAddress;
-  cost: Money;
-  complete: boolean;
 }
 
-export interface Value extends Constructor {}
+export interface Value extends Constructor {
+  id: string;
+  timestamp: Date;
+  cancelled: boolean;
+  complete: boolean;
+  cost: Money;
+}
 
 export interface NewBody {
   customerID: string;
-  id: string;
-  products: OrderProduct[];
+  // TODO: FIX CART
+  cart: string;
   shipping: IShipping.NewBody;
 }
 
 export interface ExistingBody extends NewBody {
+  id: string;
   customer: ICustomer.ExistingBody;
   timestamp: string;
   cancelled: boolean;
@@ -36,13 +39,9 @@ export interface ExistingBody extends NewBody {
   shipping: IShipping.ExistingBody;
 }
 
-export interface OrderProduct {
-  id: string;
-  quantity: number;
-}
-
 export interface SearchQuery {
   customerID: string;
   shippingID: string;
   id: string;
+  hold: boolean;
 }

@@ -1,7 +1,7 @@
 import Time from '../type/Time';
 import uuid = require('uuid/v4');
 import Account from './Account';
-import { ServerError, ClientError } from 'type/Error';
+import { ServerError, ClientError } from '../type/Error';
 
 export class AccountActive {
   private _session: Map<string, string>;

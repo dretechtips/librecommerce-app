@@ -1,44 +1,59 @@
-import { Money } from "../type/Money";
+import { Money } from '../type/Money';
+import Check from '../type/Check';
+import { PaypalMe } from '../interface/Paypal.interface';
+import CreditCard from '../type/CreditCard';
+import Payment from '../type/Payment';
+import User from '../model/User';
+import { Schedule } from '../model/Schedule';
 
-export namespace IPayroll {
-  export interface CheckingAccount {
-    routing: number;
-    account: number;
-  }
-  export enum Absence {
-    EXCUSSED,
-    UNEXCUESSED
-  }
-  export type PaymentType = "wage" | "salary" | "commission" ;
-  export interface PaymentInfo {
-    paypalMe?: URL,
-    checking?: CheckingAccount,
-    online: boolean,
-    details: WageConstructor | SalaryConstructor | CommissionConstructor
-  }
-  export interface BaseConstructor {
-    hoursEachWeek: number[],
-  }
-  export interface WageConstructor extends BaseConstructor {
-    hourly: Money,
-    type: "wage",
-  }
-  export interface SalaryConstructor extends BaseConstructor {
-    salary: Money,
-    deducation: Money[],
-    type: "salary"
-  }
-  export interface CommissionConstructor extends BaseConstructor {
-    percent: number,
-    total: Money,
-    type: "commission",
-  }
-  export interface Body {
-    userID: string,
-    paypalMe?: string,
-    checking?: CheckingAccount,
-    online: boolean,
-    type: PaymentType,
-    total: number,
-  }
+export enum Absence {
+  EXCUSSED,
+  UNEXCUESSED
+}
+
+export interface Constructor {
+  payment: Payment;
+  userID: string;
+}
+
+export interface Value extends Omit<Constructor, 'userID'> {
+  tracked: [number, number, number, number];
+  user: User;
+  schedule: Schedule;
+}
+
+export type Mode = 'salary' | 'wage' | 'commission';
+
+export interface UserPayroll {
+  mode: Mode;
+  wage?: WageConstructor;
+  salary?: SalaryConstructor;
+  commission?: CommissionConstructor;
+}
+
+export interface WageConstructor {
+  hourly: Money;
+}
+
+export interface SalaryConstructor {
+  salary: Money;
+  deducation: Money[];
+}
+
+export interface CommissionConstructor {
+  percent: number;
+  total: Money;
+}
+
+export interface Body {
+  userID: string;
+  paypalMe?: string;
+  checking?: CheckingAccount;
+  online: boolean;
+  type: PaymentType;
+  total: number;
+}
+
+export interface SearchQuery {
+  active: boolean;
 }

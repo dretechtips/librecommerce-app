@@ -2,12 +2,20 @@ import { Request, Response, NextFunction } from 'express';
 import Customer from '../model/Customer';
 import ActiveCustomer from '../model/CustomerActive';
 import AccountReset from '../model/AccountReset';
-import { HttpMethod, HttpFunction } from '../decorator/HttpMethod';
+import { HttpMethod, HttpFunction } from '../decorator/Http.decorator';
 import { NewBody } from '../interface/Customer.interface';
 import { ClientError, ServerError, DatabaseError } from '../type/Error';
 import { ExistingBody } from '../interface/Customer.interface';
-import CookieFactory from '../factory/Cookie.factory';
+import CookieFactory from '../factory/Namespace.factory';
 import { CookieStorage, ResetPassword } from '../interface/Account.interface';
+
+declare global {
+  namespace Express {
+    interface Request {
+      customer: Customer;
+    }
+  }
+}
 
 const session: ActiveCustomer = new ActiveCustomer();
 
@@ -19,8 +27,19 @@ const cs: CookieStorage = {
   accessToken: cf.new('accessToken')
 };
 
+export const get = HttpFunction(
+  'System was unable to fetch the customer',
+  (req, res, next) => {
+    const { id } = req.body.customer as Pick<ExistingBody, 'id'>;
+    const customers: Customer[] = Customer.search({ id });
+    if (customers.length !== 1)
+      throw new ServerError('System found 2 customers account from one id.');
+    req.customer = customers[0];
+    return next();
+  }
+);
+
 export const verify = HttpFunction(
-  'ALL',
   'System was unable to verify the customer account.',
   (req, res, next) => {
     const accessToken: string = req.cookies[cs.accessToken.string()];
@@ -29,12 +48,11 @@ export const verify = HttpFunction(
     const customer: Customer[] = Customer.search({ id: cID ? cID : undefined });
     if (customer.length !== 1)
       throw new ServerError("Server didn't fetch one customer account");
-    return customer[0];
+    return next();
   }
 );
 
 export const signin = HttpFunction(
-  'POST',
   'System was unable to sign in the customer',
   (req, res) => {
     const { id } = req.body.customer as Pick<ExistingBody, 'id'>;
@@ -58,7 +76,6 @@ export const signin = HttpFunction(
 );
 
 export const add = HttpFunction(
-  'POST',
   'System was unable to add the customer.',
   (req, res) => {
     const body: NewBody = req.body.customer;
@@ -69,27 +86,17 @@ export const add = HttpFunction(
 );
 
 export const update = HttpFunction(
-  'PATCH',
   'System was unable to update the customer.',
   (req, res) => {
-    const { id } = req.body.customer as Pick<ExistingBody, 'id'>;
     const body: Partial<NewBody> = req.body.customer;
-    const customers: Customer[] = Customer.search({ id });
-    if (customers.length !== 1)
-      throw new ServerError('System found 2 customers account from one id.');
-    customers[0].update(body);
+    req.customer.update(body);
   }
 );
 
 export const remove = HttpFunction(
-  'DELETE',
   'System was unable to delete the customer account',
   (req, res) => {
-    const { id } = req.body.customer as Pick<ExistingBody, 'id'>;
-    const customers: Customer[] = Customer.search({ id });
-    if (customers.length !== 1)
-      throw new ServerError('System found 2 customers account from one id.');
-    customers[0].remove();
+    req.customer.remove();
   }
 );
 /**
@@ -98,7 +105,6 @@ export const remove = HttpFunction(
  *   Note: The link will expire in 24 hours.
  */
 export const email = HttpFunction(
-  'POST',
   'System was unable to email the customer their password',
   (req, res) => {
     // Check if reset is in the system
@@ -106,8 +112,7 @@ export const email = HttpFunction(
   }
 );
 // Rework this
-export const resetPASS = HttpFunction(
-  'PATCH',
+export const resetPassword = HttpFunction(
   'System was unable to reset your password.',
   (req, res) => {
     const { credientals } = req.body.customer as ResetPassword;
