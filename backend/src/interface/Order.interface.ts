@@ -6,10 +6,12 @@ import { Money } from '../type/Money';
 import { AddressConstructor } from './Location.interface';
 import * as ICustomer from './Customer.interface';
 import ProductVariation from '../model/ProductVariation';
+import Customer from '../model/Customer';
+import Cart from '../model/Cart';
 
 export interface Constructor {
-  products: ProductVariation[];
-  address: Address;
+  cart: Cart;
+  customer: Customer;
   shipping: Shipping;
   ipAddress: IPAddress;
 }
@@ -23,20 +25,18 @@ export interface Value extends Constructor {
 }
 
 export interface NewBody {
-  customerID: string;
-  // TODO: FIX CART
-  cart: string;
-  shipping: IShipping.NewBody;
+  customer: Customer;
+  cart: Cart;
+  shipping: Shipping;
+  ipAddress: string;
 }
 
 export interface ExistingBody extends NewBody {
   id: string;
-  customer: ICustomer.ExistingBody;
   timestamp: string;
   cancelled: boolean;
   ipAddress: string;
   totalCost: number;
-  shipping: IShipping.ExistingBody;
 }
 
 export interface SearchQuery {

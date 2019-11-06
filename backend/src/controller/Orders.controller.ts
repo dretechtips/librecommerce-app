@@ -18,20 +18,16 @@ import OrderFeed from '../model/OrderFeed';
 import { ServerError, ClientError } from '../type/Error';
 import * as CustomerController from './Customer.controller';
 import Cart from '../model/Cart';
+import Controller from './_.controller';
+import { Value, ExistingBody } from '../interface/Order.interface';
 
 //const queue: OrderQueue = new OrderQueue();
 
+const controller = new Controller<Value, ExistingBody, Order>(Order, 'order');
+
 const feeds: OrderFeed = new OrderFeed();
 
-export const get = HttpFunction(
-  'System was unable to get an order',
-  (req, res, next) => {
-    const { id } = req.body.order as Pick<ExistingBody, 'id'>;
-    const orders: Order[] = Order.search({ id });
-    const order: Order = orders[0];
-    req.order = order;
-  }
-);
+export const get = controller.get('System was uable to get an order');
 
 export const add = [
   HttpFunction('System was unable to add the order.', (req, res, next) => {

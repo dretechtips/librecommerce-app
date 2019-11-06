@@ -5,7 +5,7 @@ import * as BanController from '../controller/Ban.controller';
 import { Time } from '../type/Time';
 import cron = require('node-cron');
 import uuid = require('uuid/v4');
-import { ClientError } from 'type/Error';
+import { ClientError } from '../type/Error';
 
 export abstract class Account {
   protected _value: Constructor;
