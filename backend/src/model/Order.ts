@@ -4,26 +4,28 @@ import {
   ExistingBody,
   Value,
   SearchQuery
-} from '../interface/Order.interface';
-import { Queue } from '../data/Queue';
-import * as uuid from 'uuid/v4';
-import { EmailAddress, PhoneNum, Address, IPAddress } from '../type/Location';
-import Customer from './Customer';
-import * as ICustomer from '../interface/Customer.interface';
-import { Shipping } from './Shipping';
-import axios = require('axios');
-import { Request } from 'express-serve-static-core';
-import { Money } from '../type/Money';
-import * as IShipping from '../interface/Shipping.interface';
-import ProductVariation from './ProductVariation';
-import Model from './Model';
-
-export class Order extends Model<Value, ExistingBody> {
-  constructor(order: Constructor | string | NewBody) {
-    if (typeof order === 'string') {
-      super('order', order);
+} from "../interface/Order.interface";
+import { Queue } from "../data/Queue";
+import * as uuid from "uuid/v4";
+import { EmailAddress, PhoneNum, Address, IPAddress } from "../type/Location";
+import Customer from "./Customer";
+import * as ICustomer from "../interface/Customer.interface";
+import { Shipping } from "./Shipping";
+import axios = require("axios");
+import { Request } from "express-serve-static-core";
+import { Money } from "../type/Money";
+import * as IShipping from "../interface/Shipping.interface";
+import ProductVariation from "./ProductVariation";
+import Model from "./Model";
+interface test {
+  collection: string;
+}
+export class Order extends Model<Value, ExistingBody> implements test {
+  protected static collection = "order";
+  constructor(order: Constructor | string) {
+    if (typeof order === "string") {
+      super(order);
     } else {
-      super('order');
       this.setState({
         ...this.state(),
         ...order,

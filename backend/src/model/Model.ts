@@ -1,16 +1,17 @@
-import * as db from 'database';
-import { State, Props } from '../interface/Model.interface';
-import uuid = require('uuid/v4');
+import * as db from "database";
+import { State, Props } from "../interface/Model.interface";
+import uuid = require("uuid/v4");
 
 /**
  * @param S  State
  * @param I  Interface
  */
 export abstract class Model<S = {}, I = {}> {
+  protected static collection: string;
   private _value: State<S>;
-  constructor(collection: string, id?: string) {
+  constructor(id?: string) {
     if (id) {
-      const struct: I = this.find(collection, id);
+      const struct: I = this.find(Model.collection, id);
       const value: State<S> = this.fromPrimObj(struct);
       this._value = value;
     } else {
@@ -45,6 +46,10 @@ export abstract class Model<S = {}, I = {}> {
   public update(data: Partial<I>): void {}
   public abstract toPrimObj(): I;
   public abstract fromPrimObj(struct: I): State<S>;
+  public static search(query: string) {
+    // Call database collection using collection name
+    // Query the database based off param
+  }
 }
 
 export default Model;
