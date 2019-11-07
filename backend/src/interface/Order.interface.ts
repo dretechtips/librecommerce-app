@@ -13,7 +13,6 @@ export interface Constructor {
   cart: Cart;
   customer: Customer;
   shipping: Shipping;
-  ipAddress: IPAddress;
 }
 
 export interface Value extends Constructor {
@@ -25,10 +24,9 @@ export interface Value extends Constructor {
 }
 
 export interface NewBody {
-  customer: Customer;
-  cart: Cart;
-  shipping: Shipping;
-  ipAddress: string;
+  customerID: string;
+  cartID: string;
+  shippingID: string;
 }
 
 export interface ExistingBody extends NewBody {
@@ -36,7 +34,7 @@ export interface ExistingBody extends NewBody {
   timestamp: string;
   cancelled: boolean;
   ipAddress: string;
-  totalCost: number;
+  cost: number;
 }
 
 export interface SearchQuery {

@@ -11,7 +11,8 @@ import { wsServer } from '../index';
 import {
   ExistingBody,
   SearchQuery,
-  NewBody
+  NewBody,
+  Value
 } from '../interface/Order.interface';
 import { HttpMethod, HttpFunction } from '../decorator/Http.decorator';
 import OrderFeed from '../model/OrderFeed';
@@ -19,7 +20,6 @@ import { ServerError, ClientError } from '../type/Error';
 import * as CustomerController from './Customer.controller';
 import Cart from '../model/Cart';
 import Controller from './_.controller';
-import { Value, ExistingBody } from '../interface/Order.interface';
 
 //const queue: OrderQueue = new OrderQueue();
 
@@ -29,38 +29,14 @@ const feeds: OrderFeed = new OrderFeed();
 
 export const get = controller.get('System was uable to get an order');
 
-export const add = [
-  HttpFunction('System was unable to add the order.', (req, res, next) => {
-    const customer: Customer = req.customer;
-    const cart: Cart = req.cart;
-    const shipping: Shipping = req.shipping;
-    const order: Order = new Order({
-      shipping,
-      products: cart.getProducts(),
-      ipAddress: new IPAddress(req.ip),
-      address: req.customer.getAddress()
-    });
-    feeds.add(order);
-    order.save();
-    return next();
-  })
-];
+export const update = controller.update(
+  'System was unable to update an order.',
+  'cancelled' || 'id'
+);
 
-export const remove = [
-  get,
-  HttpFunction('System was unable to remove the order.', (req, res, next) => {
-    req.order.delete();
-    return next();
-  })
-];
+export const remove = controller.remove('System was unable to remove an order');
 
-export const update = [
-  get,
-  HttpFunction('System was unable to update order', (req, res, next) => {
-    req.order.update(req.body.order as ExistingBody);
-    return next();
-  })
-];
+export const add = controller.add('System was unable to add an order');
 
 export const search = HttpFunction(
   'System was unable to search for the orders.',

@@ -13,6 +13,9 @@ export abstract class Model<S = {}, I = {}> {
       const struct: I = this.find(collection, id);
       const value: State<S> = this.fromPrimObj(struct);
       this._value = value;
+    } else {
+      this._value.id = uuid();
+      this._value.timestamp = new Date();
     }
   }
   private find(collection: string, id: string): I {

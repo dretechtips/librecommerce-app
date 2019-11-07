@@ -5,6 +5,7 @@ import Model from '../model/Model';
 import Order from '../model/Order';
 import { Request } from 'express';
 import { Props, State, DefaultProps } from '../interface/Model.interface';
+import { NewBody } from '../interface/Order.interface';
 
 class Controller<State, Props, Type extends Model<State, Props>> {
   private _type: { new (id: string): Type };
@@ -24,22 +25,48 @@ class Controller<State, Props, Type extends Model<State, Props>> {
       return next();
     });
   }
-  public update<U extends keyof Props>(error: string) {
+  public update<U extends keyof Props>(
+    error: string,
+    rewritable: U,
+    gets?: (keyof Express.Request)[]
+  ) {
     return [
       this.get(error),
       HttpFunction(error, (req, res, next) => {
-        const body = req.body[this._storage] as Partial<Pick<Props, U>> &
-          Pick<DefaultProps, 'id'>;
-        const item = req[this._storage];
-        item.update(body);
+        const body: Partial<Pick<Props, U>> = gets
+          ? {
+              ...req.body[this._storage],
+              ...gets.map(cur => req[cur])
+            }
+          : {
+              ...req.body[this._storage]
+            };
+        const item: Model<State, Props> = req[this._storage];
+        item.update(body as Partial<Props>);
         return next();
       })
     ];
   }
-  public add(error: string) {
-    return [this.get(error)];
+  public add<U extends keyof Express.Request>(error: string, getters: U[]) {
+    return [
+      HttpFunction(error, (req, res, next) => {
+        const object = {
+          ...req.body[this._storage],
+          ...getters.map(cur => req[cur])
+        };
+
+        return next();
+      })
+    ];
   }
-  public remove() {}
+  public remove(error: string) {
+    return [
+      this.get(error),
+      HttpFunction(error, (req, res, next) => {
+        req[this._storage].delete();
+      })
+    ];
+  }
 }
 
 export default Controller;

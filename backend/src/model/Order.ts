@@ -19,15 +19,14 @@ import ProductVariation from './ProductVariation';
 import Model from './Model';
 
 export class Order extends Model<Value, ExistingBody> {
-  constructor(order: Constructor | string) {
+  constructor(order: Constructor | string | NewBody) {
     if (typeof order === 'string') {
       super('order', order);
     } else {
       super('order');
       this.setState({
+        ...this.state(),
         ...order,
-        id: uuid(),
-        timestamp: new Date(),
         cancelled: false,
         complete: false,
         cost: this.setTotalCost(order.cart.getProducts())
