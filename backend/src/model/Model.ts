@@ -1,13 +1,18 @@
-import * as db from "database";
-import { State, Props } from "../interface/Model.interface";
-import uuid = require("uuid/v4");
+import * as db from 'database';
+import { State, Props, IModel } from '../interface/Model.interface';
+import uuid = require('uuid/v4');
+import { StaticImplements } from '../decorator/Static.decorator';
+import { PropSafe } from '../interface/Model.interface';
+
+const model = new Model();
 
 /**
  * @param S  State
  * @param I  Interface
  */
-export abstract class Model<S = {}, I = {}> {
-  protected static collection: string;
+@StaticImplements<IModel>()
+export abstract class Model<S = {}, I extends PropSafe = {}> {
+  public static collection: string;
   private _value: State<S>;
   constructor(id?: string) {
     if (id) {
@@ -44,11 +49,17 @@ export abstract class Model<S = {}, I = {}> {
   public delete(): void {}
   public save(): void {}
   public update(data: Partial<I>): void {}
-  public abstract toPrimObj(): I;
+  public abstract toPrimObj(): Props<I>;
   public abstract fromPrimObj(struct: I): State<S>;
-  public static search(query: string) {
-    // Call database collection using collection name
-    // Query the database based off param
+  public static search<S, I extends PropSafe, T extends Model<S, I>>(
+    query: Partial<Props<I>>,
+    type: { new (id: string): T }
+  ): string[] {
+    // Just get the id and pass it into the constructor of the type
+    // 1. Pass the search query into the database search
+    // 2. Get the id as an array
+    // 3. Pass those id into the construcotor
+    // 4. Return T
   }
 }
 

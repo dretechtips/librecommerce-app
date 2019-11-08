@@ -1,11 +1,11 @@
 /// <reference path="../libs/global.d.ts"/>
-import { HttpFunction } from "../decorator/Http.decorator";
-import { NextFunction } from "express";
-import Model from "../model/Model";
-import { Request } from "express";
-import { Props, State, DefaultProps } from "../interface/Model.interface";
-import database from "database";
-import Order from "../model/Order";
+import { HttpFunction } from '../decorator/Http.decorator';
+import { NextFunction } from 'express';
+import Model from '../model/Model';
+import { Request } from 'express';
+import { Props, State, DefaultProps } from '../interface/Model.interface';
+import database from 'database';
+import Order from '../model/Order';
 
 class Controller<Constructor, State, Props, Type extends Model<State, Props>> {
   private _type: { new (id: Constructor | string): Type };
@@ -71,11 +71,14 @@ class Controller<Constructor, State, Props, Type extends Model<State, Props>> {
       })
     ];
   }
-  public search<Q extends Props>(error: string, query: Q) {
+  public search<Q extends keyof Props>(error: string, query?: Q) {
     return HttpFunction(error, (req, res, next) => {
       const query: Q = req.body[this._storage].query;
-      Model.search();
-      return next();
+      const model = Model.search('PLACEHOLDER');
+      const send = {};
+      send['success'] = true;
+      send[this._storage] = model.toPrimObj();
+      res.send({ ...send });
     });
   }
 }

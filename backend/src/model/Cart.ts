@@ -19,6 +19,13 @@ export class Cart {
   public getProducts(): ProductVariation[] {
     return this._value.items;
   }
+  public addProduct(product: ProductVariation): void {
+    this._value.items.push(product);
+    return;
+  }
+  public removeProduct(productID: string): void {
+    this._value.items.filter(cur => productID !== cur.getID());
+  }
   public id(): string {
     return this._value.id;
   }

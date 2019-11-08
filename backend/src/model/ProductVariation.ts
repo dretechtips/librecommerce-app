@@ -32,6 +32,9 @@ export class ProductVariation {
     };
     return product;
   }
+  public getID(): string {
+    return this._values.id;
+  }
   public getCost(): Money {
     return this._values.price;
   }

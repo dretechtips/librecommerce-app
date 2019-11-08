@@ -21,25 +21,21 @@ export interface Value extends Constructor {
   cancelled: boolean;
   complete: boolean;
   cost: Money;
+  hold: boolean;
 }
 
-export interface NewBody {
+export interface ExistingBody {
   customerID: string;
   cartID: string;
   shippingID: string;
-}
-
-export interface ExistingBody extends NewBody {
   id: string;
   timestamp: string;
   cancelled: boolean;
-  ipAddress: string;
   cost: number;
-}
-
-export interface SearchQuery {
-  customerID: string;
-  shippingID: string;
-  id: string;
   hold: boolean;
 }
+
+export type SearchQuery = Pick<
+  ExistingBody,
+  'customerID' | 'cancelled' | 'cartID' | 'hold' | 'shippingID' | 'timestamp'
+>;

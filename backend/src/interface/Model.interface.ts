@@ -7,9 +7,19 @@ export interface DefaultState {
 
 export type State<T = {}> = DefaultState & T;
 
+type Safe = boolean | number | string | boolean[] | number[] | string[] | null;
+
+export type PropSafe = {
+  [key: string]: Safe;
+};
+
 export interface DefaultProps {
   id: string;
   timestamp: string;
 }
 
-export type Props<T = {}> = DefaultProps & T;
+export type Props<T extends PropSafe = {}> = DefaultProps & T;
+
+export interface IModel {
+  collection: string;
+}
