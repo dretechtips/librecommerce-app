@@ -15,7 +15,8 @@ import * as IShipping from '../interface/Shipping.interface';
 import ProductVariation from './ProductVariation';
 import Model from './Model';
 
-export class Order extends Model<Value, Required<ExistingBody>> {
+export class Order extends Model<Value, Required<ExistingBody>>() {
+  public static database = 'main';
   public static collection = 'order';
   constructor(order: Constructor | string) {
     if (typeof order === 'string') {
@@ -50,8 +51,7 @@ export class Order extends Model<Value, Required<ExistingBody>> {
     // Talk to paypal api
   }
   public refund(): void {
-    // Talk to paypal api // Paypal API refund
-    // note it into the database
+    // Talk to paypal api
   }
   public addProduct(product: ProductVariation): void {
     this.state().cart.addProduct(product);
@@ -81,9 +81,6 @@ export class Order extends Model<Value, Required<ExistingBody>> {
   }
   public toPrimObj(): ExistingBody {}
   public fromPrimObj(struct: ExistingBody): Value {}
-  public static search(query: Partial<SearchQuery>) {
-    super.search<Value, Required<ExistingBody>>(query);
-  }
 }
 
 export default Order;

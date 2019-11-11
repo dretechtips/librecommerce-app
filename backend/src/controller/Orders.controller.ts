@@ -70,8 +70,8 @@ export const unhold = [
 
 export const getHoldList = HttpFunction(
   'System was unable to retrieve the holds!',
-  (req, res, next) => {
-    const orders: Order[] = Order.search({ hold: true });
+  async (req, res, next) => {
+    const orderIDs: string[] = await Order.search({ hold: true });
     res.send({ success: true, orders: orders });
   }
 );

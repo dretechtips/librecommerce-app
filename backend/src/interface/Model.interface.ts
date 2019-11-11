@@ -21,5 +21,6 @@ export interface DefaultProps {
 export type Props<T extends PropSafe = {}> = DefaultProps & T;
 
 export interface IModel {
-  collection: string;
+  readonly database: string;
+  readonly collection: string;
 }

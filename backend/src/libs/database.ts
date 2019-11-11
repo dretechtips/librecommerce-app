@@ -1,5 +1,6 @@
-export { Database } from '../model/Database';
-export { DatabaseClient as Client } from '../model/DatabaseClient';
-export { DatabaseCollection as Collection } from '../model/DatabaseCollection';
-export { DatabaseFunction as Function } from '../model/DatabaseFunction';
-export { DatabaseScript as Script } from '../model/DatabaseScript';
+export { DatabaseConnection as Connection } from '../helper/DatabaseConnection';
+export { DatabaseClient as Client } from '../helper/DatabaseClient';
+export { DatabaseAction as Action } from '../helper/DatabaseAction';
+export { DatabaseFunction as Function } from '../helper/DatabaseFunction';
+export { DatabaseScript as Script } from '../helper/DatabaseScript';
+export * from '../interface/Database.interface';

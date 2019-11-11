@@ -3,19 +3,18 @@ import {
   SearchValue,
   Operation,
   DatabaseValue
-} from '../interface/DatabaseFunction.interface';
+} from '../interface/Database.interface';
+import { Db } from 'mongodb';
 
 export abstract class DatabaseFunction {
   private _db: any;
   private _collection: string;
-  constructor(db: any, collection: string) {
+  constructor(db: Db, collection: string) {
     this._db = db;
     this._collection = collection;
   }
   public abstract async run(): Promise<void>;
 }
-
-export default DatabaseFunction;
 
 export class Insert extends DatabaseFunction {
   private _value: DatabaseValue[] | DatabaseValue[][];
