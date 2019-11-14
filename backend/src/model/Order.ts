@@ -13,7 +13,7 @@ import axios = require('axios');
 import { Money } from '../type/Money';
 import * as IShipping from '../interface/Shipping.interface';
 import ProductVariation from './ProductVariation';
-import Model from './Model';
+import Model from '../factory/Model.factory';
 
 export class Order extends Model<Value, Required<ExistingBody>>() {
   public static database = 'main';

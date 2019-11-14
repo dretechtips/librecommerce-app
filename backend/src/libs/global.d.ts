@@ -18,7 +18,7 @@ declare global {
     interface Request {
       customer: Customer;
       shipping: Shipping;
-      order: Order;
+      order: typeof Model;
       product: Product;
     }
   }

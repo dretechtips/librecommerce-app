@@ -20,13 +20,13 @@ import { ServerError, ClientError } from '../type/Error';
 import * as CustomerController from './Customer.controller';
 import Cart from '../model/Cart';
 import Controller from './_.controller';
+import Model from '../model/Model';
 
 //const queue: OrderQueue = new OrderQueue();
-
-const controller = new Controller<Constructor, Value, ExistingBody, Order>(
-  Order,
-  'order'
-);
+const test = Order;
+const contoller = Controller<Constructor, Value, Required<ExistingBody>>()<
+  Order
+>(Order, 'order');
 
 const feeds: OrderFeed = new OrderFeed();
 

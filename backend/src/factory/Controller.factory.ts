@@ -1,39 +1,48 @@
 /// <reference path="../libs/global.d.ts"/>
 import { HttpFunction } from '../decorator/Http.decorator';
 import { NextFunction } from 'express';
-import Model from '../model/Model';
+import Model, { DatabaseSearchIDs } from './Model.factory';
 import { Request } from 'express';
-import { Props, State, DefaultProps } from '../interface/Model.interface';
-import database from 'database';
 import Order from '../model/Order';
+import { PropSafe, DefaultProps, IModel } from '../interface/Model.interface';
 
-class Controller<Constructor, State, Props, Type extends Model<State, Props>> {
-  private _type: { new (id: Constructor | string): Type };
+/**
+ * @typedef C Constructor
+ * @typedef S State
+ * @typedef I Interface
+ */
+
+class Controller<I extends PropSafe, T extends Model<any, any, I>> {
+  private _model: { new: (constructor: I) => T } & IModel;
   private _storage: keyof Express.Request;
   constructor(
-    type: { new (id: string | Constructor): Type },
+    model: { new: (constructor: I) => T } & IModel,
     storage: keyof Express.Request
   ) {
-    this._type = type;
+    this._model = model;
     this._storage = storage;
   }
-  public get(error: string) {
-    return HttpFunction(error, (req, res, next) => {
+  public get(error?: string) {
+    if (!error) error = `The system was unable to get a ${this._storage}!`;
+    return HttpFunction(error, async (req, res, next) => {
       const { id } = req.body[this._storage] as DefaultProps;
-      const item: Type = new this._type(id);
+      const item: T = await DatabaseSearchIDs<I, T>(this._model.collection, [
+        id
+      ]);
       req[this._storage] = <any>item;
       return next();
     });
   }
-  public update<U extends keyof Props>(
-    error: string,
+  public update<U extends keyof I>(
     rewritable: U,
+    error?: string,
     gets?: (keyof Express.Request)[]
   ) {
+    if (!error) error = `The system was unable to get a ${this._storage}!`;
     return [
       this.get(error),
       HttpFunction(error, (req, res, next) => {
-        const param: Partial<Pick<Props, U>> = gets
+        const param: Partial<Pick<I, U>> = gets
           ? {
               ...req.body[this._storage],
               ...gets.map(cur => req[cur])
@@ -41,14 +50,15 @@ class Controller<Constructor, State, Props, Type extends Model<State, Props>> {
           : {
               ...req.body[this._storage]
             };
-        const item: Model<State, Props> = req[this._storage];
-        item.update(param as Partial<Props>);
+        const item = req[this._storage];
+        item.update(param as Partial<I>);
         return next();
       })
     ];
   }
-  public add(error: string, gets?: (keyof Express.Request)[]) {
+  public add(error?: string, gets?: (keyof Express.Request)[]) {
     return HttpFunction(error, (req, res, next) => {
+      const body: I = req.body[this._storage];
       const param: Constructor = gets
         ? {
             ...req.body[this._storage],
@@ -57,12 +67,12 @@ class Controller<Constructor, State, Props, Type extends Model<State, Props>> {
         : {
             ...req.body[this._storage]
           };
-      const object = new this._type(param);
+      const object = new this._model(param);
       object.add();
       return next();
     });
   }
-  public remove(error: string) {
+  public remove(error?: string) {
     return [
       this.get(error),
       HttpFunction(error, (req, res, next) => {
@@ -71,7 +81,7 @@ class Controller<Constructor, State, Props, Type extends Model<State, Props>> {
       })
     ];
   }
-  public search<Q extends keyof Props>(error: string, query?: Q) {
+  public search<Q extends keyof Props>(error?: string, query?: Q) {
     return HttpFunction(error, (req, res, next) => {
       const query: Q = req.body[this._storage].query;
       const model = Model.search('PLACEHOLDER');

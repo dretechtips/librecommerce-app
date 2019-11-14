@@ -7,6 +7,7 @@ import { HttpMethod, HttpFunction } from '../decorator/Http.decorator';
 import { ExistingBody } from '../interface/Cart.interface';
 import { ClientError, ServerError } from '../type/Error';
 import * as IProduct from '../interface/Product.interface';
+import ProductVariation from '../model/ProductVariation';
 
 declare global {
   namespace Express {
@@ -71,7 +72,7 @@ export const listProducts = [
   HttpFunction(
     'System was unable to list the items in the cart.',
     (req, res) => {
-      const products: Product[] = req.cart.getProducts();
+      const products: ProductVariation[] = req.cart.getProducts();
       const productBody: IProduct.ExistingBody[] = products.map(cur =>
         cur.toPrimitiveObj()
       );

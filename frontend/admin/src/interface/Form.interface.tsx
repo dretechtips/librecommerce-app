@@ -1,7 +1,6 @@
 import { AxiosResponse } from "axios";
 
-export interface FormProps
-{
+export interface FormProps {
   questions: FormQuestion[];
   modifier: FormModifier;
   submit?: (inputs: any[]) => Promise<AxiosResponse>;
@@ -14,9 +13,8 @@ export interface FormUIProps extends Omit<FormProps, "submit"> {
   error?: string;
 }
 
-export interface FormState
-{
-  modifier: FormModifier,
+export interface FormState {
+  modifier: FormModifier;
   values: any[];
   loading: boolean;
   error?: string;
@@ -25,12 +23,21 @@ export interface FormState
 
 export type FormModifier = "read" | "write";
 
-export interface FormQuestion
-{
-  question: string,
-  input: FormInput,
+export interface FormQuestion {
+  question: string;
+  input: FormInput;
   placeholder?: string;
   options?: string[];
 }
 
-export type FormInput = "text" | "textarea" | "textarea-list" | "select" | "date" | "date-range" | "barcode" | "file" | "photo";
+export type FormInput =
+  | "text"
+  | "textarea"
+  | "textarea-list"
+  | "select"
+  | "date"
+  | "date-range"
+  | "barcode"
+  | "file"
+  | "photo"
+  | "tagsbox";

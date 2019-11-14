@@ -13,7 +13,7 @@ export interface Constructor {
 }
 export interface NewBody {
   name: string,
-  baseID: string,
+  productID: string,
   price: number,
   images: string[],
   size?: string,
