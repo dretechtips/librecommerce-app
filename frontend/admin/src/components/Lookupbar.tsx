@@ -44,7 +44,7 @@ export function Lookupbar<T>(props: LookupbarUIProps<T>) {
                     </p>
                   </div>
                 </div>
-                <hr />
+                {index !== props.result.length - 1 && <hr />}
               </React.Fragment>
             ))}
           </div>

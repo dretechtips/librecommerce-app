@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 
 export interface FormProps {
-  questions: FormQuestion[];
+  questions: FormQuestion[] | FormRelation<any>;
   modifier: FormModifier;
   submit?: (inputs: any[]) => Promise<AxiosResponse>;
 }
@@ -29,6 +29,8 @@ export interface FormQuestion {
   placeholder?: string;
   options?: string[];
 }
+
+export type FormRelation<T> = { [K in keyof T]: FormQuestion };
 
 export type FormInput =
   | "text"

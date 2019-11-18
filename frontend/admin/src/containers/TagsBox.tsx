@@ -12,7 +12,9 @@ export class TagsBox extends Component<TagsBoxProps, TagsBoxState> {
   }
   handleAdd = (tag: Tag): void => {
     const length: number = this.state.tags.length;
-    const nextID: number = Number(this.state.tags[length - 1].id) + 1;
+    const lastTag: Tag | undefined = this.state.tags[length - 1];
+    let nextID: number = 0;
+    if (lastTag !== undefined) nextID = Number(lastTag.id) + 1;
     tag.id = "" + nextID;
     this.setState({ ...this.state, tags: [...this.state.tags, tag] });
   };
@@ -31,6 +33,7 @@ export class TagsBox extends Component<TagsBoxProps, TagsBoxState> {
     this.setState({ ...this.state, tags: nTags });
   };
   render() {
+    console.log(this.state.tags);
     return (
       <TagsBoxUI
         {...this.props}

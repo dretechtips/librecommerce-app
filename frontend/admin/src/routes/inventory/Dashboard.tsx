@@ -8,7 +8,7 @@ const Dashboard: DashboardProps = {
     {
       name: "Manage Product Variations",
       icon: "fas fa-dice",
-      path: "/product-variation"
+      path: "/product/variation"
     },
     { name: "Manage Category", icon: "fas fa-list", path: "/category" }
   ]

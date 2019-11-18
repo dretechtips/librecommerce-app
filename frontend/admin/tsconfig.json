@@ -7,11 +7,7 @@
     "target": "es2016",
     "jsx": "react",
     "esModuleInterop": true,
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
@@ -20,13 +16,9 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true
+    "noEmit": true,
+    "experimentalDecorators": true
   },
-  "exclude": [
-    "node_modules",
-    "**/node_modules/*"
-  ],
-  "include": [
-    "src"
-  ]
+  "exclude": ["node_modules", "**/node_modules/*"],
+  "include": ["src"]
 }
