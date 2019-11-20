@@ -11,6 +11,7 @@ import BarcodeScannerBox from "../containers/BarcodeScannerBox";
 import FileUpload from "../containers/FileUpload";
 import PhotoUpload from "../containers/PhotoUpload";
 import TagsBox from "../containers/TagsBox";
+import PasswordInput from "../containers/PasswordInput";
 
 export default (props: FormUIProps) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -131,6 +132,9 @@ export default (props: FormUIProps) => {
         break;
       case "tagsbox":
         el = <TagsBox />;
+        break;
+      case "password":
+        el = <PasswordInput />;
         break;
       default:
         el = (

@@ -4,13 +4,15 @@ import Logout from "../components/Logout";
 import Report from "./report/Router";
 import Order from "./order/Router";
 import Inventory from "./inventory/Router";
+import Customer from "./customer/Router";
 
 const Router: MainPanelRoute[] = [
-  {  path: "/", component: Dashboard  },
+  { path: "/", component: Dashboard },
   { path: "/signout", component: Logout },
   ...Report,
   ...Order,
-  ...Inventory
-]
+  ...Inventory,
+  ...Customer
+];
 
 export default Router;

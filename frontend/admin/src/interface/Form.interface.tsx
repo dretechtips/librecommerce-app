@@ -42,4 +42,5 @@ export type FormInput =
   | "barcode"
   | "file"
   | "photo"
-  | "tagsbox";
+  | "tagsbox"
+  | "password";
