@@ -21,11 +21,11 @@ function PasswordInput(props: PasswordInputUIProps) {
           onFocus={props.displayHelp}
           onBlur={props.undisplayHelp}
           value={props.password}
+          spellCheck={false}
         />
         <div className="input-group-append">
           <button className="input-group-text" onClick={props.generatePassword}>
-            <FontAwesomeIcon icon={faKey} fixedWidth className="mr-1" />
-            Generate
+            <FontAwesomeIcon icon={faKey} fixedWidth />
           </button>
         </div>
       </div>

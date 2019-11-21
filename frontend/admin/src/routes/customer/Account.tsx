@@ -16,6 +16,8 @@ export class Account extends CURDComponent<CustomerData, NewCustomerData> {
     username: { question: "Username", input: "text" },
     password: { question: "Password", input: "password" },
     address: { question: "Address", input: "text" },
+    state: { question: "State", input: "text" },
+    country: { question: "Country", input: "text" },
     emailAddress: { question: "Email Address", input: "text" },
     phoneNum: { question: "Phone Number", input: "text" }
   };

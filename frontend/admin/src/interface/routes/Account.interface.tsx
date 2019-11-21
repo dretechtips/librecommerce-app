@@ -8,6 +8,8 @@ export interface AccountData {
   emailAddress: string;
   phoneNum: string;
   address: string;
+  state: string;
+  country: string;
   alerts: string[];
 }
 
