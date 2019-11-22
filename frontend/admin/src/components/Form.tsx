@@ -12,6 +12,8 @@ import FileUpload from "../containers/FileUpload";
 import PhotoUpload from "../containers/PhotoUpload";
 import TagsBox from "../containers/TagsBox";
 import PasswordInput from "../containers/PasswordInput";
+import StreetAddressInput from "../containers/StreetAddressInput";
+import EmailAddressInput from "../containers/EmailAddressInput";
 
 export default (props: FormUIProps) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -135,6 +137,12 @@ export default (props: FormUIProps) => {
         break;
       case "password":
         el = <PasswordInput />;
+        break;
+      case "address":
+        el = <StreetAddressInput />;
+        break;
+      case "email":
+        el = <EmailAddressInput />;
         break;
       default:
         el = (

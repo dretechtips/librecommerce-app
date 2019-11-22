@@ -1,13 +1,13 @@
 /**
  * @typedef T Invalid State
  */
-export interface InputProps<T extends { [key: string]: any }> {
+export interface InputProps<T extends {}> {
   name: string;
   example: string;
   value: string;
   verify: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  valid: T[];
-  invalid: InputValidity<T>[];
+  valid: (keyof T)[];
+  invalid: InputValidity<T>;
 }
 
 export interface InputMessage {

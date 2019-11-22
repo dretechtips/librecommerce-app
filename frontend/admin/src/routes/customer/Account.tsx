@@ -15,10 +15,10 @@ export class Account extends CURDComponent<CustomerData, NewCustomerData> {
     lastName: { question: "Last Name", input: "text" },
     username: { question: "Username", input: "text" },
     password: { question: "Password", input: "password" },
-    address: { question: "Address", input: "text" },
+    address: { question: "Address", input: "address" },
     state: { question: "State", input: "text" },
     country: { question: "Country", input: "text" },
-    emailAddress: { question: "Email Address", input: "text" },
+    emailAddress: { question: "Email Address", input: "email" },
     phoneNum: { question: "Phone Number", input: "text" }
   };
   public sQuestions: FormRelation<Omit<CustomerData, keyof NewCustomerData>> = {

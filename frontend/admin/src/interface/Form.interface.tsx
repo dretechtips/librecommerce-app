@@ -43,4 +43,6 @@ export type FormInput =
   | "file"
   | "photo"
   | "tagsbox"
-  | "password";
+  | "password"
+  | "address"
+  | "email";

@@ -12,5 +12,7 @@ export const customerData: CustomerData = {
   associatedIPs: ["192.138.3.3", "432.321.4.3"],
   phoneNum: "214-321-5232",
   address: "1234 Apple Lane",
-  alerts: ["Alert on closing time changing to meme"]
+  alerts: ["Alert on closing time changing to meme"],
+  state: "Texas",
+  country: "USA"
 };

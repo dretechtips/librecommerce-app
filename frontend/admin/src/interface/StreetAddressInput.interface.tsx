@@ -2,8 +2,9 @@ export interface StreetAddressInputProps {}
 
 export interface StreetAddressInputUIProps {
   value: string;
-  valid: InvalidState[];
+  valid: (keyof typeof InvalidState)[];
   verify: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  example: string;
 }
 
 export interface StreetAddressInputState {
@@ -12,10 +13,10 @@ export interface StreetAddressInputState {
   street: string;
   type: string;
   apt: number;
-  valid: InvalidState[];
+  valid: (keyof typeof InvalidState)[];
 }
 
-export enum InvalidState {
+export const enum InvalidState {
   HOUSING,
   STREET,
   TYPE,
