@@ -8,6 +8,7 @@ export interface InputProps<T extends {}> {
   verify: (e: React.ChangeEvent<HTMLInputElement>) => void;
   valid: (keyof T)[];
   invalid: InputValidity<T>;
+  onInput?: (e: React.FormEvent<HTMLInputElement>) => void;
 }
 
 export interface InputMessage {

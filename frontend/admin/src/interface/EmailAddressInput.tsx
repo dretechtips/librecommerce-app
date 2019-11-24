@@ -1,6 +1,8 @@
 import { InputValidity } from "./Input.interface";
 
-export interface EmailAddressInputProps {}
+export interface EmailAddressInputProps {
+  onInput: (e: React.FormEvent<HTMLInputElement>) => void;
+}
 
 export interface EmailAddressInputUIProps extends EmailAddressInputProps {
   name: string;

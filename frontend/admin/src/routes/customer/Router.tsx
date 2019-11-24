@@ -1,6 +1,7 @@
 import { MainPanelRoute } from "../../interface/MainPanel.interface";
 import Account from "./Account";
 import CRUDWithRouter from "../../templates/CRUD.router";
+import Communicate from "./Communicate";
 
 const AccountRouter = CRUDWithRouter(
   Account,
@@ -17,7 +18,8 @@ export const Router: MainPanelRoute[] = [
   AccountRouter("create"),
   AccountRouter("read"),
   AccountRouter("search"),
-  AccountRouter("update&delete")
+  AccountRouter("update&delete"),
+  { path: "/customer/communicate", component: Communicate }
 ];
 
 export default Router;

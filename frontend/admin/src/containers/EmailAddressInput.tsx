@@ -34,6 +34,7 @@ export class EmailAddressInput extends Component<
     if (!this.findAt(value)) state.push("NO_AT");
     if (!this.findDomain(value)) state.push("NO_DOMAIN");
     if (!this.findDomainExtension(value)) state.push("NO_EXTENSION");
+
     this.setState({ ...this.state, value, valid: state });
   };
   private findAt(s: string): boolean {
@@ -48,6 +49,7 @@ export class EmailAddressInput extends Component<
   render() {
     return (
       <EmailAddressInputUI
+        {...this.props}
         name={this.name}
         value={this.state.value}
         example={this.example}

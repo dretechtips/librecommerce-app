@@ -15,15 +15,15 @@ import PasswordInput from "../containers/PasswordInput";
 import StreetAddressInput from "../containers/StreetAddressInput";
 import EmailAddressInput from "../containers/EmailAddressInput";
 
-export default (props: FormUIProps) => {
+function Form<T>(props: FormUIProps<T>) {
   const ref = useRef<HTMLDivElement>(null);
   function inputCallback(
     e: React.FormEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >,
-    index: number
+    key: keyof T
   ): void {
-    props.values[index] = e.currentTarget.value;
+    props.onInput(key, e.currentTarget.value);
   }
   function scrollToTop(ref: MutableRefObject<HTMLDivElement>): void {
     const wrapper: Element | null = ref.current.offsetParent;
@@ -34,7 +34,7 @@ export default (props: FormUIProps) => {
     scrollToTop(ref);
     if (props.submit) props.submit(props.values);
   }
-  function display(cur: FormQuestion, index: number) {
+  function display(cur: FormQuestion, index: keyof T) {
     let el: JSX.Element;
     switch (cur.input) {
       case "text":
@@ -139,10 +139,10 @@ export default (props: FormUIProps) => {
         el = <PasswordInput />;
         break;
       case "address":
-        el = <StreetAddressInput />;
+        el = <StreetAddressInput onInput={e => inputCallback(e, index)} />;
         break;
       case "email":
-        el = <EmailAddressInput />;
+        el = <EmailAddressInput onInput={e => inputCallback(e, index)} />;
         break;
       default:
         el = (
@@ -178,9 +178,9 @@ export default (props: FormUIProps) => {
         ""
       )}
       {Array.isArray(props.questions)
-        ? props.questions.map((cur, index) => display(cur, index))
+        ? props.questions.map((cur, index) => display(cur, index as keyof T))
         : Object.keys(props.questions).map((key, index) =>
-            display((props.questions as any)[key], index)
+            display((props.questions as any)[key], key as keyof T)
           )}
       {props.submit ? (
         <div className="form-group">
@@ -195,4 +195,6 @@ export default (props: FormUIProps) => {
       )}
     </div>
   );
-};
+}
+
+export default Form;

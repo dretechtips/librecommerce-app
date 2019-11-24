@@ -28,6 +28,7 @@ function Input<T extends {}>(props: InputProps<T>) {
         onFocus={() => setDisplay(true)}
         onBlur={() => setDisplay(false)}
         onClick={() => setClicked(true)}
+        onInput={props.onInput}
         placeholder={props.example}
       />
       {display && (

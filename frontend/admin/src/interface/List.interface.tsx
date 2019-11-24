@@ -13,7 +13,7 @@ export interface ListUIProps extends ListProps {
 }
 
 export interface ListPopover {
-  toggle: (index: number) =>  void;
+  toggle: (index: number) => void;
   value: number;
 }
 
@@ -28,7 +28,7 @@ export interface ListItems {
   actions?: ListItemAction[];
 }
 
-interface ListItem {
+export interface ListItem {
   value: string;
   id: string;
 }
@@ -39,7 +39,7 @@ export interface ListItemAction {
   name: string;
 }
 
-export type ListModifier = "select" | "read" ;
+export type ListModifier = "select" | "read";
 
 export interface ListSelect {
   remove?: (id: string[]) => void;

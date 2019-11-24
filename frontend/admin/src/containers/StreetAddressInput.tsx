@@ -59,6 +59,7 @@ export class StreetAddressInput extends Component<
   render() {
     return (
       <StreetAddressInputUI
+        {...this.props}
         example={"[Housing #] [Street Name] [Street Type] [APT #]?"}
         value={this.state.input}
         valid={this.state.valid}

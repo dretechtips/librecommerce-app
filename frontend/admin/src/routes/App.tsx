@@ -7,26 +7,28 @@ import MainPanel from "./MainPanel";
 import Profile from "../containers/Profile";
 import { DropdownProps } from "../interface/Dropdown.interface";
 import Dropdown from "../components/Dropdown";
-import { BrowserRouter } from "react-router-dom";
 
 export default () => {
   const dropdown: DropdownProps = {
     element: <Profile />,
-    items: [{name: "Account Setting", icon: "fas fa-cog", path: "/setting"},
-      {name: "Report Bug", icon: "fas fa-bug", path: "/report/bug"},
+    items: [
+      { name: "Account Setting", icon: "fas fa-cog", path: "/setting" },
+      { name: "Report Bug", icon: "fas fa-bug", path: "/report/bug" },
       "split",
-      {name: "Logout", icon: "fas fa-sign-out-alt", path: "/signout"}]
-  }
-  return(
-    <App 
-    logoURL={"https://upload.wikimedia.org/wikipedia/en/thumb/a/af/Medicine_Hat_Tigers_Logo.svg/1200px-Medicine_Hat_Tigers_Logo.svg.png"}>
-      <Nav
-        rightItems={[<Dropdown {...dropdown}/>]}
-        dashboardPath="/"/>
+      { name: "Logout", icon: "fas fa-sign-out-alt", path: "/signout" }
+    ]
+  };
+  return (
+    <App
+      logoURL={
+        "https://upload.wikimedia.org/wikipedia/en/thumb/a/af/Medicine_Hat_Tigers_Logo.svg/1200px-Medicine_Hat_Tigers_Logo.svg.png"
+      }
+    >
+      <Nav rightItems={[<Dropdown {...dropdown} />]} dashboardPath="/" />
       <div className="row no-gutters App-Content">
         <SidePanel />
         <MainPanel />
       </div>
     </App>
-  )
-}
+  );
+};

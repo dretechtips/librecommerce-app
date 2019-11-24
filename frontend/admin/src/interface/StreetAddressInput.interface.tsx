@@ -1,4 +1,8 @@
-export interface StreetAddressInputProps {}
+import React from "react";
+import { InputProps } from "./Input.interface";
+
+export interface StreetAddressInputProps
+  extends Required<Pick<InputProps<any>, "onInput">> {}
 
 export interface StreetAddressInputUIProps {
   value: string;

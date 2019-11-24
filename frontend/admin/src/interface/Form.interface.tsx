@@ -1,21 +1,23 @@
 import { AxiosResponse } from "axios";
 
-export interface FormProps {
-  questions: FormQuestion[] | FormRelation<any>;
+export interface FormProps<T> {
+  questions: FormQuestion[] | FormRelation<T>;
   modifier: FormModifier;
-  submit?: (inputs: any[]) => Promise<AxiosResponse>;
+  submit?: (inputs: { [K in keyof T]: any }) => Promise<AxiosResponse>;
+  inputs?: (inputs: { [K in keyof T]: any }) => void;
 }
 
-export interface FormUIProps extends Omit<FormProps, "submit"> {
-  values: any[];
-  submit?: (inputs: any[]) => void;
+export interface FormUIProps<T> extends Omit<FormProps<T>, "submit"> {
+  submit: ((inputs: { [K in keyof T]: any }) => Promise<void>) | undefined;
+  values: { [K in keyof T]: any };
+  onInput: (key: keyof T, value: any) => void;
   success?: boolean;
   error?: string;
 }
 
-export interface FormState {
+export interface FormState<T> {
   modifier: FormModifier;
-  values: any[];
+  values: { [K in keyof T]: any };
   loading: boolean;
   error?: string;
   success: boolean;
