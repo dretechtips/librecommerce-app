@@ -7,16 +7,16 @@ import {
   EamilFormState,
   EmailFormQuestions
 } from "../interface/EmailForm.interface";
-import jsPDF from "jspdf";
+import PDFService from "../service/pdf.service";
 
 export class EmailForm extends Component<EmailFormProps, EamilFormState> {
   constructor(props: EmailFormProps) {
     super(props);
     this.state = {
-      to: "",
-      name: "",
-      subject: "",
-      body: ""
+      to: null,
+      name: null,
+      subject: null,
+      body: null
     };
   }
   private imageToDataURI(url: string): Promise<string> {
@@ -36,43 +36,51 @@ export class EmailForm extends Component<EmailFormProps, EamilFormState> {
     });
   }
 
-  private generatePDF = async (): Promise<jsPDF> => {
-    const doc = new jsPDF("portrait");
-    doc.addImage(
+  private generatePDF = async (): Promise<PDFService | null> => {
+    if (this.state.name === null || this.state.body === null) return null;
+    const doc: PDFService = new PDFService("portrait", "letter");
+    doc.setMargin(50);
+    doc.addImagef(
       await this.imageToDataURI(this.props.logoURL),
-      "PDF",
+      "PNG",
+      "center",
       0,
-      0,
-      50,
-      50
+      110,
+      100,
+      "logo",
+      "FAST"
     );
-    doc.text(
+    doc.textf(
       [
-        "Recepient Data",
+        "Dear " + this.state.name,
+        "",
         this.state.body,
+        "",
         "X________________",
         "Signature",
         "X________________",
         "Note: Any letter created without a supervisor signature is considered to be voided and invalid."
       ],
-      0,
-      50
+      150
     );
     console.log(doc);
     return doc;
   };
   public print = async (): Promise<void> => {};
   public download = async (): Promise<void> => {
-    const pdf = await this.generatePDF();
-    pdf.save("Client_Generated_PDF_" + new Date() + ".pdf");
+    const pdf: PDFService | null = await this.generatePDF();
+    if (pdf === null) {
+      alert("No name and body provided to generate an email.");
+      return;
+    } else pdf.docs.save("Client_Generated_PDF_" + new Date() + ".pdf");
   };
   private getInputs = (inputs: { [K in keyof EmailFormQuestions]: string }) => {
-    console.log(inputs);
     this.setState({
       ...this.state,
       to: inputs.to,
       subject: inputs.subject,
-      body: inputs.body
+      body: inputs.body,
+      name: inputs.name
     });
     return;
   };

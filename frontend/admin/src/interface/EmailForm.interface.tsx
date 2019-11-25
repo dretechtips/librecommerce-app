@@ -11,8 +11,8 @@ export interface EmailFormUIProps extends EmailFormProps, EmailFormQuestions {
 export interface EamilFormState extends EmailFormQuestions {}
 
 export interface EmailFormQuestions {
-  to: string;
-  name: string;
-  subject: string;
-  body: string;
+  to: string | null;
+  name: string | null;
+  subject: string | null;
+  body: string | null;
 }
