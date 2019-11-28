@@ -20,13 +20,6 @@ function EmailForm(props: EmailFormUIProps) {
       <div className="row mb-3">
         <div className="col-12">
           <Button
-            icon={"fas fa-print"}
-            value={"Print"}
-            color={"success"}
-            action={() => {}}
-            className={"mr-2"}
-          />
-          <Button
             icon={"fas fa-file-download"}
             value={"Download"}
             color={"success"}

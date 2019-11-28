@@ -35,11 +35,20 @@ export class EmailForm extends Component<EmailFormProps, EamilFormState> {
       };
     });
   }
-
+  private namef(name: string): string {
+    return name
+      .split(" ")
+      .map(cur => {
+        const aString: string[] = cur.split("");
+        aString[0] = aString[0].toUpperCase();
+        return aString.join("");
+      })
+      .join(" ");
+  }
   private generatePDF = async (): Promise<PDFService | null> => {
     if (this.state.name === null || this.state.body === null) return null;
     const doc: PDFService = new PDFService("portrait", "letter");
-    doc.setMargin(50);
+    doc.setMargin(72);
     doc.addImagef(
       await this.imageToDataURI(this.props.logoURL),
       "PNG",
@@ -52,27 +61,31 @@ export class EmailForm extends Component<EmailFormProps, EamilFormState> {
     );
     doc.textf(
       [
-        "Dear " + this.state.name,
-        "",
+        "Dear " + this.namef(this.state.name),
+        " ",
         this.state.body,
-        "",
+        " ",
+        "Sincerely",
+        " ",
         "X________________",
         "Signature",
+        " ",
         "X________________",
-        "Note: Any letter created without a supervisor signature is considered to be voided and invalid."
+        "Supervisor Signature",
+        "Note: Any letter created without a supervisor signature is considered to be voided and invalid.",
+        " ",
+        "Account Details"
       ],
       150
     );
-    console.log(doc);
     return doc;
   };
-  public print = async (): Promise<void> => {};
   public download = async (): Promise<void> => {
-    const pdf: PDFService | null = await this.generatePDF();
-    if (pdf === null) {
+    const client: PDFService | null = await this.generatePDF();
+    if (client === null) {
       alert("No name and body provided to generate an email.");
       return;
-    } else pdf.docs.save("Client_Generated_PDF_" + new Date() + ".pdf");
+    } else client.docs.save("Client_Generated_PDF_" + new Date() + ".pdf");
   };
   private getInputs = (inputs: { [K in keyof EmailFormQuestions]: string }) => {
     this.setState({
@@ -89,7 +102,6 @@ export class EmailForm extends Component<EmailFormProps, EamilFormState> {
       <EmailFormUI
         {...this.props}
         download={this.download}
-        print={this.print}
         getInputs={this.getInputs}
         to={this.state.to}
         subject={this.state.subject}

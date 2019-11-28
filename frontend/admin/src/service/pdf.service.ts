@@ -51,6 +51,10 @@ export class PDFService {
   private width: number;
   private height: number;
   private unit: Unit;
+  private fontSize: number;
+  private orientation: "portrait" | "landscape";
+  private format: PageFormat;
+
   /**
    * Units are in term of pt
    */
@@ -103,11 +107,15 @@ export class PDFService {
     compressPDF?: number
   ) {
     this.docs = new jsPDF(orientation, "pt", format, compressPDF);
-    this.docs.setFontSize(12);
+    this.docs.setFont("Times", "Roman");
+    this.fontSize = 12;
+    this.docs.setFontSize(this.fontSize);
+    console.log(this.docs.getFontList());
     this.unit = "pt";
+    this.format = format ? format : "a4";
+    this.orientation = orientation ? orientation : "portrait";
     this.width = this.getFormat(format)[0];
     this.height = this.getFormat(format)[1];
-
     this.margin = 0;
   }
   public setPageFormat(format?: PageFormat): void {
@@ -128,6 +136,8 @@ export class PDFService {
   public setMargin(amount: number) {
     this.margin = amount;
   }
+  public shiftDown() {}
+  public shiftUp() {}
   public text(
     text: string | string[],
     x: number,
@@ -142,18 +152,28 @@ export class PDFService {
   }
   private stringf(text: string): string[] {
     try {
-      if (text.search("\n")) {
+      if (text.search("\n") !== -1) {
+        let aText: string[] = [];
+        text
+          .split("\n")
+          .map(cur => this.stringf(cur))
+          .forEach(cur => aText.push(...cur));
+        return aText;
       }
-      const sChar: number = this.docs.getTextWidth("A");
-      const dTextLength: number = text.length * sChar;
-      const whitespace: number = this.width - this.margin * 2;
-      const sLength: number = whitespace / sChar;
-      let aText: string[] = new Array(Math.ceil(dTextLength / whitespace)).fill(
-        ""
-      );
-      aText = aText.map((cur, index) =>
-        text.substr(index * Math.floor(sLength), Math.floor(sLength))
-      );
+      const whitespace: number = this.width - this.margin - this.margin;
+      const aString: string[] = text.split("");
+      const aText: string[] = [];
+      let string = "";
+      for (let i = 0; i < aString.length; i++) {
+        let cur: number = this.docs.getTextWidth(string);
+        string += aString[i] ? aString[i] : " ";
+        let next: number = this.docs.getTextWidth(string);
+        if (cur <= whitespace && next > whitespace) {
+          aText.push(string);
+          string = "";
+        }
+      }
+      if (aText.length === 0) aText.push(text);
       return aText;
     } catch (e) {
       return [];
@@ -165,10 +185,35 @@ export class PDFService {
       textf.push(...this.stringf(text));
     } else {
       for (let line of text) {
+        console.log(line);
         textf.push(...this.stringf(line));
       }
     }
-    return this.text(textf, 0, y, flags, 0, align);
+    let whitespace = this.height - this.margin * 2 - y;
+    const firstPageTextLength: number = Math.ceil(
+      whitespace / this.docs.getLineHeight()
+    );
+    const pageTextLength: number = Math.ceil(
+      (whitespace + y) / this.docs.getLineHeight()
+    );
+    const firstPage: string[] = textf.slice(0, firstPageTextLength);
+    console.log(firstPageTextLength);
+    this.text(firstPage, 0, y, flags, 0, align);
+    if (textf.length > firstPageTextLength) {
+      let page: string[] = textf.slice(firstPageTextLength, pageTextLength);
+      let count = 1;
+      console.log(page);
+      while (page.length !== 0) {
+        this.docs.addPage();
+        this.text(page, 0, 0, flags, 0, align);
+        page = textf.slice(
+          firstPageTextLength + pageTextLength * count,
+          pageTextLength
+        );
+        count++;
+      }
+    }
+    return this.docs;
   }
   public addImage(
     imageData: string | HTMLImageElement | HTMLCanvasElement | Uint8Array,

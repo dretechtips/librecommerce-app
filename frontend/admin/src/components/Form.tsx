@@ -1,7 +1,9 @@
 import {
   FormUIProps,
   FormRelation,
-  FormQuestion
+  FormQuestion,
+  isFormGroup,
+  FormGroup
 } from "../interface/Form.interface";
 import React, { useRef, MutableRefObject } from "react";
 import Button from "../components/Button";
@@ -21,9 +23,10 @@ function Form<T>(props: FormUIProps<T>) {
     e: React.FormEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >,
-    key: keyof T
+    key: keyof T,
+    key2?: keyof T[keyof T]
   ): void {
-    props.onInput(key, e.currentTarget.value);
+    props.onInput(key, key2, e.currentTarget.value);
   }
   function scrollToTop(ref: MutableRefObject<HTMLDivElement>): void {
     const wrapper: Element | null = ref.current.offsetParent;
@@ -34,7 +37,7 @@ function Form<T>(props: FormUIProps<T>) {
     scrollToTop(ref);
     if (props.submit) props.submit(props.values);
   }
-  function display(cur: FormQuestion, index: keyof T) {
+  function display(cur: FormQuestion, key: keyof T, key2?: keyof T[keyof T]) {
     let el: JSX.Element;
     switch (cur.input) {
       case "text":
@@ -44,7 +47,7 @@ function Form<T>(props: FormUIProps<T>) {
             className="form-control"
             readOnly={props.modifier === "read" ? true : false}
             placeholder={cur.placeholder ? cur.placeholder : ""}
-            onInput={e => inputCallback(e, index)}
+            onInput={e => inputCallback(e, key, key2)}
           />
         );
         break;
@@ -54,8 +57,20 @@ function Form<T>(props: FormUIProps<T>) {
             className="form-control"
             readOnly={props.modifier === "read" ? true : false}
             placeholder={cur.placeholder ? cur.placeholder : ""}
-            onInput={e => inputCallback(e, index)}
+            onInput={e => inputCallback(e, key, key2)}
           />
+        );
+        break;
+      case "checkbox":
+        el = (
+          <div className="custom-control custom-checkbox">
+            <input
+              type="checkbox"
+              className="custom-control-input"
+              onInput={e => inputCallback(e, key, key2)}
+            />
+            <label className="custom-control-label">{props.questions}</label>
+          </div>
         );
         break;
       case "date":
@@ -64,7 +79,7 @@ function Form<T>(props: FormUIProps<T>) {
             type="date"
             className="form-control"
             readOnly={props.modifier === "read" ? true : false}
-            onInput={e => inputCallback(e, index)}
+            onInput={e => inputCallback(e, key, key2)}
           />
         );
         break;
@@ -74,7 +89,7 @@ function Form<T>(props: FormUIProps<T>) {
             <select
               className="form-control"
               disabled={props.modifier === "read" ? true : false}
-              onInput={e => inputCallback(e, index)}
+              onInput={e => inputCallback(e, key, key2)}
             >
               {cur.options.map(cur => (
                 <option value={cur}>{cur}</option>
@@ -86,7 +101,7 @@ function Form<T>(props: FormUIProps<T>) {
             <select
               className="form-control"
               disabled={props.modifier === "read" ? true : false}
-              onInput={e => inputCallback(e, index)}
+              onInput={e => inputCallback(e, key, key2)}
             ></select>
           );
         break;
@@ -95,7 +110,7 @@ function Form<T>(props: FormUIProps<T>) {
           <TextAreaList
             className="form-control"
             readOnly={props.modifier === "read" ? true : false}
-            onInput={e => inputCallback(e, index)}
+            onInput={e => inputCallback(e, key, key2)}
           />
         );
         break;
@@ -139,10 +154,10 @@ function Form<T>(props: FormUIProps<T>) {
         el = <PasswordInput />;
         break;
       case "address":
-        el = <StreetAddressInput onInput={e => inputCallback(e, index)} />;
+        el = <StreetAddressInput onInput={e => inputCallback(e, key, key2)} />;
         break;
       case "email":
-        el = <EmailAddressInput onInput={e => inputCallback(e, index)} />;
+        el = <EmailAddressInput onInput={e => inputCallback(e, key, key2)} />;
         break;
       default:
         el = (
@@ -179,9 +194,50 @@ function Form<T>(props: FormUIProps<T>) {
       )}
       {Array.isArray(props.questions)
         ? props.questions.map((cur, index) => display(cur, index as keyof T))
-        : Object.keys(props.questions).map((key, index) =>
-            display((props.questions as any)[key], key as keyof T)
-          )}
+        : Object.keys(props.questions).map((key, index) => {
+            if (
+              isFormGroup((props.questions as FormRelation<T>)[key as keyof T])
+            ) {
+              return (
+                <div>
+                  <h2 className="mb-3 bg-warning p-2">
+                    {
+                      ((props.questions as FormRelation<T>)[
+                        key as keyof T
+                      ] as FormGroup<T[keyof T]>).category
+                    }
+                  </h2>
+                  {Object.keys(
+                    ((props.questions as FormRelation<T>)[
+                      key as keyof T
+                    ] as FormGroup<T[keyof T]>).questions
+                  ).map((key2, index) => {
+                    return display(
+                      ((props.questions as FormRelation<T>)[
+                        key as keyof T
+                      ] as FormGroup<T[keyof T]>).questions[
+                        key2 as keyof T[keyof T]
+                      ] as FormQuestion,
+                      key as keyof T,
+                      key2 as keyof T[keyof T]
+                    );
+                  })}
+                  <hr className="mt-5" />
+                </div>
+              );
+            } else {
+              return (
+                <React.Fragment>
+                  {display(
+                    (props.questions as FormRelation<T>)[
+                      key as keyof T
+                    ] as FormQuestion,
+                    key as keyof T
+                  )}
+                </React.Fragment>
+              );
+            }
+          })}
       {props.submit ? (
         <div className="form-group">
           <Button

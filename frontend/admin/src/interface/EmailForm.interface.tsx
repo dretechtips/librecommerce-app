@@ -5,7 +5,6 @@ export interface EmailFormProps {
 export interface EmailFormUIProps extends EmailFormProps, EmailFormQuestions {
   getInputs: (values: { [K in keyof EmailFormQuestions]: string }) => void;
   download: () => Promise<void>;
-  print: () => Promise<void>;
 }
 
 export interface EamilFormState extends EmailFormQuestions {}

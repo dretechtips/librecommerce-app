@@ -1,5 +1,8 @@
 import { ListItems } from "../List.interface";
 import { FormModifier } from "../Form.interface";
+import { ProductVariation } from "./Inventory.interface";
+import { CreditCard } from "./Billing.interface";
+import { NewShipping } from "./Shipping.interface";
 
 export interface UnprocessedUIProps {
   halt: UnprocessedUIActions;
@@ -12,10 +15,6 @@ interface UnprocessedUIActions {
   (id: string): void;
 }
 
-interface UnprocessedUIBulkActions {
-  (ids: string[]): void;
-}
-
 export interface UnprocessedState {
   avaliable: ListItems;
   halted: ListItems;
@@ -25,3 +24,15 @@ export interface UnprocessedState {
 export interface FormProps {
   modifer: FormModifier;
 }
+
+export interface Order {
+  username: string;
+  id: string;
+  timestamp: string;
+  cancelled: boolean;
+  //products: ProductVariation[];
+  shipping: NewShipping;
+  cc: CreditCard;
+}
+
+export type NewOrder = Omit<Order, "timestamp" | "id" | "cancelled">;

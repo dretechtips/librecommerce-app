@@ -10,7 +10,11 @@ export interface FormProps<T> {
 export interface FormUIProps<T> extends Omit<FormProps<T>, "submit"> {
   submit: ((inputs: { [K in keyof T]: any }) => Promise<void>) | undefined;
   values: { [K in keyof T]: any };
-  onInput: (key: keyof T, value: any) => void;
+  onInput: (
+    key: keyof T,
+    key2: keyof T[keyof T] | undefined,
+    value: any
+  ) => void;
   success?: boolean;
   error?: string;
 }
@@ -32,9 +36,37 @@ export interface FormQuestion {
   options?: string[];
 }
 
-export type FormRelation<T> = { [K in keyof T]: FormQuestion };
+export type Primitives =
+  | boolean
+  | null
+  | undefined
+  | number
+  | bigint
+  | string
+  | symbol;
+
+export function isFormGroup(
+  type: FormGroup<any> | FormQuestion
+): type is FormGroup<any> {
+  return (
+    (type as FormGroup<any>).category !== undefined &&
+    (type as FormGroup<any>).questions !== undefined
+  );
+}
+
+export interface FormGroup<T> {
+  category: string;
+  questions: FormRelation<T>;
+}
+
+export type FormRelation<T> = {
+  [K in keyof T]: T[K] extends Primitives | Primitives[]
+    ? FormQuestion
+    : FormGroup<T[K]>;
+};
 
 export type FormInput =
+  | "checkbox"
   | "text"
   | "textarea"
   | "textarea-list"

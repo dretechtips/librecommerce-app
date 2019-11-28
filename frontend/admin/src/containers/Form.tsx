@@ -4,7 +4,8 @@ import {
   FormProps,
   FormState,
   FormRelation,
-  FormQuestion
+  FormQuestion,
+  Primitives
 } from "../interface/Form.interface";
 import { Loading } from "../components/Loading";
 
@@ -23,17 +24,33 @@ export class Form<T = any> extends Component<FormProps<T>, FormState<T>> {
   ): { [K in keyof T]: any } {
     const values: any = {};
     for (let key in questions) {
-      values[key] = null;
+      if (Array.isArray(values[key]) || typeof values[key] !== "object")
+        values[key] = null;
+      else for (let key2 in values[key]) values[key][key2] = null;
     }
     return values;
   }
-  private onInput = (key: keyof T, value: any) => {
+  private onInput = (
+    key: keyof T,
+    key2: keyof T[keyof T] | undefined,
+    value: any
+  ) => {
     if (this.props.inputs)
       this.props.inputs({ ...this.state.values, [key]: value });
-    this.setState({
-      ...this.state,
-      values: { ...this.state.values, [key]: value }
-    });
+    if (key2 !== undefined) {
+      this.setState({
+        ...this.state,
+        values: {
+          ...this.state.values,
+          [key]: { ...this.state.values[key], value }
+        }
+      });
+    } else {
+      this.setState({
+        ...this.state,
+        values: { ...this.state.values, [key]: value }
+      });
+    }
   };
   submit = async (inputs: { [K in keyof T]: any }): Promise<void> => {
     if (
