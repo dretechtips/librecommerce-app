@@ -1,13 +1,15 @@
 import React from "react";
 import EmailForm from "../../containers/EmailForm";
+import MessageForm from "../../containers/MessageForm";
 import App from "../../containers/App";
+import { CustomerData } from "../../interface/routes/Customer.interface";
+
+export async function getAccounts(): Promise<CustomerData[]> {
+  return [];
+}
 
 function Communicate() {
-  return (
-    <App.contextType.Consumer>
-      {state => <EmailForm logoURL={state.logoURL} />}
-    </App.contextType.Consumer>
-  );
+  return <MessageForm getAccounts={getAccounts} />;
 }
 
 export default Communicate;

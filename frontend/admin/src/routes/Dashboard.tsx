@@ -11,7 +11,7 @@ import Payroll from "./payroll/Dashboard";
 import Schedule from "./schedule/Dashboard";
 import Shipping from "./shipping/Dashboard";
 import Subscription from "./subscription/Dashboard";
-import Spy from "./spy/Dashboard";
+// import Spy from "./spy/Dashboard";
 import Cart from "./cart/Dashboard";
 import User from "./user/Dashboard";
 import Speech_Filter from "./speech_filter/Dashboard";
@@ -28,13 +28,10 @@ const actions: DashboardProps[] = [
   Schedule,
   Shipping,
   Subscription,
-  Spy,
   User,
   Speech_Filter
-]
+];
 
 export default () => {
-  return (
-    <Dashboard actions={actions}/>
-  )
-}
+  return <Dashboard actions={actions} />;
+};

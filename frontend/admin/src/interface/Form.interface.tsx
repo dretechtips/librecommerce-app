@@ -1,4 +1,5 @@
 import { AxiosResponse } from "axios";
+import { TextInputProps } from "./Input.interface";
 
 export interface FormProps<T> {
   questions: FormQuestion[] | FormRelation<T>;
@@ -29,12 +30,14 @@ export interface FormState<T> {
 
 export type FormModifier = "read" | "write";
 
-export interface FormQuestion {
+export type FormQuestion = {
   question: string;
-  input: FormInput;
-  placeholder?: string;
   options?: string[];
-}
+} & FormInputConditional<FormInput>;
+
+export type FormInputConditional<T extends FormInput> = T extends string
+  ? { input: Exclude<FormInput, FormInputType<any, any>>; props?: undefined }
+  : Extract<FormInput, FormInputType<any, any>>;
 
 export type Primitives =
   | boolean
@@ -65,6 +68,8 @@ export type FormRelation<T> = {
     : FormGroup<T[K]>;
 };
 
+export type FormInputType<T, D extends string> = { props?: T; input: D };
+
 export type FormInput =
   | "checkbox"
   | "text"
@@ -79,4 +84,5 @@ export type FormInput =
   | "tagsbox"
   | "password"
   | "address"
-  | "email";
+  | "email"
+  | FormInputType<TextInputProps, "text">;

@@ -19,3 +19,8 @@ export interface InputMessage {
 export type InputValidity<T extends {}> = {
   [K in keyof T]: InputMessage;
 };
+
+export interface TextInputProps {
+  value: string;
+  placeholder: string;
+}

@@ -38,3 +38,5 @@ export class Archive extends CURDComponent<Shipping, NewShipping> {
     };
   };
 }
+
+export default Archive;

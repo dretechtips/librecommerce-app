@@ -3,7 +3,9 @@ import {
   FormRelation,
   FormQuestion,
   isFormGroup,
-  FormGroup
+  FormGroup,
+  isFormInputType,
+  FormInputType
 } from "../interface/Form.interface";
 import React, { useRef, MutableRefObject } from "react";
 import Button from "../components/Button";
@@ -38,7 +40,7 @@ function Form<T>(props: FormUIProps<T>) {
     if (props.submit) props.submit(props.values);
   }
   function display(cur: FormQuestion, key: keyof T, key2?: keyof T[keyof T]) {
-    let el: JSX.Element;
+    let el: JSX.Element = <div></div>;
     switch (cur.input) {
       case "text":
         el = (
@@ -46,7 +48,6 @@ function Form<T>(props: FormUIProps<T>) {
             type="text"
             className="form-control"
             readOnly={props.modifier === "read" ? true : false}
-            placeholder={cur.placeholder ? cur.placeholder : ""}
             onInput={e => inputCallback(e, key, key2)}
           />
         );
@@ -56,7 +57,6 @@ function Form<T>(props: FormUIProps<T>) {
           <textarea
             className="form-control"
             readOnly={props.modifier === "read" ? true : false}
-            placeholder={cur.placeholder ? cur.placeholder : ""}
             onInput={e => inputCallback(e, key, key2)}
           />
         );

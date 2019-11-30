@@ -8,6 +8,9 @@ import Customer from "./customer/Router";
 import Schedule from "./schedule/Router";
 import Shipping from "./shipping/Router";
 import User from "./user/Router";
+import Ban from "./ban/Router";
+import Promotion from "./promo/Router";
+import Subscription from "./subscription/Router";
 
 const Router: MainPanelRoute[] = [
   { path: "/", component: Dashboard },
@@ -18,7 +21,10 @@ const Router: MainPanelRoute[] = [
   ...Customer,
   ...Schedule,
   ...Shipping,
-  ...User
+  ...User,
+  ...Ban,
+  ...Promotion,
+  ...Subscription
 ];
 
 export default Router;
