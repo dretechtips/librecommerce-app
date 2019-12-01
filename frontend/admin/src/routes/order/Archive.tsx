@@ -23,7 +23,9 @@ class Archive extends CURDComponent<Order, NewOrder> {
         provider: {
           question: "Provider",
           input: "select",
-          options: ["Mastercard", "Visa", "Discover"]
+          props: {
+            option: ["Mastercard", "Visa", "Discover"]
+          }
         },
         number: { question: "Number", input: "text" },
         expMonth: { question: "Exp. Month", input: "text" },

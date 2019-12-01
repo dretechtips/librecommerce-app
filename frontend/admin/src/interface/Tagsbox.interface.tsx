@@ -12,3 +12,7 @@ export interface TagsBoxUIProps extends TagsBoxProps {
 export interface TagsBoxState {
   tags: Tag[];
 }
+
+export interface TagsBoxInputProps {
+  tags?: string[];
+}

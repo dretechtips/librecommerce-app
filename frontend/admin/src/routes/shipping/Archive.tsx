@@ -13,7 +13,9 @@ export class Archive extends CURDComponent<Shipping, NewShipping> {
     provider: {
       question: "Provider",
       input: "select",
-      options: ["FEDEX", "USPS", "UPS"]
+      props: {
+        option: ["FEDEX", "UPS", "USPS"]
+      }
     },
     address: { question: "Address", input: "address" }
   };

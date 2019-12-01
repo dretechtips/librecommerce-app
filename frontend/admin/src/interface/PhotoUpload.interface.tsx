@@ -17,3 +17,7 @@ export interface PhotoUploadState {
   size: number;
   remove: number;
 }
+
+export interface PhotoUploadInputProps {
+  photos?: HTMLImageElement[];
+}

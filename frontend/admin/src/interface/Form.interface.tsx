@@ -1,5 +1,17 @@
 import { AxiosResponse } from "axios";
-import { TextInputProps } from "./Input.interface";
+import {
+  TextInputProps,
+  CheckboxInputProps,
+  TextAreaInputProps,
+  TextAreaListInputProps,
+  SelectInputProps,
+  DateInputProps
+} from "./Input.interface";
+import { BarcodeScannerInputProps } from "./BarcodeScannerBox.interface";
+import { FileUploadInputProps } from "./FileUpload.interface";
+import { PhotoUploadInputProps } from "./PhotoUpload.interface";
+import { TagsBoxInputProps } from "./Tagsbox.interface";
+import { DateRangeInputProps } from "./DateRangeInput.interface";
 
 export interface FormProps<T> {
   questions: FormQuestion[] | FormRelation<T>;
@@ -32,7 +44,6 @@ export type FormModifier = "read" | "write";
 
 export type FormQuestion = {
   question: string;
-  options?: string[];
 } & FormInputConditional<FormInput>;
 
 export type FormInputConditional<T extends FormInput> = T extends string
@@ -68,7 +79,10 @@ export type FormRelation<T> = {
     : FormGroup<T[K]>;
 };
 
-export type FormInputType<T, D extends string> = { props?: T; input: D };
+export type FormInputType<T, D extends string> = {
+  props?: T extends never ? undefined : Partial<T>;
+  input: D;
+};
 
 export type FormInput =
   | "checkbox"
@@ -85,4 +99,14 @@ export type FormInput =
   | "password"
   | "address"
   | "email"
-  | FormInputType<TextInputProps, "text">;
+  | FormInputType<TextInputProps, "text">
+  | FormInputType<CheckboxInputProps, "checkbox">
+  | FormInputType<TextAreaInputProps, "textarea">
+  | FormInputType<TextAreaListInputProps, "textarea-list">
+  | FormInputType<SelectInputProps, "select">
+  | FormInputType<DateInputProps, "date">
+  | FormInputType<BarcodeScannerInputProps, "barcode">
+  | FormInputType<FileUploadInputProps, "file">
+  | FormInputType<PhotoUploadInputProps, "photo">
+  | FormInputType<TagsBoxInputProps, "tagsbox">
+  | FormInputType<DateRangeInputProps, "date-range">;

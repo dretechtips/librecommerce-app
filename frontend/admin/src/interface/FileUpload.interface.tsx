@@ -25,11 +25,15 @@ export interface FileUploadState {
 export interface FileUploadAccess {
   set: (ref: HTMLInputElement) => void;
   toggle: () => void;
-  remove: FileUploadRemove
+  remove: FileUploadRemove;
 }
 
 export interface FileUploadRemove {
   set: (index: number) => void;
   get: () => number;
   clear: () => void;
+}
+
+export interface FileUploadInputProps {
+  files?: File[];
 }

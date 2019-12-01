@@ -5,11 +5,13 @@ export interface BarcodeScannerState {
   scanType: BarcodeScannerType;
 }
 
-export interface BarcodeScannerProps {
+export interface BarcodeScannerProps
+  extends React.DetailedHTMLProps<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    HTMLInputElement
+  > {}
 
-}
-
-export interface BarcodeScannerUIProps {
+export interface BarcodeScannerUIProps extends BarcodeScannerProps {
   mode: BarcodeScannerMode;
   value: string;
   start: () => void;
@@ -21,6 +23,22 @@ export interface BarcodeScannerUIProps {
   updateScanner: (id: BarcodeScannerType) => void;
 }
 
-export type BarcodeScannerMode = "scanning" | "complete" | "standby" | "error" | "selecting";
+export type BarcodeScannerMode =
+  | "scanning"
+  | "complete"
+  | "standby"
+  | "error"
+  | "selecting";
 
-export type BarcodeScannerType = "code_128" | "ean" | "code_39" | "codabar" | "upc" | "i2of5" | "code_93"
+export type BarcodeScannerType =
+  | "code_128"
+  | "ean"
+  | "code_39"
+  | "codabar"
+  | "upc"
+  | "i2of5"
+  | "code_93";
+
+export interface BarcodeScannerInputProps {
+  code: string;
+}

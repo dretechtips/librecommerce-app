@@ -14,7 +14,9 @@ export class Bug extends Component {
       {
         question: "Issue Category",
         input: "select",
-        options: ["UI Issue", "UX Issue", "Server Issue"]
+        props: {
+          option: ["UI Issue", "UX Issue", "Server Issue"]
+        }
       },
       { question: "Server generated code", input: "text" },
       { question: "Server generated message", input: "text" },
@@ -27,7 +29,9 @@ export class Bug extends Component {
       {
         question: "Build Type",
         input: "select",
-        options: ["Development", "Testing", "Production"]
+        props: {
+          option: ["Development", "Testing", "Production"]
+        }
       }
     ];
   }

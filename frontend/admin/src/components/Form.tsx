@@ -4,7 +4,6 @@ import {
   FormQuestion,
   isFormGroup,
   FormGroup,
-  isFormInputType,
   FormInputType
 } from "../interface/Form.interface";
 import React, { useRef, MutableRefObject } from "react";
@@ -18,6 +17,8 @@ import TagsBox from "../containers/TagsBox";
 import PasswordInput from "../containers/PasswordInput";
 import StreetAddressInput from "../containers/StreetAddressInput";
 import EmailAddressInput from "../containers/EmailAddressInput";
+import Checkbox from "./Checkbox";
+import DateRangeInput from "../containers/DateRangeInput";
 
 function Form<T>(props: FormUIProps<T>) {
   const ref = useRef<HTMLDivElement>(null);
@@ -49,6 +50,8 @@ function Form<T>(props: FormUIProps<T>) {
             className="form-control"
             readOnly={props.modifier === "read" ? true : false}
             onInput={e => inputCallback(e, key, key2)}
+            placeholder={cur.props ? cur.props.placeholder : undefined}
+            value={cur.props ? cur.props.value : undefined}
           />
         );
         break;
@@ -58,52 +61,55 @@ function Form<T>(props: FormUIProps<T>) {
             className="form-control"
             readOnly={props.modifier === "read" ? true : false}
             onInput={e => inputCallback(e, key, key2)}
+            placeholder={cur.props!.placeholder}
+            value={cur.props!.value}
           />
         );
         break;
       case "checkbox":
         el = (
-          <div className="custom-control custom-checkbox">
-            <input
-              type="checkbox"
-              className="custom-control-input"
-              onInput={e => inputCallback(e, key, key2)}
-            />
-            <label className="custom-control-label">{props.questions}</label>
-          </div>
+          <Checkbox
+            onInput={e => inputCallback(e, key, key2)}
+            label={cur.question}
+            readOnly={props.modifier === "read" ? true : false}
+            checked={cur.props!.value ? cur.props!.value : false}
+          />
         );
         break;
       case "date":
         el = (
           <input
-            type="date"
+            type="text"
             className="form-control"
             readOnly={props.modifier === "read" ? true : false}
             onInput={e => inputCallback(e, key, key2)}
+            value={cur.props!.date ? cur.props!.date!.toString() : undefined}
           />
         );
         break;
       case "select":
-        if (cur.options)
-          el = (
-            <select
-              className="form-control"
-              disabled={props.modifier === "read" ? true : false}
-              onInput={e => inputCallback(e, key, key2)}
-            >
-              {cur.options.map(cur => (
-                <option value={cur}>{cur}</option>
+        el = (
+          <select
+            className="form-control"
+            disabled={props.modifier === "read" ? true : false}
+            onInput={e => inputCallback(e, key, key2)}
+          >
+            {cur.props &&
+              cur.props.option &&
+              cur.props.option.map((option, index) => (
+                <option
+                  value={option}
+                  selected={
+                    cur.props!.selected
+                      ? cur.props!.selected === index
+                      : undefined
+                  }
+                >
+                  {option}
+                </option>
               ))}
-            </select>
-          );
-        else
-          el = (
-            <select
-              className="form-control"
-              disabled={props.modifier === "read" ? true : false}
-              onInput={e => inputCallback(e, key, key2)}
-            ></select>
-          );
+          </select>
+        );
         break;
       case "textarea-list":
         el = (
@@ -111,44 +117,39 @@ function Form<T>(props: FormUIProps<T>) {
             className="form-control"
             readOnly={props.modifier === "read" ? true : false}
             onInput={e => inputCallback(e, key, key2)}
+            rows={cur.props!.rows}
+            placeholder={cur.props!.placeholder}
+            value={cur.props!.value}
+            list={cur.props!.list}
           />
         );
         break;
       case "date-range":
         el = (
-          <div className="row">
-            <div className="col-md-6">
-              <div className="form-group">
-                <input
-                  type="date"
-                  className="form-control"
-                  placeholder="Start Date"
-                />
-              </div>
-            </div>
-            <div className="col-md-6">
-              <div className="form-group">
-                <input
-                  type="date"
-                  className="form-control"
-                  placeholder="End Date"
-                />
-              </div>
-            </div>
-          </div>
+          <DateRangeInput
+            start={cur.props!.start}
+            end={cur.props!.end}
+            readOnly={props.modifier === "read" ? true : false}
+            onInput={e => inputCallback(e, key, key2)}
+          />
         );
         break;
       case "barcode":
-        el = <BarcodeScannerBox />;
-        break;
+        el = (
+          <BarcodeScannerBox
+            value={cur.props!.code}
+            onInput={e => inputCallback(e, key, key2)}
+          />
+        );
+        if (cur.props) break;
       case "file":
         el = <FileUpload message="Please upload the files into here." />;
         break;
       case "photo":
-        el = <PhotoUpload />;
+        el = <PhotoUpload onInput={} readOnly={} />;
         break;
       case "tagsbox":
-        el = <TagsBox />;
+        el = <TagsBox onInput={} readOnly={} />;
         break;
       case "password":
         el = <PasswordInput />;
@@ -164,7 +165,10 @@ function Form<T>(props: FormUIProps<T>) {
           <input
             type="text"
             className="form-control"
-            readOnly={props.modifier === "read" ? true : false}
+            readOnly={true}
+            placeholder={
+              "Production Error: If this pass through development build, report this as a bug ASAP!"
+            }
           />
         );
         break;
