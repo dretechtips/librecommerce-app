@@ -61,18 +61,19 @@ function Form<T>(props: FormUIProps<T>) {
             className="form-control"
             readOnly={props.modifier === "read" ? true : false}
             onInput={e => inputCallback(e, key, key2)}
-            placeholder={cur.props!.placeholder}
-            value={cur.props!.value}
+            placeholder={cur.props ? cur.props!.placeholder : undefined}
+            value={cur.props ? cur.props!.value : undefined}
           />
         );
         break;
       case "checkbox":
         el = (
           <Checkbox
-            onInput={e => inputCallback(e, key, key2)}
             label={cur.question}
-            readOnly={props.modifier === "read" ? true : false}
-            checked={cur.props!.value ? cur.props!.value : false}
+            input={<ol />}
+            //onInput={e => inputCallback(e, key, key2)}
+            //readOnly={props.modifier === "read" ? true : false}
+            //checked={cur.props ? cur.props!.value : false}
           />
         );
         break;
@@ -83,7 +84,13 @@ function Form<T>(props: FormUIProps<T>) {
             className="form-control"
             readOnly={props.modifier === "read" ? true : false}
             onInput={e => inputCallback(e, key, key2)}
-            value={cur.props!.date ? cur.props!.date!.toString() : undefined}
+            value={
+              cur.props
+                ? cur.props!.date
+                  ? cur.props.date.toString()
+                  : undefined
+                : undefined
+            }
           />
         );
         break;
@@ -100,9 +107,7 @@ function Form<T>(props: FormUIProps<T>) {
                 <option
                   value={option}
                   selected={
-                    cur.props!.selected
-                      ? cur.props!.selected === index
-                      : undefined
+                    cur.props ? cur.props!.selected === index : undefined
                   }
                 >
                   {option}
@@ -117,18 +122,18 @@ function Form<T>(props: FormUIProps<T>) {
             className="form-control"
             readOnly={props.modifier === "read" ? true : false}
             onInput={e => inputCallback(e, key, key2)}
-            rows={cur.props!.rows}
-            placeholder={cur.props!.placeholder}
-            value={cur.props!.value}
-            list={cur.props!.list}
+            rows={cur.props ? cur.props!.rows : undefined}
+            placeholder={cur.props ? cur.props!.placeholder : undefined}
+            value={cur.props ? cur.props!.value : undefined}
+            list={cur.props ? cur.props!.list : undefined}
           />
         );
         break;
       case "date-range":
         el = (
           <DateRangeInput
-            start={cur.props!.start}
-            end={cur.props!.end}
+            start={cur.props ? cur.props!.start : undefined}
+            end={cur.props ? cur.props!.end : undefined}
             readOnly={props.modifier === "read" ? true : false}
             onInput={e => inputCallback(e, key, key2)}
           />
@@ -137,7 +142,7 @@ function Form<T>(props: FormUIProps<T>) {
       case "barcode":
         el = (
           <BarcodeScannerBox
-            value={cur.props!.code}
+            value={cur.props ? cur.props!.code : undefined}
             onInput={e => inputCallback(e, key, key2)}
           />
         );
@@ -146,7 +151,12 @@ function Form<T>(props: FormUIProps<T>) {
         el = <FileUpload message="Please upload the files into here." />;
         break;
       case "photo":
-        el = <PhotoUpload onInput={} readOnly={} />;
+        el = (
+          <PhotoUpload
+            onInput={e => inputCallback(e, key, key2)}
+            readOnly={props.modifier === "read" ? true : false}
+          />
+        );
         break;
       case "tagsbox":
         el = <TagsBox onInput={} readOnly={} />;
