@@ -1,18 +1,41 @@
 import React, { useState } from "react";
-import { InputProps, InputMessage } from "../interface/Input.interface";
+import {
+  InputUIProps,
+  InputMessage,
+  InputGroup
+} from "../interface/Input.interface";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
+import Button from "./Button";
+
+function renderInputGroup(input: InputGroup[]): JSX.Element[] {
+  return input.map(cur => {
+    if (cur.type === "text") {
+      return <span className="input-group-text">{cur.text}</span>;
+    } else if (cur.type === "button") {
+      return <Button color="success" value={cur.type} action={cur.action} />;
+    } else {
+      return <div></div>;
+    }
+  });
+}
 
 /**
  *
  * @param props Input Props
  * @typedef T Invalid State
  */
-function Input<T extends {}>(props: InputProps<T>) {
+function Input<T extends {}>(props: InputUIProps<T>) {
   const [display, setDisplay] = useState(false);
   const [clicked, setClicked] = useState(false);
   return (
     <div>
+      {/* <div className="input-group">
+        {props.prepend &&
+        <div className="input-group-prepend">
+          {renderInputGroup(props.prepend)}
+        </div>
+        } */}
       <input
         type="text"
         className={
@@ -31,6 +54,11 @@ function Input<T extends {}>(props: InputProps<T>) {
         onInput={props.onInput}
         placeholder={props.example}
       />
+      {/* {props.append &&
+          <div className="input-group-prepend">
+          {renderInputGroup(props.append)}
+        </div>}
+      </div> */}
       {display && (
         <div className="text-sm">
           {props.valid.length === 0 ? (

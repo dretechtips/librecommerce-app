@@ -4,7 +4,7 @@ import { FileUploadUIProps } from "../interface/FileUpload.interface";
 function FileUpload(props: FileUploadUIProps) {
   return (
     <div
-      {...props}
+      {...props.input}
       className={"custom-file " + (props.interface ? "d-none" : "")}
     >
       <input

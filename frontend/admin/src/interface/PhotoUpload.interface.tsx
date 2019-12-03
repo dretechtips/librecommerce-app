@@ -1,10 +1,11 @@
 import { FileUploadAccess } from "./FileUpload.interface";
 
-export interface PhotoUploadProps
-  extends React.DetailedHTMLProps<
+export interface PhotoUploadProps {
+  input?: React.DetailedHTMLProps<
     React.InputHTMLAttributes<HTMLInputElement>,
     HTMLInputElement
-  > {
+  >;
+  photos?: HTMLImageElement[];
   photoLimit?: number;
   /** @description In terms of MB */
   sizeLimit?: number;

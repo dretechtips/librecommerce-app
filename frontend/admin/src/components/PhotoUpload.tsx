@@ -5,10 +5,6 @@ import PhotoViewer from "../containers/PhotoViewer";
 import { FileUploadProps } from "../interface/FileUpload.interface";
 
 function PhotoUpload(props: PhotoUploadUIProps) {
-  function extract(): React.DetailedHTMLProps<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    HTMLInputElement
-  > {}
   return (
     <div>
       <PhotoViewer
@@ -17,7 +13,7 @@ function PhotoUpload(props: PhotoUploadUIProps) {
         remove={props.fileUpload.remove.set}
       />
       <FileUpload
-        {...props}
+        input={props.input}
         message="Please upload pictures"
         allowedFileTypes={[
           "image/png",

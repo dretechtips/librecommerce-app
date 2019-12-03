@@ -1,11 +1,11 @@
-export interface FileUploadProps
-  extends React.DetailedHTMLProps<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    HTMLInputElement
-  > {
+export interface FileUploadProps {
   /**
    * @description Limit is in terms of MB
    */
+  input?: React.DetailedHTMLProps<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    HTMLInputElement
+  >;
   limit?: number;
   message: string;
   allowedFileTypes?: string[];

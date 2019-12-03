@@ -4,15 +4,13 @@ import {
   PhotoUploadState
 } from "../interface/PhotoUpload.interface";
 import PhotoUploadUI from "../components/PhotoUpload";
-import { FileUploadInputProps } from "../interface/FileUpload.interface";
-import FileUpload from "../components/FileUpload";
 
 export class PhotoUpload extends Component<PhotoUploadProps, PhotoUploadState> {
   fileUploadElement: HTMLInputElement | null;
   constructor(props: PhotoUploadProps) {
     super(props);
     this.state = {
-      photos: [],
+      photos: this.props.photos ? this.props.photos : [],
       size: 0,
       remove: -1
     };

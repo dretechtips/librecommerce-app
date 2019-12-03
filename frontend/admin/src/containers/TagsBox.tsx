@@ -7,7 +7,7 @@ export class TagsBox extends Component<TagsBoxProps, TagsBoxState> {
   constructor(props: TagsBoxProps) {
     super(props);
     this.state = {
-      tags: []
+      tags: this.props.tags ? this.props.tags : []
     };
   }
   handleAdd = (tag: Tag): void => {

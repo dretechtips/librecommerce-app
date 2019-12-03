@@ -70,10 +70,9 @@ function Form<T>(props: FormUIProps<T>) {
         el = (
           <Checkbox
             label={cur.question}
-            input={<ol />}
-            //onInput={e => inputCallback(e, key, key2)}
-            //readOnly={props.modifier === "read" ? true : false}
-            //checked={cur.props ? cur.props!.value : false}
+            onInput={e => inputCallback(e, key, key2)}
+            readOnly={props.modifier === "read" ? true : false}
+            checked={cur.props ? cur.props!.value : false}
           />
         );
         break;
@@ -148,18 +147,35 @@ function Form<T>(props: FormUIProps<T>) {
         );
         if (cur.props) break;
       case "file":
-        el = <FileUpload message="Please upload the files into here." />;
+        el = (
+          <FileUpload
+            input={{
+              readOnly: props.modifier === "read" ? true : false,
+              onInput: e => inputCallback(e, key, key2)
+            }}
+            message="Please upload the files into here."
+          />
+        );
         break;
       case "photo":
         el = (
           <PhotoUpload
-            onInput={e => inputCallback(e, key, key2)}
-            readOnly={props.modifier === "read" ? true : false}
+            photos={cur.props ? cur.props.photos : undefined}
+            input={{
+              readOnly: props.modifier === "read" ? true : false,
+              onInput: e => inputCallback(e, key, key2)
+            }}
           />
         );
         break;
       case "tagsbox":
-        el = <TagsBox onInput={} readOnly={} />;
+        el = (
+          <TagsBox
+            tags={cur.props ? cur.props.tags : undefined}
+            readOnly={props.modifier === "read" ? true : false}
+            onChange={e => inputCallback(e, key, key2)}
+          />
+        );
         break;
       case "password":
         el = <PasswordInput />;

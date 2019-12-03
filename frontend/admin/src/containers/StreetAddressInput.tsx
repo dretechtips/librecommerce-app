@@ -5,11 +5,13 @@ import {
   InvalidState
 } from "../interface/StreetAddressInput.interface";
 import StreetAddressInputUI from "../components/StreetAddressInput";
+import { InputValidity } from "../interface/Input.interface";
 
 export class StreetAddressInput extends Component<
   StreetAddressInputProps,
   StreetAddressInputState
 > {
+  private name: string = "Street Address";
   constructor(props: StreetAddressInputProps) {
     super(props);
     this.state = {
@@ -21,6 +23,26 @@ export class StreetAddressInput extends Component<
       valid: ["PARAM_UNDERFLOW", "HOUSING", "STREET", "TYPE"]
     };
   }
+  public invalid: InputValidity<typeof InvalidState> = {
+    APT: {
+      success: "Valid Apartment Number",
+      fail: "Invalid Apartment Number"
+    },
+    HOUSING: {
+      success: "Valid Housing Number",
+      fail: "Invalid Housing Number"
+    },
+    STREET: { success: "Valid Street", fail: "Invalid Street" },
+    TYPE: { success: "Valid Street Type", fail: "Invalid Street Type" },
+    PARAM_OVERFLOW: {
+      success: "Street Address has under 5 param",
+      fail: "Street Address has over 4 param"
+    },
+    PARAM_UNDERFLOW: {
+      success: "Street Address has over 2 param",
+      fail: "Street Address has under 3 param"
+    }
+  };
   public verify = (e: React.ChangeEvent<HTMLInputElement> | null): void => {
     if (e === null) return;
     const state: (keyof typeof InvalidState)[] = [];
@@ -60,6 +82,8 @@ export class StreetAddressInput extends Component<
     return (
       <StreetAddressInputUI
         {...this.props}
+        name={this.name}
+        invalid={this.invalid}
         example={"[Housing #] [Street Name] [Street Type] [APT #]?"}
         value={this.state.input}
         valid={this.state.valid}

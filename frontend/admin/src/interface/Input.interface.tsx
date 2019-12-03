@@ -1,15 +1,36 @@
+import Button from "../components/Button";
+import React from "react";
+import { ButtonProps } from "./Button.interface";
+
 /**
  * @typedef T Invalid State
  */
-export interface InputProps<T extends {}> {
+export interface InputUIProps<T extends {}> extends InputProps {
   name: string;
   example: string;
   value: string;
   verify: (e: React.ChangeEvent<HTMLInputElement>) => void;
   valid: (keyof T)[];
   invalid: InputValidity<T>;
-  onInput?: (e: React.FormEvent<HTMLInputElement>) => void;
 }
+
+export interface InputProps {
+  onInput?: (e: React.FormEvent<HTMLInputElement>) => void;
+  onVerified?: (e: React.FormEvent<HTMLInputElement>) => void;
+  append?: InputGroup[];
+  prepend?: InputGroup[];
+}
+
+export type InputGroup =
+  | {
+      type: "text";
+      text: string;
+    }
+  | {
+      type: "button";
+      text: string;
+      action: () => void;
+    };
 
 export interface InputMessage {
   success: string;

@@ -1,15 +1,10 @@
 import React from "react";
-import { InputProps } from "./Input.interface";
+import { InputProps, InputUIProps } from "./Input.interface";
 
-export interface StreetAddressInputProps
-  extends Required<Pick<InputProps<any>, "onInput">> {}
+export interface StreetAddressInputProps extends InputProps {}
 
-export interface StreetAddressInputUIProps {
-  value: string;
-  valid: (keyof typeof InvalidState)[];
-  verify: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  example: string;
-}
+export interface StreetAddressInputUIProps
+  extends InputUIProps<typeof InvalidState> {}
 
 export interface StreetAddressInputState {
   input: string;
