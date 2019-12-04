@@ -31,7 +31,7 @@ abstract class CURDComponent<
     } as unknown) as FormRelation<T>;
   }
   abstract cQuestions: FormRelation<K>;
-  abstract sQuestions: FormRelation<Omit<T, keyof K>>;
+  abstract sQuestions: FormRelation<Omit<T, Extract<keyof K, keyof T>>>;
   abstract new: (value: K) => Promise<void>;
   abstract update: (value: K) => Promise<void>;
   abstract delete: (id: string) => Promise<void>;

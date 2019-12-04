@@ -2,6 +2,7 @@ import { LookupbarResult } from "./Lookupbar.interface";
 import { FormQuestion, FormModifier, FormRelation } from "./Form.interface";
 import { ComponentType, ComponentClass } from "react";
 import { MainPanelRoute } from "./MainPanel.interface";
+import { Order, NewOrder } from "./routes/Order.interface";
 
 export interface CRUDProps {
   paths: CRUDPath;
@@ -14,7 +15,7 @@ export interface ICRUD<T, K extends Omit<T, any>> {
   /** @description Client Questions */
   cQuestions: FormRelation<K>;
   /** @description Server Questions */
-  sQuestions: FormRelation<Omit<T, keyof K>>;
+  sQuestions: FormRelation<Omit<T, Extract<keyof K, keyof T>>>;
   fetch: (id: string) => Promise<T>;
   new: (value: K) => Promise<void>;
   delete: (id: string) => Promise<void>;
@@ -22,6 +23,12 @@ export interface ICRUD<T, K extends Omit<T, any>> {
   toResult: (value: T) => LookupbarResult;
   query: (value: string) => Promise<T[]>;
 }
+
+type Replace<T, K extends Omit<T, any>> = {
+  [C in keyof K]: K[C] extends T[Extract<C, keyof T>] ? K[C] : never;
+};
+
+const apple: Replace<Order, NewOrder> = {};
 
 export interface CRUDPath {
   read: string;
