@@ -40,7 +40,11 @@ function Form<T>(props: FormUIProps<T>) {
     scrollToTop(ref);
     if (props.submit) props.submit(props.values);
   }
-  function display(cur: FormQuestion, key: keyof T, key2?: keyof T[keyof T]) {
+  function display(
+    cur: FormQuestion,
+    key: keyof T,
+    key2?: keyof T[keyof T]
+  ): JSX.Element {
     let el: JSX.Element = <div></div>;
     switch (cur.input) {
       case "text":
@@ -178,13 +182,31 @@ function Form<T>(props: FormUIProps<T>) {
         );
         break;
       case "password":
-        el = <PasswordInput />;
+        el = (
+          <PasswordInput
+            value={cur.props ? cur.props.value : undefined}
+            readOnly={props.modifier === "read" ? true : false}
+            onInput={e => inputCallback(e, key, key2)}
+          />
+        );
         break;
       case "address":
-        el = <StreetAddressInput onInput={e => inputCallback(e, key, key2)} />;
+        el = (
+          <StreetAddressInput
+            value={cur.props ? cur.props.value : undefined}
+            readOnly={props.modifier === "read" ? true : false}
+            onInput={e => inputCallback(e, key, key2)}
+          />
+        );
         break;
       case "email":
-        el = <EmailAddressInput onInput={e => inputCallback(e, key, key2)} />;
+        el = (
+          <EmailAddressInput
+            value={cur.props ? cur.props.value : undefined}
+            readOnly={props.modifier === "read" ? true : false}
+            onInput={e => inputCallback(e, key, key2)}
+          />
+        );
         break;
       default:
         el = (

@@ -16,7 +16,7 @@ import {
 
 abstract class CURDComponent<
   T extends {},
-  K extends Omit<T, any>,
+  K extends Omit<T, keyof T>,
   P = {},
   S = {}
 > extends Component<CRUDProps & P, S> implements ICRUD<T, K> {

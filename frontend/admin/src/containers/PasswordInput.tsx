@@ -2,14 +2,34 @@ import React, { Component } from "react";
 import {
   PasswordInputProps,
   PasswordInputState,
-  InvalidityState
+  InvalidState
 } from "../interface/PasswordInput.interface";
 import PasswordInputUI from "../components/PasswordInput";
+import { InputValidity, InputUIProps } from "../interface/Input.interface";
 
 export class PasswordInput extends Component<
   PasswordInputProps,
   PasswordInputState
 > {
+  private name: string = "Password Input";
+  public invalid: InputValidity<typeof InvalidState> = {
+    TOOLONG: {
+      success: "Password isn't too long.",
+      fail: "Password is too long."
+    },
+    TOOSHORT: {
+      success: "Password isn't too short.",
+      fail: "Password is too short"
+    },
+    NO_CAPITAL_LETTER: {
+      success: "Password has at least one captial letter",
+      fail: "Password doesn't have a capital letter"
+    },
+    NO_SPECIAL_CHAR: {
+      success: "Password has at least one special character",
+      fail: "Password doesn't jave a special character."
+    }
+  };
   private min: number = 8;
   private max: number = 25;
   private sCharSet: string[];
@@ -17,23 +37,10 @@ export class PasswordInput extends Component<
     super(props);
     this.state = {
       password: "",
-      validityStates: [
-        InvalidityState.tooShort,
-        InvalidityState.noCapitalLetter,
-        InvalidityState.noSpecialChar
-      ],
-      help: false
+      valid: ["NO_CAPITAL_LETTER", "NO_SPECIAL_CHAR", "TOOSHORT"]
     };
     this.sCharSet = this.initCharSetS();
   }
-  public displayHelp = (): void => {
-    this.setState({ ...this.state, help: true });
-    return;
-  };
-  public undisplayHelp = (): void => {
-    this.setState({ ...this.state, help: false });
-    return;
-  };
   public generatePassword = (): void => {
     const array: string[] = new Array(13)
       .fill("a")
@@ -43,7 +50,7 @@ export class PasswordInput extends Component<
     this.setState({
       ...this.state,
       password: array.join(""),
-      validityStates: true
+      valid: []
     });
   };
   public validation = (
@@ -51,13 +58,13 @@ export class PasswordInput extends Component<
   ): void => {
     if (!ref) return;
     const s: string = ref.currentTarget.value;
-    let state: InvalidityState[] | true = [];
-    if (this.isTooShort(s)) state.push(InvalidityState.tooShort);
-    if (this.isTooLong(s)) state.push(InvalidityState.tooLong);
-    if (!this.hasCapitalLetter(s)) state.push(InvalidityState.noCapitalLetter);
-    if (!this.hasSpecialCharacter(s)) state.push(InvalidityState.noSpecialChar);
+    let state: InvalidState[] | true = [];
+    if (this.isTooShort(s)) state.push(InvalidState.TOOSHORT);
+    if (this.isTooLong(s)) state.push(InvalidState.TOOLONG);
+    if (!this.hasCapitalLetter(s)) state.push(InvalidState.NO_CAPITAL_LETTER);
+    if (!this.hasSpecialCharacter(s)) state.push(InvalidState.NO_SPECIAL_CHAR);
     if (state.length === 0) state = true;
-    this.setState({ ...this.state, validityStates: state, password: s });
+    this.setState({ ...this.state, valid: [], password: s });
   };
   private generateChar(casing: "upper" | "lower"): string {
     const offset: number = Math.ceil(Math.random() * 100) % 26;
@@ -121,15 +128,13 @@ export class PasswordInput extends Component<
   render() {
     return (
       <PasswordInputUI
-        generatePassword={this.generatePassword}
-        validityStates={this.state.validityStates}
-        password={this.state.password}
-        validation={this.validation}
-        min={this.min}
-        max={this.max}
-        help={this.state.help}
-        displayHelp={this.displayHelp}
-        undisplayHelp={this.undisplayHelp}
+        {...this.props}
+        name={this.name}
+        example={""}
+        value={this.state.password}
+        verify={this.validation}
+        valid={this.state.valid}
+        invalid={this.invalid}
       />
     );
   }

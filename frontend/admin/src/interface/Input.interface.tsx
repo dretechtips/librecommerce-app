@@ -12,11 +12,14 @@ export interface InputUIProps<T extends {}> extends InputProps {
   verify: (e: React.ChangeEvent<HTMLInputElement>) => void;
   valid: (keyof T)[];
   invalid: InputValidity<T>;
+  buttons?: ButtonProps[];
 }
 
 export interface InputProps {
   onInput?: (e: React.FormEvent<HTMLInputElement>) => void;
   onVerified?: (e: React.FormEvent<HTMLInputElement>) => void;
+  readOnly?: boolean;
+  value?: string;
   append?: InputGroup[];
   prepend?: InputGroup[];
 }

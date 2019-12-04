@@ -6,19 +6,6 @@ import {
 } from "../interface/Input.interface";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
-import Button from "./Button";
-
-function renderInputGroup(input: InputGroup[]): JSX.Element[] {
-  return input.map(cur => {
-    if (cur.type === "text") {
-      return <span className="input-group-text">{cur.text}</span>;
-    } else if (cur.type === "button") {
-      return <Button color="success" value={cur.type} action={cur.action} />;
-    } else {
-      return <div></div>;
-    }
-  });
-}
 
 /**
  *
@@ -30,35 +17,36 @@ function Input<T extends {}>(props: InputUIProps<T>) {
   const [clicked, setClicked] = useState(false);
   return (
     <div>
-      {/* <div className="input-group">
-        {props.prepend &&
-        <div className="input-group-prepend">
-          {renderInputGroup(props.prepend)}
+      <div className="input-group">
+        <input
+          readOnly={props.readOnly}
+          type="text"
+          className={
+            "form-control " +
+            (clicked === true
+              ? props.valid.length === 0
+                ? "is-valid"
+                : "is-invalid"
+              : "")
+          }
+          onChange={props.verify}
+          value={props.value}
+          onFocus={() => setDisplay(true)}
+          onBlur={() => setDisplay(false)}
+          onClick={() => setClicked(true)}
+          onInput={props.onInput}
+          placeholder={props.example}
+        />
+        <div className="input-group-append">
+          {props.buttons &&
+            props.buttons.map(props => (
+              <button className="input-group-text" onClick={props.action}>
+                {props.icon && <i className={props.icon}></i>}
+                {props.value}
+              </button>
+            ))}
         </div>
-        } */}
-      <input
-        type="text"
-        className={
-          "form-control " +
-          (clicked === true
-            ? props.valid.length === 0
-              ? "is-valid"
-              : "is-invalid"
-            : "")
-        }
-        onChange={props.verify}
-        value={props.value}
-        onFocus={() => setDisplay(true)}
-        onBlur={() => setDisplay(false)}
-        onClick={() => setClicked(true)}
-        onInput={props.onInput}
-        placeholder={props.example}
-      />
-      {/* {props.append &&
-          <div className="input-group-prepend">
-          {renderInputGroup(props.append)}
-        </div>}
-      </div> */}
+      </div>
       {display && (
         <div className="text-sm">
           {props.valid.length === 0 ? (

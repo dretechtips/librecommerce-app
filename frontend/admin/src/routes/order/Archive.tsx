@@ -14,7 +14,9 @@ class Archive extends CURDComponent<Order, NewOrder> {
       category: "Shipping",
       questions: {
         provider: { question: "Provider", input: "text" },
-        address: { question: "Address", input: "address" }
+        address: { question: "Address", input: "address" },
+        id: { question: "ID", input: "text" },
+        price: { question: "Price", input: "text" }
       }
     },
     cc: {

@@ -1,26 +1,18 @@
-export interface PasswordInputProps {}
+import { InputProps, InputUIProps } from "./Input.interface";
 
-export interface PasswordInputUIProps extends PasswordInputProps {
-  validityStates: InvalidityState[] | true;
-  password: string;
-  validation: (ref: React.ChangeEvent<HTMLInputElement> | null) => void;
-  min: number;
-  max: number;
-  help: boolean;
-  displayHelp: () => void;
-  undisplayHelp: () => void;
-  generatePassword: () => void;
-}
+export interface PasswordInputProps extends InputProps {}
+
+export interface PasswordInputUIProps
+  extends InputUIProps<typeof InvalidState> {}
 
 export interface PasswordInputState {
   password: string;
-  validityStates: InvalidityState[] | true;
-  help: boolean;
+  valid: (keyof typeof InvalidState)[];
 }
 
-export enum InvalidityState {
-  tooShort,
-  tooLong,
-  noCapitalLetter,
-  noSpecialChar
+export enum InvalidState {
+  TOOSHORT,
+  TOOLONG,
+  NO_CAPITAL_LETTER,
+  NO_SPECIAL_CHAR
 }

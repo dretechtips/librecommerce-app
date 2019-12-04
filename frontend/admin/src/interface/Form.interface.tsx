@@ -99,7 +99,7 @@ export type FormInput =
   | "password"
   | "address"
   | "email"
-  | FormInputType<TextInputProps, "text">
+  | FormInputType<TextInputProps, "text" | "address" | "email" | "password">
   | FormInputType<CheckboxInputProps, "checkbox">
   | FormInputType<TextAreaInputProps, "textarea">
   | FormInputType<TextAreaListInputProps, "textarea-list">
