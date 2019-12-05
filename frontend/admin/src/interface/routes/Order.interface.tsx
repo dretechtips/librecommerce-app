@@ -31,4 +31,7 @@ export interface Order {
   cc: CreditCard;
 }
 
-export type NewOrder = Omit<Order, "timestamp" | "id" | "cancelled">;
+export type NewOrder = Omit<
+  Order,
+  "timestamp" | "id" | "cancelled" | "shipping"
+> & { shipping: NewShipping };

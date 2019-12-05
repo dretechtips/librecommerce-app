@@ -34,10 +34,21 @@ class Archive extends CURDComponent<Order, NewOrder> {
       }
     }
   };
-  public sQuestions: FormRelation<Omit<Order, keyof NewOrder>> = {
+  public sQuestions: FormRelation<
+    Omit<Order, Exclude<keyof NewOrder, "shipping">>
+  > = {
     cancelled: { question: "Cancelled", input: "checkbox" },
     timestamp: { question: "Timestamp", input: "text" },
-    id: { question: "ID", input: "text" }
+    id: { question: "ID", input: "text" },
+    shipping: {
+      category: "Shipping",
+      questions: {
+        id: { question: "Shipping ID", input: "text" },
+        price: { question: "Price", input: "text" },
+        provider: { question: "Provider", input: "text" },
+        address: { question: "Address", input: "address" }
+      }
+    }
   };
   public delete = async (id: string) => {};
   public update = async (value: NewOrder) => {};

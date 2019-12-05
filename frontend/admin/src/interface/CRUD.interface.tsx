@@ -24,12 +24,6 @@ export interface ICRUD<T, K extends Omit<T, any>> {
   query: (value: string) => Promise<T[]>;
 }
 
-type Replace<T, K extends Omit<T, any>> = {
-  [C in keyof K]: K[C] extends T[Extract<C, keyof T>] ? K[C] : never;
-};
-
-const apple: Replace<Order, NewOrder> = {};
-
 export interface CRUDPath {
   read: string;
   modify: string;
