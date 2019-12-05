@@ -138,7 +138,7 @@ function Form<T>(props: FormUIProps<T>) {
             start={cur.props ? cur.props!.start : undefined}
             end={cur.props ? cur.props!.end : undefined}
             readOnly={props.modifier === "read" ? true : false}
-            onInput={e => inputCallback(e, key, key2)}
+            onInput={e => props.onInput(key, key2, e)}
           />
         );
         break;
@@ -177,7 +177,7 @@ function Form<T>(props: FormUIProps<T>) {
           <TagsBox
             tags={cur.props ? cur.props.tags : undefined}
             readOnly={props.modifier === "read" ? true : false}
-            onChange={e => inputCallback(e, key, key2)}
+            onChange={e => props.onInput(key, key2, e)}
           />
         );
         break;

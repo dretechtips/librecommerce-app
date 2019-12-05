@@ -11,6 +11,7 @@ import User from "./user/Router";
 import Ban from "./ban/Router";
 import Promotion from "./promo/Router";
 import Subscription from "./subscription/Router";
+import Payroll from "./payroll/Router";
 
 const Router: MainPanelRoute[] = [
   { path: "/", component: Dashboard },
@@ -24,7 +25,8 @@ const Router: MainPanelRoute[] = [
   ...User,
   ...Ban,
   ...Promotion,
-  ...Subscription
+  ...Subscription,
+  ...Payroll
 ];
 
 export default Router;

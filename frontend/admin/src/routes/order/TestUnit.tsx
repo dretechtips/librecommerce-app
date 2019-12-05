@@ -7,7 +7,9 @@ export const order: Order = {
   cancelled: false,
   shipping: {
     provider: "FEDEX",
-    address: "1234 Apple Drive"
+    address: "1234 Apple Drive",
+    id: "sdjodhhr2432",
+    price: 19.2
   },
   cc: {
     provider: "mastercard",

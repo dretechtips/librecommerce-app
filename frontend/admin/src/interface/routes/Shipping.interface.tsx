@@ -1,6 +1,6 @@
 export interface Shipping {
   id: string;
-  price: string;
+  price: number;
   provider: "USPS" | "FEDEX" | "UPS";
   address: string;
 }
