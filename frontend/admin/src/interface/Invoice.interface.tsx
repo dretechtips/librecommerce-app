@@ -1,19 +1,32 @@
 export interface InvoiceProps {
-  comments: string;
   getAdd(): Promise<InvoiceGoodorService[]>;
   getSubtract(): Promise<InvoiceGoodorService[]>;
-  sendTo: Promise<InvoiceSendTo[]>;
-  terms: string;
+  getSendTo(): Promise<InvoiceSendTo>;
+  getTerms(): Promise<string>;
+  getInvoiceNum(): Promise<number>;
+  getDate(): Promise<Date>;
+  getComments(): Promise<string>;
 }
 
 export interface InvoiceUIProps extends InvoiceProps {
+  calcTotalPrice: (GorS: InvoiceGoodorService[]) => number;
   add: InvoiceGoodorService[];
   subtract: InvoiceGoodorService[];
+  terms: string | null;
+  invoiceNum: number | null;
+  date: string | null;
+  sendTo: InvoiceSendTo | null;
+  comments: string | null;
 }
 
 export interface InvoiceState {
   add: InvoiceGoodorService[];
   subtract: InvoiceGoodorService[];
+  terms: string | null;
+  invoiceNum: number | null;
+  date: string | null;
+  sendTo: InvoiceSendTo | null;
+  comment: string | null;
 }
 
 export interface InvoiceGoodorService {
