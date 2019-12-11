@@ -1,7 +1,7 @@
 import React from "react";
 
-function Salary() {
+function Pay() {
   return <div></div>;
 }
 
-export default Salary;
+export default Pay;

@@ -8,10 +8,11 @@ import {
 } from "../../interface/Invoice.interface";
 import Card from "../../components/Card";
 
-class PayslipInvoice extends Component implements InvoiceProps {
+class Payslip extends Component implements InvoiceProps {
   private url: string = "Some URL";
   constructor() {
     super({});
+    this.state = {};
   }
   public async getAdd(): Promise<InvoiceGoodorService[]> {
     return [];
@@ -30,10 +31,10 @@ class PayslipInvoice extends Component implements InvoiceProps {
       name: "John Doe",
       email: "johndoe1@gmai.cfea",
       phone: "3218904238",
+      address: "1234 Apple Street",
       city: "Dallas",
       state: "Texas",
-      country: "USA",
-      address: "1234 Apple Street"
+      country: "USA"
     };
   }
   public async getDate(): Promise<Date> {

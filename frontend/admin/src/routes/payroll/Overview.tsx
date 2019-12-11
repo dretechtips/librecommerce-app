@@ -5,12 +5,17 @@ function Overview() {
   return (
     <div>
       <div className="row">
-        <Card theme="success">Release Payment</Card>
-        <Card theme="success">Total Wage Last Month</Card>
-        <Card theme="success">Next Payment Date</Card>
+        <div className="col">
+          <Card theme="success">Release Payment</Card>
+        </div>
+        <div className="col">
+          <Card theme="success">Total Payment This Month</Card>
+        </div>
+        <div className="col">
+          <Card theme="success">Next Payment Date</Card>
+        </div>
       </div>
       <Card theme="success">Pay Runs</Card>
-      <Card theme="success"></Card>
     </div>
   );
 }

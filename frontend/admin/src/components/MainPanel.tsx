@@ -13,4 +13,4 @@ export default (props: MainPanelProps) => {
       </Switch>
     </main>
   );
-}
+};
