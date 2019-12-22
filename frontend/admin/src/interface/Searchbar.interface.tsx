@@ -3,7 +3,7 @@ import { ButtonProps } from "./Button.interface";
 
 export interface SearchbarProps {
   placeholder: string;
-  search: SearchFunction;
+  search: (value: string) => void;
   value?: string;
   buttons?: SearchButton[];
 }

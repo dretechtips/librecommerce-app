@@ -1,7 +1,7 @@
 import { MainPanelRoute } from "../../interface/MainPanel.interface";
 import CRUDWithRouter from "../../templates/CRUD.router";
 import Archive from "./Archive";
-import AppealArchive from "./AppealArchive";
+import AppealArchive from "./appeal/Archive";
 
 const ArchiveRouter = CRUDWithRouter(
   Archive,

@@ -1,23 +1,27 @@
 import React from "react";
-import Card from "../../components/Card";
 import CURDComponent from "../../templates/CURD.component";
 import {
   Category as ICategory,
   NewCategory
 } from "../../interface/routes/Inventory.interface";
-import { FormQuestion, FormRelation } from "../../interface/Form.interface";
+import { FormRelation } from "../../interface/Form.interface";
 import { LookupbarResult } from "../../interface/Lookupbar.interface";
 import { category } from "./TestUnit";
+import FormField from "../../components/FormField";
 
 class Category extends CURDComponent<ICategory, NewCategory> {
   public name = "Product Category";
   public cQuestions: FormRelation<NewCategory> = {
-    name: { question: "Name", input: "text" },
-    description: { question: "Description", input: "textarea" },
-    tags: { question: "Associated Tags", input: "tagsbox" }
+    name: new FormField({ question: { label: "Name", input: "text" } }),
+    description: new FormField({
+      question: { label: "Description", input: "textarea" }
+    }),
+    tags: new FormField({
+      question: { label: "Associated Tags", input: "tagsbox" }
+    })
   };
   public sQuestions: FormRelation<Omit<ICategory, keyof NewCategory>> = {
-    id: { question: "ID", input: "text" }
+    id: new FormField({ question: { label: "ID", input: "text" } })
   };
   public toResult = (category: ICategory): LookupbarResult => {
     return {

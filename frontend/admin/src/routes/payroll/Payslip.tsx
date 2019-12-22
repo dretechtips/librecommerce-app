@@ -10,10 +10,6 @@ import Card from "../../components/Card";
 
 class Payslip extends Component implements InvoiceProps {
   private url: string = "Some URL";
-  constructor() {
-    super({});
-    this.state = {};
-  }
   public async getAdd(): Promise<InvoiceGoodorService[]> {
     return [];
   }

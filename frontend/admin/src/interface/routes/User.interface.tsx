@@ -1,7 +1,8 @@
 import { AccountData, NewAccountData } from "./Account.interface";
+import { Payroll } from "./Payroll.interface";
 
 export interface LoginProps {
-  login: LoginFunc;
+  login: () => void;
 }
 
 export interface LoginState {}
@@ -13,7 +14,7 @@ export interface LoginFunc {
 export interface UserData extends AccountData {
   privilege: string;
   position: string;
-  payroll: number;
+  payroll: Payroll;
   payment: string;
   schedule: string;
   lastPayment: string;

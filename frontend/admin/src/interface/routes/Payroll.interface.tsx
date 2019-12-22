@@ -7,14 +7,16 @@ export interface Payroll {
 
 export type PayrollMode = "wage" | "salary" | "commision";
 
-export interface Wage {}
+export interface Wage {
+  rate: number;
+}
 
-export interface Salary {}
+export interface Salary {
+  deduction: number[];
+  base: number;
+  bonuses: number[];
+}
 
-export interface Commission {}
-
-export interface PayslipProps {}
-
-export interface PayslipState {}
-
-export interface PayslipUIProps extends PayslipProps {}
+export interface Commission {
+  percent: number;
+}

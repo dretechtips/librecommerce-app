@@ -7,6 +7,7 @@ import {
 import { FormRelation } from "../../interface/Form.interface";
 import { LookupbarResult } from "../../interface/Lookupbar.interface";
 import { variation } from "./TestUnit";
+import FormField from "../../components/FormField";
 
 class ProductVariety extends CURDComponent<
   ProductVariation,
@@ -14,21 +15,23 @@ class ProductVariety extends CURDComponent<
 > {
   public name = "Product Variety";
   public cQuestions: FormRelation<NewProductVariation> = {
-    name: { question: "Name", input: "text" },
-    SKU: { question: "SKU (Stock Keeping Unit)", input: "barcode" },
-    UPC: { question: "UPC (Universal Product Code)", input: "barcode" },
-    productID: { question: "Product ID", input: "text" },
-    price: { question: "Price", input: "text" },
-    imagesURL: { question: "Images", input: "photo" },
-    stock: { question: "Stock Quantity", input: "text" },
-    tags: { question: "Tags", input: "tagsbox" },
-    size: { question: "Size", input: "text" },
-    color: { question: "Color", input: "text" }
+    name: new FormField({ question: { label: "Name", input: "text" } }),
+    SKU: new FormField({ question: { label: "SKU", input: "barcode" } }),
+    UPC: new FormField({ question: { label: "UPC", input: "barcode" } }),
+    productID: new FormField({ question: { label: "Product", input: "text" } }),
+    price: new FormField({ question: { label: "Price", input: "text" } }),
+    imagesURL: new FormField({ question: { label: "Images", input: "photo" } }),
+    stock: new FormField({
+      question: { label: "Stock Quantity", input: "text" }
+    }),
+    tags: new FormField({ question: { label: "Tags", input: "tagsbox" } }),
+    size: new FormField({ question: { label: "Size", input: "text" } }),
+    color: new FormField({ question: { label: "Color", input: "text" } })
   };
   public sQuestions: FormRelation<
     Omit<ProductVariation, keyof NewProductVariation>
   > = {
-    id: { question: "ID", input: "text" }
+    id: new FormField({ question: { label: "ID", input: "text" } })
   };
   public update = async (
     value: Partial<NewProductVariation>

@@ -1,20 +1,14 @@
 import { AxiosResponse } from "axios";
 import {
-  TextInputProps,
-  CheckboxInputProps,
-  TextAreaInputProps,
-  TextAreaListInputProps,
-  SelectInputProps,
-  DateInputProps
-} from "./Input.interface";
-import { BarcodeScannerInputProps } from "./BarcodeScannerBox.interface";
-import { FileUploadInputProps } from "./FileUpload.interface";
-import { PhotoUploadInputProps } from "./PhotoUpload.interface";
-import { TagsBoxInputProps } from "./Tagsbox.interface";
-import { DateRangeInputProps } from "./DateRangeInput.interface";
+  FormInputs,
+  FormInputConditional
+} from "../interface/FormInput.interface";
+import { FormField } from "../components/FormField";
+import FormFieldGroup from "../components/FormFieldGroup";
+import { NoInfer } from "../utils/Types";
 
 export interface FormProps<T> {
-  questions: FormQuestion[] | FormRelation<T>;
+  questions: FormRelation<T>;
   modifier: FormModifier;
   submit?: (inputs: { [K in keyof T]: any }) => Promise<AxiosResponse>;
   inputs?: (inputs: { [K in keyof T]: any }) => void;
@@ -23,11 +17,7 @@ export interface FormProps<T> {
 export interface FormUIProps<T> extends Omit<FormProps<T>, "submit"> {
   submit: ((inputs: { [K in keyof T]: any }) => Promise<void>) | undefined;
   values: { [K in keyof T]: any };
-  onInput: (
-    key: keyof T,
-    key2: keyof T[keyof T] | undefined,
-    value: any
-  ) => void;
+  onInput: (nNode: string, nParent: string, value: any) => void;
   success?: boolean;
   error?: string;
 }
@@ -42,13 +32,14 @@ export interface FormState<T> {
 
 export type FormModifier = "read" | "write";
 
-export type FormQuestion = {
-  question: string;
-} & FormInputConditional<FormInput>;
+export type FormQuestionProps = FormInputConditional<FormInputs> & {
+  label: string;
+};
 
-export type FormInputConditional<T extends FormInput> = T extends string
-  ? { input: Exclude<FormInput, FormInputType<any, any>>; props?: undefined }
-  : Extract<FormInput, FormInputType<any, any>>;
+export interface FormQuestionGroupProps<T> {
+  category: string;
+  questions: NoInfer<FormRelation<Required<T>>>;
+}
 
 export type Primitives =
   | boolean
@@ -59,54 +50,14 @@ export type Primitives =
   | string
   | symbol;
 
-export function isFormGroup(
-  type: FormGroup<any> | FormQuestion
-): type is FormGroup<any> {
-  return (
-    (type as FormGroup<any>).category !== undefined &&
-    (type as FormGroup<any>).questions !== undefined
-  );
-}
-
-export interface FormGroup<T> {
-  category: string;
-  questions: FormRelation<T>;
-}
-
 export type FormRelation<T> = {
   [K in keyof T]: T[K] extends Primitives | Primitives[]
-    ? FormQuestion
-    : FormGroup<T[K]>;
+    ? FormField
+    : FormFieldGroup<T[K]>;
 };
 
-export type FormInputType<T, D extends string> = {
-  props?: T extends never ? undefined : Partial<T>;
-  input: D;
+export type FormCleared<T> = {
+  [K in keyof T]: T[K] extends Primitives | Primitives[]
+    ? undefined
+    : FormCleared<T>;
 };
-
-export type FormInput =
-  | "checkbox"
-  | "text"
-  | "textarea"
-  | "textarea-list"
-  | "select"
-  | "date"
-  | "date-range"
-  | "barcode"
-  | "file"
-  | "photo"
-  | "tagsbox"
-  | "password"
-  | "address"
-  | "email"
-  | FormInputType<TextInputProps, "text" | "address" | "email" | "password">
-  | FormInputType<CheckboxInputProps, "checkbox">
-  | FormInputType<TextAreaInputProps, "textarea">
-  | FormInputType<TextAreaListInputProps, "textarea-list">
-  | FormInputType<SelectInputProps, "select">
-  | FormInputType<DateInputProps, "date">
-  | FormInputType<BarcodeScannerInputProps, "barcode">
-  | FormInputType<FileUploadInputProps, "file">
-  | FormInputType<PhotoUploadInputProps, "photo">
-  | FormInputType<TagsBoxInputProps, "tagsbox">
-  | FormInputType<DateRangeInputProps, "date-range">;

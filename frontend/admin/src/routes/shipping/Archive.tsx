@@ -6,22 +6,25 @@ import {
 import { FormRelation } from "../../interface/Form.interface";
 import { LookupbarResult } from "../../interface/Lookupbar.interface";
 import { shipping } from "./TestUnit";
+import FormField from "../../components/FormField";
 
 export class Archive extends CURDComponent<Shipping, NewShipping> {
   public name = "Shipping";
   public cQuestions: FormRelation<NewShipping> = {
-    provider: {
-      question: "Provider",
-      input: "select",
-      props: {
-        option: ["FEDEX", "UPS", "USPS"]
+    provider: new FormField({
+      question: {
+        label: "Provider",
+        input: "select",
+        props: {
+          option: ["FEDEX", "UPS", "USPS"]
+        }
       }
-    },
-    address: { question: "Address", input: "address" }
+    }),
+    address: new FormField({ question: { label: "Address", input: "address" } })
   };
   public sQuestions: FormRelation<Omit<Shipping, keyof NewShipping>> = {
-    id: { question: "ID", input: "text" },
-    price: { question: "Price", input: "text" }
+    id: new FormField({ question: { label: "ID", input: "text" } }),
+    price: new FormField({ question: { label: "Price", input: "text" } })
   };
   public update = async (value: NewShipping): Promise<void> => {};
   public delete = async (id: string): Promise<void> => {};

@@ -32,17 +32,17 @@ export interface UserPayroll {
 }
 
 export interface WageConstructor {
-  hourly: Money;
+  rate: Money;
 }
 
 export interface SalaryConstructor {
-  salary: Money;
+  base: Money;
   deducation: Money[];
+  bonuses: Money[];
 }
 
 export interface CommissionConstructor {
   percent: number;
-  total: Money;
 }
 
 export interface Body {

@@ -7,6 +7,7 @@ import {
 import { FormRelation } from "../../interface/Form.interface";
 import { LookupbarResult } from "../../interface/Lookupbar.interface";
 import { bundle } from "./TestUnit";
+import FormField from "../../components/FormField";
 
 export class Archive extends CURDComponent<
   SubscriptionData,
@@ -14,13 +15,15 @@ export class Archive extends CURDComponent<
 > {
   public name = "Bundle Subscription";
   public cQuestions: FormRelation<NewSubscriptionData> = {
-    name: { question: "Bundle Name", input: "text" },
-    productIDs: { question: "Products", input: "text" }
+    name: new FormField({ question: { label: "Bundle Name", input: "text" } }),
+    productIDs: new FormField({
+      question: { label: "Products", input: "text" }
+    })
   };
   public sQuestions: FormRelation<
     Omit<SubscriptionData, keyof NewSubscriptionData>
   > = {
-    id: { question: "ID", input: "text" }
+    id: new FormField({ question: { label: "ID", input: "text" } })
   };
   public delete = async (id: string) => {};
   public update = async (value: NewSubscriptionData) => {};

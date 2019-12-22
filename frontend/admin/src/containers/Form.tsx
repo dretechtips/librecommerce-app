@@ -4,55 +4,38 @@ import {
   FormProps,
   FormState,
   FormRelation,
-  FormQuestion,
-  Primitives
+  FormCleared
 } from "../interface/Form.interface";
 import { Loading } from "../components/Loading";
+import { Tree, Leaf } from "../data/Tree";
 
 export class Form<T = any> extends Component<FormProps<T>, FormState<T>> {
   constructor(props: FormProps<T>) {
     super(props);
     this.state = {
       modifier: this.props.modifier,
-      values: this.objectToValue(this.props.questions),
+      values: this.toDefaultValues(this.props.questions),
       loading: false,
       success: false
     };
   }
-  private objectToValue(
-    questions: FormRelation<T> | FormQuestion[]
-  ): { [K in keyof T]: any } {
-    const values: any = {};
-    for (let key in questions) {
-      if (Array.isArray(values[key]) || typeof values[key] !== "object")
-        values[key] = null;
-      else for (let key2 in values[key]) values[key][key2] = null;
-    }
-    return values;
+  private toDefaultValues(questions: FormRelation<T>): FormCleared<T> {
+    const tree: Tree = new Tree(questions);
+    tree.clearLeafs();
+    return tree.toObject() as FormCleared<T>;
   }
-  private onInput = (
-    key: keyof T,
-    key2: keyof T[keyof T] | undefined,
-    value: any
-  ) => {
-    if (this.props.inputs)
-      this.props.inputs({ ...this.state.values, [key]: value });
-    if (key2 !== undefined) {
-      this.setState({
-        ...this.state,
-        values: {
-          ...this.state.values,
-          [key]: { ...this.state.values[key], value }
-        }
-      });
-    } else {
-      this.setState({
-        ...this.state,
-        values: { ...this.state.values, [key]: value }
-      });
-    }
+  private onInput = (nodeName: string, parentName: string, value: any) => {
+    const tree: Tree = new Tree(this.state.values);
+    tree.traverselDF((node, parent, level) => {
+      const children = parent.getChildren(nodeName);
+      if (children instanceof Leaf) node = new Leaf<any>(value, level);
+    });
+    this.setState({
+      ...this.state,
+      values: tree.toObject() as { [K in keyof T]: any }
+    });
   };
-  submit = async (inputs: { [K in keyof T]: any }): Promise<void> => {
+  public submit = async (inputs: { [K in keyof T]: any }): Promise<void> => {
     if (
       this.props.submit &&
       Object.keys(inputs).filter(key => inputs[key as keyof T] !== undefined)
@@ -81,7 +64,7 @@ export class Form<T = any> extends Component<FormProps<T>, FormState<T>> {
       });
     }
   };
-  render() {
+  public render() {
     if (this.state.loading) return <Loading />;
     else
       return (

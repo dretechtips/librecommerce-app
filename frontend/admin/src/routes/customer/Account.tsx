@@ -7,26 +7,47 @@ import {
 import { FormRelation } from "../../interface/Form.interface";
 import { LookupbarResult } from "../../interface/Lookupbar.interface";
 import { customerData } from "./TestUnit";
+import FormField from "../../components/FormField";
 
 export class Account extends CURDComponent<CustomerData, NewCustomerData> {
   public name = "Customer Account";
   public cQuestions: FormRelation<NewCustomerData> = {
-    firstName: { question: "First Name", input: "text" },
-    lastName: { question: "Last Name", input: "text" },
-    username: { question: "Username", input: "text" },
-    password: { question: "Password", input: "password" },
-    address: { question: "Address", input: "address" },
-    state: { question: "State", input: "text" },
-    country: { question: "Country", input: "text" },
-    emailAddress: { question: "Email Address", input: "email" },
-    phoneNum: { question: "Phone Number", input: "text" }
+    firstName: new FormField({
+      question: { label: "First Name", input: "text" }
+    }),
+    lastName: new FormField({
+      question: { label: "Last Name", input: "text" }
+    }),
+    username: new FormField({ question: { label: "Username", input: "text" } }),
+    password: new FormField({
+      question: { label: "Password", input: "password" }
+    }),
+    address: new FormField({
+      question: { label: "Address", input: "address" }
+    }),
+    state: new FormField({ question: { label: "State", input: "text" } }),
+    country: new FormField({ question: { label: "Country", input: "text" } }),
+    emailAddress: new FormField({
+      question: { label: "Email Address", input: "email" }
+    }),
+    phoneNum: new FormField({
+      question: { label: "Phone Number", input: "text" }
+    })
   };
   public sQuestions: FormRelation<Omit<CustomerData, keyof NewCustomerData>> = {
-    id: { question: "ID", input: "text" },
-    associatedIPs: { question: "Associated IP Addresses", input: "tagsbox" },
-    alerts: { question: "Unread Alerts", input: "tagsbox" },
-    ordersID: { question: "Order IDs", input: "tagsbox" },
-    lastOrderDate: { question: "Last Order Date", input: "text" }
+    id: new FormField({ question: { label: "ID", input: "text" } }),
+    associatedIPs: new FormField({
+      question: { label: "Associated IP Addresses", input: "tagsbox" }
+    }),
+    alerts: new FormField({
+      question: { label: "Unread Alerts", input: "tagsbox" }
+    }),
+    ordersID: new FormField({
+      question: { label: "Order IDs", input: "tagsbox" }
+    }),
+    lastOrderDate: new FormField({
+      question: { label: "Last Order Date", input: "text" }
+    })
   };
   public update = async (value: NewCustomerData): Promise<void> => {};
   public delete = async (id: string): Promise<void> => {};

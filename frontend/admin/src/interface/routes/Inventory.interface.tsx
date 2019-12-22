@@ -7,9 +7,8 @@ interface InventoryFormProps {
 
 export interface ProductProps {}
 
-export interface Product {
+export interface ProductData {
   name: string;
-  timestamp: string;
   id: string;
   brand: string;
   categoryID: string;
@@ -22,7 +21,7 @@ export interface Product {
   tags: string[];
 }
 
-export type NewProduct = Omit<Product, "id" | "imagesURL" | "timestamp">;
+export type NewProductData = Omit<ProductData, "id" | "imagesURL">;
 
 export interface ProductVariation {
   id: string;

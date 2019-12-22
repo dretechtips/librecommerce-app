@@ -4,15 +4,18 @@ import { BanData, NewBanData } from "../../interface/routes/Ban.interface";
 import { FormRelation } from "../../interface/Form.interface";
 import { LookupbarResult } from "../../interface/Lookupbar.interface";
 import { ban } from "./TestUnit";
+import FormField from "../../components/FormField";
 
 export class Archive extends CURDComponent<BanData, NewBanData> {
   public name = "Ban";
   public cQuestions: FormRelation<NewBanData> = {
-    customerID: { question: "Customer", input: "text" },
-    reason: { question: "Reason", input: "textarea" }
+    customerID: new FormField({
+      question: { label: "Customer", input: "text" }
+    }),
+    reason: new FormField({ question: { label: "Reason", input: "textarea" } })
   };
   public sQuestions: FormRelation<Omit<BanData, keyof NewBanData>> = {
-    id: { question: "Customer", input: "text" }
+    id: new FormField({ question: { label: "ID", input: "text" } })
   };
   public delete = async (id: string) => {};
   public update = async (value: NewBanData) => {};
