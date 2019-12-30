@@ -1,6 +1,5 @@
 import DeferProps from "../factory/DeferProps";
 import FormInputGroup from "./FormInputGroup";
-import { FormInputGroupProps } from "../interface/FormInputGroup.interface";
 
 export class FormFieldGroup<T> extends DeferProps<
   FormInputGroup<T>,
@@ -8,7 +7,10 @@ export class FormFieldGroup<T> extends DeferProps<
 > {
   protected WrappedComponent = FormInputGroup;
   public questions() {
-    return this.props.questions;
+    return JSON.parse(JSON.stringify(this.props.questions));
+  }
+  public category() {
+    return this.props.category;
   }
 }
 

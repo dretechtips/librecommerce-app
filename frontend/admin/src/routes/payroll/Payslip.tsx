@@ -1,12 +1,11 @@
 import React, { Component } from "react";
-import { Payroll } from "../../interface/routes/Payroll.interface";
+import Card from "../../components/Card";
 import Invoice from "../../containers/Invoice";
 import {
-  InvoiceProps,
   InvoiceGoodorService,
+  InvoiceProps,
   InvoiceSendTo
 } from "../../interface/Invoice.interface";
-import Card from "../../components/Card";
 
 class Payslip extends Component implements InvoiceProps {
   private url: string = "Some URL";

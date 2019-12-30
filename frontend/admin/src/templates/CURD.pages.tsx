@@ -11,21 +11,28 @@ import {
 import Card from "../components/Card";
 import Lookupbar from "../containers/Lookupbar";
 import Form from "../containers/Form";
-import { FormRelation } from "../interface/Form.interface";
 
 export function CreatePage<T>(props: CreateProps<T> & FormProps) {
   return (
-    <Card title={props.title} theme="success">
-      <Form questions={props.questions} modifier={"write"} />
-    </Card>
+    <Form
+      fields={{
+        questions: props.questions,
+        modifier: "write"
+      }}
+      title={props.title}
+    />
   );
 }
 
 export function ReadPage<T>(props: ReadProps<T> & FormProps) {
   return (
-    <Card title={props.title} theme="success">
-      <Form questions={props.questions} modifier={"read"} />
-    </Card>
+    <Form
+      fields={{
+        questions: props.questions,
+        modifier: "read"
+      }}
+      title={props.title}
+    />
   );
 }
 
@@ -33,9 +40,13 @@ export function UpdateDeletePage<T, K extends Omit<T, any>>(
   props: UpdateDeleteProps<T, K> & FormProps
 ) {
   return (
-    <Card title={props.title} theme="success">
-      <Form questions={props.questions} modifier={"write"} />
-    </Card>
+    <Form
+      fields={{
+        questions: props.questions,
+        modifier: "write"
+      }}
+      title={props.title}
+    />
   );
 }
 

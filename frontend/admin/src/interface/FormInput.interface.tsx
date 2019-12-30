@@ -17,6 +17,9 @@ import { SliderInputProps } from "./Slider.interface";
 export type FormInputProps = {
   modifier: FormModifier;
   question: FormQuestionProps;
+  node: string;
+  parent: string | null;
+  onInput?: (node: string, parent: string | null, value: any) => void;
 };
 
 export type FormInputType<T extends {}, D extends string> = {

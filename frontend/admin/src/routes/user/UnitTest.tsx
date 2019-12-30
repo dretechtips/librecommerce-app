@@ -1,4 +1,5 @@
 import { UserData } from "../../interface/routes/User.interface";
+import { payroll } from "../payroll/TestData";
 
 export const user: UserData = {
   username: "dbsajobd432",
@@ -14,7 +15,7 @@ export const user: UserData = {
   privilege: "apple",
   position: "Apple",
   payment: "APple",
-  payroll: 43242,
+  payroll: payroll,
   schedule: "fjdoafho",
   lastPayment: "dfnaof",
   rank: "fdkpfsdo",

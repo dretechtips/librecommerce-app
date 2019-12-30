@@ -1,14 +1,30 @@
-export interface SidePanelProps
-{
+import { ScreenType } from "../utils/ScreenToSize";
+
+export interface SidePanelProps {
   items: SidePanelItem[];
   dashboardPath: string;
+  top?: number;
+  screen: ScreenType;
 }
 
 export interface SidePanelUIProps extends SidePanelProps {
   toDashboard: (index: number, name: string, search: Function) => void;
   active: number;
-  mode: SidePanelMode;
   slide: SlideProps;
+  open: boolean;
+  toggle: () => void;
+}
+
+export interface SidePanelState {
+  active: number;
+  isSliding: boolean;
+  position: number;
+  open: boolean;
+}
+
+export interface SidePanelContext {
+  isOpen(): boolean;
+  toggle(): void;
 }
 
 export interface SlideProps {
@@ -18,18 +34,7 @@ export interface SlideProps {
   end: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 
-export interface SidePanelState
-{
-  active: number;
-  mode: SidePanelMode;
-  isSliding: boolean;
-  position: number;
+export interface SidePanelItem {
+  name: string;
+  icon: string;
 }
-
-export interface SidePanelItem
-{
-  name: string,
-  icon: string,
-}
-
-export type SidePanelMode = "desktop" | "mobile"

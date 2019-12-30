@@ -25,12 +25,10 @@ export abstract class DeferProps<
   constructor(props: Pick<ExtractReactAllProps<T>, U>) {
     this.props = props;
   }
-  public use(props: Omit<ExtractReactAllProps<T>, U>): JSX.Element | undefined {
-    if (this.props) {
-      const Component: React.ComponentType<any> = this
-        .WrappedComponent as React.ComponentType<any>;
-      return <Component {...(this.props as any)} {...(props as any)} />;
-    } else return undefined;
+  public use(props: Omit<ExtractReactAllProps<T>, U>): JSX.Element {
+    const Component: React.ComponentType<any> = this
+      .WrappedComponent as React.ComponentType<any>;
+    return <Component {...(props as any)} {...(this.props as any)} />;
   }
 }
 

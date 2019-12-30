@@ -1,36 +1,31 @@
-import React, { Component, ReactNode } from "react";
+import React, { Component } from "react";
 import "./css/App.css";
 import { AppState, AppProps } from "../interface/App.interface";
 import Login from "../containers/Login";
-import { BrowserRouter, withRouter } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
+import getScreenType from "../utils/ScreenToSize";
 
 export class App extends Component<AppProps, AppState> {
   static defaultState: AppState = {
     login: false,
     profile: {
-      username: "{%DEFAULT%}",
-      name: "{%DEFAULT%}",
+      username: "Loading...",
+      name: "Loading...",
       imageURL: "https://via.placeholder.com/40x40"
     },
-    sidePanel: false,
-    actions: {
-      toggleSidePanel: () => alert("Side Panel has not been set up properly!")
-    },
+    actions: {},
     logoURL: "localhost"
   };
-  static contextType = React.createContext<AppState>(App.defaultState);
-  constructor(props: AppProps) {
+  public static contextType = React.createContext<AppState>(App.defaultState);
+  public constructor(props: AppProps) {
     super(props);
     this.state = {
       ...App.defaultState,
-      actions: {
-        toggleSidePanel: this.toggleSidePanel
-      },
       logoURL: this.props.logoURL
     };
     App.contextType = React.createContext(this.state);
   }
-  login = (): void => {
+  public login = (): void => {
     const nextState: AppState = {
       ...this.state,
       login: true,
@@ -39,14 +34,6 @@ export class App extends Component<AppProps, AppState> {
         name: "John Doe",
         imageURL: this.state.profile.imageURL
       }
-    };
-    this.setState(nextState);
-    App.contextType = React.createContext(nextState);
-  };
-  toggleSidePanel = (): void => {
-    const nextState: AppState = {
-      ...this.state,
-      sidePanel: !this.state.sidePanel
     };
     this.setState(nextState);
     App.contextType = React.createContext(nextState);

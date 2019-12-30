@@ -3,8 +3,8 @@ import DeferProps from "../factory/DeferProps";
 
 export class FormField extends DeferProps<FormInput, "question"> {
   protected WrappedComponent = FormInput;
-  public getQuestions() {
-    return this.props.question;
+  public question() {
+    return JSON.parse(JSON.stringify(this.props.question));
   }
 }
 

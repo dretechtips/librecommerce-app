@@ -6,6 +6,7 @@ import {
 } from "../interface/MessageForm.interface";
 import MessageFormUI from "../components/MessageForm";
 import { FormRelation } from "../interface/Form.interface";
+import FormField from "../components/FormField";
 
 export class MessageForm extends Component<MessageFormProps, MessageFormState> {
   constructor(props: MessageFormProps) {
@@ -17,9 +18,11 @@ export class MessageForm extends Component<MessageFormProps, MessageFormState> {
     };
   }
   public questions: FormRelation<MessageFormQuestions> = {
-    accountID: { question: "Account", input: "text" },
-    subject: { question: "Subject", input: "text" },
-    body: { question: "Compose Message", input: "textarea" }
+    accountID: new FormField({ question: { label: "Account", input: "text" } }),
+    subject: new FormField({ question: { label: "Subject", input: "text" } }),
+    body: new FormField({
+      question: { label: "Compose Message", input: "textarea" }
+    })
   };
   render() {
     return (

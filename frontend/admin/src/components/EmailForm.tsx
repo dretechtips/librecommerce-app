@@ -1,19 +1,22 @@
 import React from "react";
 import Form from "../containers/Form";
 import Card from "./Card";
-import { FormQuestion, FormRelation } from "../interface/Form.interface";
+import { FormRelation } from "../interface/Form.interface";
 import {
   EmailFormUIProps,
   EmailFormQuestions
 } from "../interface/EmailForm.interface";
 import Button from "./Button";
+import FormField from "./FormField";
 
 function EmailForm(props: EmailFormUIProps) {
   const questions: FormRelation<EmailFormQuestions> = {
-    to: { question: "To", input: "email" },
-    name: { question: "Name", input: "text" },
-    subject: { question: "Subject", input: "text" },
-    body: { question: "Compose Email", input: "textarea" }
+    to: new FormField({ question: { label: "To", input: "email" } }),
+    name: new FormField({ question: { label: "Name", input: "text" } }),
+    subject: new FormField({ question: { label: "Subject", input: "text" } }),
+    body: new FormField({
+      question: { label: "Compose Email", input: "textarea" }
+    })
   };
   return (
     <Card theme={"success"} title={"Compose New Email"}>
@@ -27,7 +30,14 @@ function EmailForm(props: EmailFormUIProps) {
           />
         </div>
       </div>
-      <Form modifier={"write"} questions={questions} inputs={props.getInputs} />
+      <Form
+        fields={{
+          questions,
+          modifier: "write"
+        }}
+        inputs={props.getInputs}
+        title={"Compose New Email"}
+      />
       <span className="text-sm text-muted">
         <span className="font-weight-bold">Remember</span>: Every email will be
         sent from your account based email. All email will be monitored and

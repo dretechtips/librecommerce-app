@@ -9,7 +9,13 @@ import Form from "../containers/Form";
 function MessageForm(props: MessageFormUIProps) {
   return (
     <Card theme="success" title="Compose new message">
-      <Form questions={props.questions} modifier={"write"} />
+      <Form
+        fields={{
+          questions: props.questions,
+          modifier: "write"
+        }}
+        title={"Compose new Message"}
+      />
       <span className="text-sm text-muted">
         <span className="font-weight-bold">Remember</span>: Every message will
         be sent from your account. All email will be monitored and cannot be

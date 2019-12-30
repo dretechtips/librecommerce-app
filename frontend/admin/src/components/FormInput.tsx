@@ -12,6 +12,12 @@ import DateRangeInput from "../containers/DateRangeInput";
 import TextBoxList from "../components/TextBoxList";
 
 class FormInput extends React.PureComponent<FormInputProps> {
+  public onInput(value: any) {
+    console.log("FormInput recorded value " + value);
+    console.log(this.props.node, this.props.parent);
+    if (this.props.onInput)
+      this.props.onInput(this.props.node, this.props.parent, value);
+  }
   public render() {
     const question = this.props.question;
     let el: JSX.Element = <div></div>;
@@ -22,7 +28,7 @@ class FormInput extends React.PureComponent<FormInputProps> {
             type="text"
             className="form-control"
             readOnly={this.props.modifier === "read" ? true : false}
-            onInput={e => inputCallback(e, key, key2)}
+            onInput={e => this.onInput(e.currentTarget.value)}
             placeholder={
               question.props ? question.props!.placeholder : undefined
             }
@@ -35,7 +41,7 @@ class FormInput extends React.PureComponent<FormInputProps> {
           <textarea
             className="form-control"
             readOnly={this.props.modifier === "read" ? true : false}
-            onInput={e => inputCallback(e, key, key2)}
+            onInput={e => this.onInput(e.currentTarget.value)}
             placeholder={
               question.props ? question.props!.placeholder : undefined
             }
@@ -47,9 +53,9 @@ class FormInput extends React.PureComponent<FormInputProps> {
         el = (
           <Checkbox
             label={question.label}
-            onInput={e => inputCallback(e, key, key2)}
+            onInput={e => this.onInput(e.currentTarget.value)}
             readOnly={this.props.modifier === "read" ? true : false}
-            checked={question.props ? props.question.props!.value : false}
+            checked={question.props ? question.props!.value : false}
           />
         );
         break;
@@ -59,7 +65,7 @@ class FormInput extends React.PureComponent<FormInputProps> {
             type="text"
             className="form-control"
             readOnly={this.props.modifier === "read" ? true : false}
-            onInput={e => inputCallback(e, key, key2)}
+            onInput={e => this.onInput(e.currentTarget.valueAsDate)}
             value={
               question.props
                 ? question.props!.date
@@ -75,7 +81,7 @@ class FormInput extends React.PureComponent<FormInputProps> {
           <select
             className="form-control"
             disabled={this.props.modifier === "read" ? true : false}
-            onInput={e => inputCallback(e, key, key2)}
+            onInput={e => this.onInput(e.currentTarget.value)}
           >
             {question.props &&
               question.props.option &&
@@ -99,7 +105,7 @@ class FormInput extends React.PureComponent<FormInputProps> {
           <TextBoxList
             className="form-control"
             readOnly={this.props.modifier === "read" ? true : false}
-            onInput={e => inputCallback(e, key, key2)}
+            onInput={e => this.onInput(e.currentTarget.value)}
             rows={question.props ? question.props!.rows : undefined}
             placeholder={
               question.props ? question.props!.placeholder : undefined
@@ -115,7 +121,7 @@ class FormInput extends React.PureComponent<FormInputProps> {
             start={question.props ? question.props!.start : undefined}
             end={question.props ? question.props!.end : undefined}
             readOnly={this.props.modifier === "read" ? true : false}
-            onInput={e => onInput(key, key2, e)}
+            onInput={e => this.onInput(e)}
           />
         );
         break;
@@ -123,7 +129,7 @@ class FormInput extends React.PureComponent<FormInputProps> {
         el = (
           <BarcodeScannerBox
             value={question.props ? question.props!.code : undefined}
-            onInput={e => inputCallback(e, key, key2)}
+            onInput={e => this.onInput(e.currentTarget.value)}
           />
         );
         break;
@@ -132,7 +138,7 @@ class FormInput extends React.PureComponent<FormInputProps> {
           <FileUpload
             input={{
               readOnly: this.props.modifier === "read" ? true : false,
-              onInput: e => inputCallback(e, key, key2)
+              onInput: e => this.onInput(e.currentTarget.value)
             }}
             message="Please upload the files into here."
           />
@@ -144,7 +150,7 @@ class FormInput extends React.PureComponent<FormInputProps> {
             photos={question.props ? question.props.photos : undefined}
             input={{
               readOnly: this.props.modifier === "read" ? true : false,
-              onInput: e => inputCallback(e, key, key2)
+              onInput: e => this.onInput(e.currentTarget.value)
             }}
           />
         );
@@ -154,7 +160,7 @@ class FormInput extends React.PureComponent<FormInputProps> {
           <TagsBox
             tags={question.props ? question.props.tags : undefined}
             readOnly={this.props.modifier === "read" ? true : false}
-            onChange={e => props.onInput(key, key2, e)}
+            onChange={e => this.onInput(e)}
           />
         );
         break;
@@ -163,7 +169,7 @@ class FormInput extends React.PureComponent<FormInputProps> {
           <PasswordInput
             value={question.props ? question.props.value : undefined}
             readOnly={this.props.modifier === "read" ? true : false}
-            onInput={e => inputCallback(e, key, key2)}
+            onInput={e => this.onInput(e.currentTarget.value)}
           />
         );
         break;
@@ -172,7 +178,7 @@ class FormInput extends React.PureComponent<FormInputProps> {
           <StreetAddressInput
             value={question.props ? question.props.value : undefined}
             readOnly={this.props.modifier === "read" ? true : false}
-            onInput={e => inputCallback(e, key, key2)}
+            onInput={e => this.onInput(e.currentTarget.value)}
           />
         );
         break;
@@ -181,7 +187,7 @@ class FormInput extends React.PureComponent<FormInputProps> {
           <EmailAddressInput
             value={question.props ? question.props.value : undefined}
             readOnly={this.props.modifier === "read" ? true : false}
-            onInput={e => inputCallback(e, key, key2)}
+            onInput={e => this.onInput(e.currentTarget.value)}
           />
         );
         break;

@@ -1,21 +1,20 @@
 import { SearchQueries } from "./SearchForm.interface";
 import { SearchResultProps } from "./SearchResult.interface";
-import { FormQuestion } from "./Form.interface";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { HttpMethod } from "../service/http.service";
+import FormField from "../components/FormField";
+import { FormRelation } from "./Form.interface";
 
-export interface SearchProps
-{
+export interface SearchProps {
   title: string;
-  questions: FormQuestion[];
-  search: (inputs: any[]) => Promise<AxiosResponse>;
+  questions: FormRelation<any>;
+  search: (inputs: { [x: string]: any }) => Promise<AxiosResponse>;
 }
 
 export interface SearchUIProps extends SearchProps {
   result: string | number | boolean[][];
 }
 
-export interface SearchState
-{
+export interface SearchState {
   result: any[];
 }

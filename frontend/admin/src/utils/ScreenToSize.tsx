@@ -17,3 +17,5 @@ export function getScreenType(): ScreenType {
       return "lg";
   }
 }
+
+export default getScreenType;

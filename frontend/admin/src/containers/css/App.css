@@ -1,11 +1,11 @@
 .App {
-  flex-flow: column;
   height: 100vh;
-  display: flex;
+  width: 100vw;
+  overflow-x: hidden;
+  position: relative;
 }
 
 .App-Content {
   height: 90%;
   position: relative;
 }
-

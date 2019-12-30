@@ -1,17 +1,16 @@
 import {
-  Product,
+  ProductData,
   ProductVariation,
   Category
 } from "../../interface/routes/Inventory.interface";
 
-export const product: Product = {
+export const product: ProductData = {
   name: "Sun Glasses",
   id: "432kabdsaj4248u9abnbcak",
   categoryID: "tbijbibcaisba432478",
   description:
     "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Minima veniam consequatur dolorum pariatur sapiente enim, perspiciatis expedita necessitatibus rem, nam assumenda reiciendis labore, similique modi cum a repellat amet! Doloribus?",
   imagesURL: ["https://via.placeholder.com/300x300"],
-  timestamp: "1/2/2003",
   warning: "This is a large warning sign",
   brand: "Some Randomo Sun Glass Brand",
   directions: ["Put in on", "Put in on", "Put it on"],

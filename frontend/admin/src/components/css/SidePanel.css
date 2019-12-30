@@ -1,3 +1,13 @@
 .sidepanel-active {
-  background-color: orange; 
+  background-color: #f2f2f2;
+}
+
+.sidepanel-list {
+  overflow-y: hidden;
+  height: 100%;
+}
+
+.sidepanel-list:hover {
+  overflow-y: auto;
+  height: 100%;
 }

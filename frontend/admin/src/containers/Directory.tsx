@@ -7,10 +7,9 @@ import {
 } from "../interface/Directory.interface";
 import { getScreenType } from "../utils/ScreenToSize";
 
-export class Directory<T extends DirectorySchemaType<any>> extends Component<
-  DirectoryProps<T>,
-  DirectoryState<T>
-> {
+export class Directory<
+  T extends { [K in keyof T]: string | number | boolean }
+> extends Component<DirectoryProps<T>, DirectoryState<T>> {
   constructor(props: DirectoryProps<T>) {
     super(props);
     this.state = {
@@ -31,6 +30,8 @@ export class Directory<T extends DirectorySchemaType<any>> extends Component<
         return 25;
       case "xl":
         return 30;
+      default:
+        return 25;
     }
   }
   public getPaginationSize(): number {
@@ -45,6 +46,8 @@ export class Directory<T extends DirectorySchemaType<any>> extends Component<
         return 6;
       case "xl":
         return 7;
+      default:
+        return 6;
     }
   }
   public async componentDidMount() {

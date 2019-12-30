@@ -1,8 +1,7 @@
 import { LookupbarResult } from "./Lookupbar.interface";
-import { FormQuestion, FormModifier, FormRelation } from "./Form.interface";
+import { FormModifier, FormRelation } from "./Form.interface";
 import { ComponentType, ComponentClass } from "react";
 import { MainPanelRoute } from "./MainPanel.interface";
-import { Order, NewOrder } from "./routes/Order.interface";
 
 export interface CRUDProps {
   paths: CRUDPath;

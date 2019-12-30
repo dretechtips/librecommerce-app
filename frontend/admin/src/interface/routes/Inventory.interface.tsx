@@ -1,4 +1,4 @@
-import { FormQuestion, FormModifier } from "../Form.interface";
+import { FormModifier } from "../Form.interface";
 import { Selection, CRUDPath } from "../CRUD.interface";
 
 interface InventoryFormProps {

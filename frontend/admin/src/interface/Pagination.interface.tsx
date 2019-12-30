@@ -5,8 +5,8 @@ export interface PaginationProps {
 
 export interface PaginationUIProps extends PaginationProps {
   display: PaginationIndexer;
-  toNext: () => void;
-  toPrev: () => void;
+  toNext: (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
+  toPrev: (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
   current: number;
   renderItems: () => JSX.Element[];
 }

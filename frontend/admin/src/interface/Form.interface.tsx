@@ -6,28 +6,26 @@ import {
 import { FormField } from "../components/FormField";
 import FormFieldGroup from "../components/FormFieldGroup";
 import { NoInfer } from "../utils/Types";
+import { FormFieldsProps } from "./FormFields.interface";
 
 export interface FormProps<T> {
-  questions: FormRelation<T>;
-  modifier: FormModifier;
-  submit?: (inputs: { [K in keyof T]: any }) => Promise<AxiosResponse>;
-  inputs?: (inputs: { [K in keyof T]: any }) => void;
-}
-
-export interface FormUIProps<T> extends Omit<FormProps<T>, "submit"> {
-  submit: ((inputs: { [K in keyof T]: any }) => Promise<void>) | undefined;
-  values: { [K in keyof T]: any };
-  onInput: (nNode: string, nParent: string, value: any) => void;
-  success?: boolean;
-  error?: string;
+  title: string;
+  fields: Omit<FormFieldsProps<T>, "onInput">;
+  submit?: (value: T) => Promise<AxiosResponse>;
+  inputs?: (value: T) => void;
 }
 
 export interface FormState<T> {
-  modifier: FormModifier;
-  values: { [K in keyof T]: any };
-  loading: boolean;
-  error?: string;
   success: boolean;
+  error?: string;
+  values: { [K in keyof T]: any };
+}
+
+export interface FormUIProps<T>
+  extends Omit<FormProps<T>, "submit">,
+    Omit<FormState<T>, "values"> {
+  onInput: (node: string, parent: string | null, value: any) => void;
+  submit?: () => Promise<void>;
 }
 
 export type FormModifier = "read" | "write";
@@ -55,6 +53,30 @@ export type FormRelation<T> = {
     ? FormField
     : FormFieldGroup<T[K]>;
 };
+
+export function copyFormRelation<T>(
+  relations: FormRelation<T>
+): FormRelation<T> {
+  const object: any = {};
+  Object.keys(relations).forEach(key => {
+    const cur = relations[key as keyof FormRelation<T>];
+    if (cur instanceof FormField) {
+      object[key] = new FormField({ question: cur.question() });
+    } else if (cur instanceof FormFieldGroup) {
+      // console.log(
+      //   "Question",
+      //   Object.keys(cur.questions()).forEach(key =>
+      //     console.log(key, cur.questions()[key as keyof FormRelation<T>])
+      //   )
+      // );
+      object[key] = new FormFieldGroup({
+        questions: cur.questions(),
+        category: cur.category()
+      });
+    }
+  });
+  return object as FormRelation<T>;
+}
 
 export type FormCleared<T> = {
   [K in keyof T]: T[K] extends Primitives | Primitives[]
