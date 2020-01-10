@@ -11,7 +11,7 @@ export class Tree {
   private root: Branch;
   constructor(obj: Object) {
     // this.root = new Branch(JSON.parse(JSON.stringify(obj)), 0);
-    this.root = new Branch(obj, 0);
+    this.root = new Branch(obj, 0, "root");
   }
   /**
    * This is bugged
@@ -68,10 +68,12 @@ export class Branch {
   private children: Map<string, Branch | Leaf<any>>;
   private level: number;
   private data: Object;
-  constructor(data: Object, level: number) {
+  private name: string;
+  constructor(data: Object, level: number, name: string) {
     this.children = new Map();
     this.level = level;
     this.data = data;
+    this.name = name;
     this.generate(data);
   }
   private generate(obj: Object) {
@@ -83,7 +85,7 @@ export class Branch {
       ) {
         this.children.set(
           key,
-          new Branch(obj[key as keyof Object], this.level + 1)
+          new Branch(obj[key as keyof Object], this.level + 1, key)
         );
       } else {
         this.children.set(
@@ -92,6 +94,9 @@ export class Branch {
         );
       }
     });
+  }
+  public getName(): string {
+    return this.name;
   }
   public getChildrens(): Map<string, Branch | Leaf<any>> {
     return this.children;

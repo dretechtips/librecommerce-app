@@ -5,7 +5,10 @@ export function Card(props: CardProps) {
   return (
     <div
       className={
-        "mb-4 card " + (props.className !== undefined ? props.className : "")
+        "mb-4 card " +
+        (props.className !== undefined ? props.className : "") +
+        " " +
+        (props.border ? "border-" + props.border : "")
       }
     >
       {props.title ? (

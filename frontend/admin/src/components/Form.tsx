@@ -18,11 +18,9 @@ function Form<T>(props: FormUIProps<T>) {
   // );
   return (
     <React.Fragment>
-      <Card theme="success">
-        <h2 className="text-center p-4 font-weight-bold">
-          {StringUtil.toName(props.title)}
-        </h2>
-        <div ref={ref}>
+      <Card theme="success" border="success">
+        <h2 className="text-center">{StringUtil.toName(props.title)}</h2>
+        <div className="mt-3" ref={ref}>
           {props.success && (
             <Alert
               message="The form has recorded the response successfully!"
@@ -33,6 +31,7 @@ function Form<T>(props: FormUIProps<T>) {
           {props.error && (
             <Alert message={props.error} theme="danger" dismissable />
           )}
+          {props.note && <span>{props.note}</span>}
         </div>
       </Card>
       <FormFields {...props.fields} onInput={props.onInput} />

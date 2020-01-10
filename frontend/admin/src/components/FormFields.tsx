@@ -32,7 +32,7 @@ function FormFields<T>(props: FormFieldsUIProps<T>): JSX.Element {
         );
       }
     } else if (field instanceof FormFieldGroup) {
-      console.log("FormFieldGroup ", field);
+      //console.log("FormFieldGroup ", field);
       group.push(
         field.use({
           ...props,
@@ -41,19 +41,17 @@ function FormFields<T>(props: FormFieldsUIProps<T>): JSX.Element {
       );
     }
   });
-  console.log("FormFieldGroupArray", group);
-  console.log("Standard", standard);
   return (
     <React.Fragment>
       {[
-        ...group,
         !props.parent ? (
-          <Card theme="success" title="Miscellaneous">
+          <Card theme="success" title="Details">
             {[...standard, ...checkboxs]}
           </Card>
         ) : (
           <React.Fragment>{[...standard, ...checkboxs]}</React.Fragment>
-        )
+        ),
+        ...group
       ]}
     </React.Fragment>
   );

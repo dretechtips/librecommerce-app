@@ -1,13 +1,14 @@
 import DeferProps from "../factory/DeferProps";
 import FormInputGroup from "./FormInputGroup";
+import { FormRelation } from "../interface/Form.interface";
 
 export class FormFieldGroup<T> extends DeferProps<
   FormInputGroup<T>,
   "questions" | "category"
 > {
   protected WrappedComponent = FormInputGroup;
-  public questions() {
-    return JSON.parse(JSON.stringify(this.props.questions));
+  public questions(): FormRelation<T> {
+    return this.props.questions;
   }
   public category() {
     return this.props.category;

@@ -18,7 +18,7 @@ export interface SliderState {
 }
 
 export interface SliderInputProps {
-  min: number;
-  max: number;
+  min?: number;
+  max?: number;
   current?: number;
 }

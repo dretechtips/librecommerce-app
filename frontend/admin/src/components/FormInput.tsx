@@ -13,8 +13,12 @@ import TextBoxList from "../components/TextBoxList";
 
 class FormInput extends React.PureComponent<FormInputProps> {
   public onInput(value: any) {
-    console.log("FormInput recorded value " + value);
-    console.log(this.props.node, this.props.parent);
+    // console.log("FormInput recorded value " + value);
+    console.log(
+      "FormInput Node and Parent",
+      this.props.node,
+      this.props.parent
+    );
     if (this.props.onInput)
       this.props.onInput(this.props.node, this.props.parent, value);
   }

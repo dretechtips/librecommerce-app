@@ -19,7 +19,7 @@ export function Nav(props: NavProps) {
           <SidePanel.contextType.Consumer>
             {sidePanel => (
               <React.Fragment>
-                <div onClick={sidePanel.toggle}>
+                <div onClick={sidePanel.toggle} data-toggle="modal">
                   <i className="fas fa-bars text-success fa-fw fa-2x"></i>
                 </div>
                 <button

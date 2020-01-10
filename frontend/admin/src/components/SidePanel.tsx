@@ -13,22 +13,26 @@ function SidePanel(props: SidePanelUIProps): JSX.Element {
     props.toDashboard(index, name, search);
   }
   return (
-    <div
-      className={props.open ? "d-print-none" : "d-none d-print-none"}
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: SidePanelContainer.getWidth("desktop") + "px",
-        height: "100%",
-        zIndex: 9999,
-        backgroundColor: "white"
-      }}
-      onMouseMove={props.slide.capture}
-      onMouseDown={props.slide.init}
-      onMouseUp={props.slide.end}
-    >
-      <div className="col p-0 h-100">
+    <div className="sidepanel__container">
+      <div
+        className={
+          "d-print-none sidepanel__backdrop " +
+          (props.open ? "sidepanel__backdrop--active" : "")
+        }
+        onMouseMove={props.slide.capture}
+        onMouseDown={props.slide.init}
+        onMouseUp={props.slide.end}
+        onClick={() => props.toggle()}
+      ></div>
+      <div
+        className={
+          "col p-0 h-100 sidepanel " + (props.open ? "sidepanel--active" : "")
+        }
+        style={{
+          minWidth: SidePanelContainer.getWidth("desktop") + "px",
+          maxWidth: SidePanelContainer.getWidth("desktop") + "px"
+        }}
+      >
         <nav>
           <ul className="nav nav-pills flex-column">
             <App.contextType.Consumer>
@@ -49,7 +53,7 @@ function SidePanel(props: SidePanelUIProps): JSX.Element {
                         src={state.logoURL}
                         alt="Logo"
                         width={40}
-                        className="img-fluid ml-1"
+                        className="img-fluid ml-1 align-top"
                       />
                     </span>
                   </li>
@@ -80,7 +84,9 @@ function SidePanel(props: SidePanelUIProps): JSX.Element {
                       <span
                         className={
                           "nav-link d-flex justify-content-between text-muted align-items-center " +
-                          (props.active === index ? "sidepanel-active" : "")
+                          (props.active === index
+                            ? "sidepanel__option--active"
+                            : "")
                         }
                       >
                         <div>

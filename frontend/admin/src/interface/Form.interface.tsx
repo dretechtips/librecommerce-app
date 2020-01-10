@@ -13,6 +13,7 @@ export interface FormProps<T> {
   fields: Omit<FormFieldsProps<T>, "onInput">;
   submit?: (value: T) => Promise<AxiosResponse>;
   inputs?: (value: T) => void;
+  note?: string;
 }
 
 export interface FormState<T> {
@@ -54,32 +55,24 @@ export type FormRelation<T> = {
     : FormFieldGroup<T[K]>;
 };
 
-export function copyFormRelation<T>(
-  relations: FormRelation<T>
-): FormRelation<T> {
-  const object: any = {};
-  Object.keys(relations).forEach(key => {
-    const cur = relations[key as keyof FormRelation<T>];
-    if (cur instanceof FormField) {
-      object[key] = new FormField({ question: cur.question() });
-    } else if (cur instanceof FormFieldGroup) {
-      // console.log(
-      //   "Question",
-      //   Object.keys(cur.questions()).forEach(key =>
-      //     console.log(key, cur.questions()[key as keyof FormRelation<T>])
-      //   )
-      // );
-      object[key] = new FormFieldGroup({
-        questions: cur.questions(),
-        category: cur.category()
-      });
-    }
-  });
-  return object as FormRelation<T>;
-}
-
 export type FormCleared<T> = {
   [K in keyof T]: T[K] extends Primitives | Primitives[]
     ? undefined
     : FormCleared<T>;
 };
+
+export interface AsyncForm
+  extends Array<AsyncFormField | AsyncFormFieldGroup> {}
+
+export type AsyncFormField = {
+  name: string;
+  type: "Field";
+  value: any;
+  queryable: boolean;
+} & FormInputs;
+
+export interface AsyncFormFieldGroup {
+  name: string;
+  type: "FieldGroup";
+  fields: AsyncForm;
+}

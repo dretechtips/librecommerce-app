@@ -40,5 +40,5 @@ export type BarcodeScannerType =
   | "code_93";
 
 export interface BarcodeScannerInputProps {
-  code: string;
+  code?: string;
 }

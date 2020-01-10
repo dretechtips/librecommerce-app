@@ -8,7 +8,7 @@ import { FormInputGroupProps } from "./FormInputGroup.interface";
 import { AxiosResponse } from "axios";
 
 export interface FormFieldsProps<T> {
-  questions: FormRelation<T>;
+  questions: FormRelation<T> | (() => Promise<FormRelation<T>>);
   modifier: FormModifier;
   parent?: string | null;
   onInput: (node: string, parent: string | null, value: any) => void;

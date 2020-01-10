@@ -60,7 +60,7 @@ export interface TextAreaInputProps {
 }
 
 export interface TextAreaListInputProps extends TextAreaInputProps {
-  list: "ol" | "ul";
+  list?: "ol" | "ul";
 }
 
 export interface SelectInputProps {

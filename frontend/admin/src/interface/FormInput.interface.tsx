@@ -13,6 +13,7 @@ import { PhotoUploadInputProps } from "./PhotoUpload.interface";
 import { TagsBoxInputProps } from "./Tagsbox.interface";
 import { DateRangeInputProps } from "./DateRangeInput.interface";
 import { SliderInputProps } from "./Slider.interface";
+import { NoRequired } from "../utils/Types";
 
 export type FormInputProps = {
   modifier: FormModifier;
@@ -22,26 +23,12 @@ export type FormInputProps = {
   onInput?: (node: string, parent: string | null, value: any) => void;
 };
 
-export type FormInputType<T extends {}, D extends string> = {
+export type FormInputType<T extends NoRequired<T>, D extends string> = {
   props?: T extends never ? undefined : T;
   input: D;
 };
 
 export type FormInputs =
-  | "checkbox"
-  | "text"
-  | "textarea"
-  | "textarea-list"
-  | "select"
-  | "date"
-  | "date-range"
-  | "barcode"
-  | "file"
-  | "photo"
-  | "tagsbox"
-  | "password"
-  | "address"
-  | "email"
   | FormInputType<TextInputProps, "text" | "address" | "email" | "password">
   | FormInputType<CheckboxInputProps, "checkbox">
   | FormInputType<TextAreaInputProps, "textarea">

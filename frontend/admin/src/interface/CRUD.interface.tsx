@@ -1,71 +1,48 @@
 import { LookupbarResult } from "./Lookupbar.interface";
-import { FormModifier, FormRelation } from "./Form.interface";
-import { ComponentType, ComponentClass } from "react";
-import { MainPanelRoute } from "./MainPanel.interface";
+import { FormModifier, FormRelation, AsyncForm } from "./Form.interface";
+import { AnyMap } from "../utils/Types";
 
-export interface CRUDProps {
-  paths: CRUDPath;
-  selection: Selection;
-}
-
-export interface ICRUD<T, K extends Omit<T, any>> {
+export interface CRUDComponentProps {
   name: string;
-  questions: () => FormRelation<T>;
-  /** @description Client Questions */
-  cQuestions: FormRelation<K>;
-  /** @description Server Questions */
-  sQuestions: FormRelation<Omit<T, Extract<keyof K, keyof T>>>;
-  fetch: (id: string) => Promise<T>;
-  new: (value: K) => Promise<void>;
+  getQuestions: (type: "client" | "server" | "all") => Promise<AsyncForm>;
+  result: (id: AnyMap) => Promise<LookupbarResult[]>;
+  fetch: (id: string) => Promise<AnyMap>;
+  new: (value: AnyMap) => Promise<void>;
   delete: (id: string) => Promise<void>;
-  update: (value: K) => Promise<void>;
-  toResult: (value: T) => LookupbarResult;
-  query: (value: string) => Promise<T[]>;
+  update: (value: AnyMap) => Promise<void>;
+  query: (value: AnyMap) => Promise<AnyMap[]>;
+  page: CRUDPage | undefined;
+  path: string;
 }
 
-export interface CRUDPath {
-  read: string;
-  modify: string;
-  search: string;
-  create: string;
+export interface CRUDComponentUIProps extends CRUDComponentProps {}
+
+export interface CRUDComponentState {
+  page: CRUDPage;
 }
 
-export interface CRUDPagesProps<T, K extends Omit<T, any>> {
-  create: CreateProps<K>;
-  modify: UpdateDeleteProps<T, K>;
-  read: ReadProps<T>;
-  search: SearchProps<T>;
-  form: FormProps;
-}
+export type CRUDPage = "read" | "create" | "update" | "search";
 
-export interface CRUDPagesFactoryProps {
-  selection: Selection;
-}
-
-export type Selection = "create" | "read" | "update&delete" | "search";
-
-interface BaseProps {
+interface CRUDPageProps {
   title: string;
+  getQuestions: (type: "client" | "server" | "all") => Promise<AsyncForm>;
 }
 
-export interface CreateProps<T> extends BaseProps {
-  submit: (value: T) => Promise<void>;
+export interface CreatePageProps extends CRUDPageProps {
+  submit: (value: AnyMap) => Promise<void>;
 }
 
-export interface UpdateDeleteProps<T, K extends Omit<T, any>>
-  extends BaseProps {
-  submit: (value: K) => Promise<void>;
-  getter: (id: string) => Promise<T>;
+export interface UpdatePageProps extends CRUDPageProps {
+  get: (id: string) => Promise<AnyMap>;
+  submit: (value: AnyMap) => Promise<void>;
 }
 
-export interface ReadProps<T> extends BaseProps {
-  getter: (id: string) => Promise<T>;
+export interface ReadPageProps extends CRUDPageProps {
+  get: (id: string) => Promise<any>;
 }
 
-export interface SearchProps<T> extends BaseProps {
-  submit: (query: string) => Promise<T[]>;
-  toResult: (value: T) => LookupbarResult;
-  add: string;
+export interface SearchPageProps extends CRUDPageProps {
+  submit: (value: AnyMap) => Promise<LookupbarResult[]>;
 }
 
 export interface FormProps {

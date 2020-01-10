@@ -4,13 +4,17 @@ import {
   FormProps,
   FormState,
   FormRelation,
-  FormCleared,
-  copyFormRelation
+  FormCleared
 } from "../interface/Form.interface";
 import { Loading } from "../components/Loading";
 import { Tree, Leaf, Branch } from "../data/Tree";
 import FormField from "../components/FormField";
 import FormFieldGroup from "../components/FormFieldGroup";
+
+/**
+ * @todo Fix the brokne inital state of nested form objects
+ * @todo Fix the brokwn changed state of nested form objects
+ */
 
 export class Form<T = any> extends Component<FormProps<T>, FormState<T>> {
   constructor(props: FormProps<T>) {
@@ -18,43 +22,24 @@ export class Form<T = any> extends Component<FormProps<T>, FormState<T>> {
     this.state = {
       error: undefined,
       success: false,
-      values: this.toDefaultValues(props.fields.questions)
+      values: this.toDefaultValues<T>(props.fields.questions)
     };
+    console.log("Form inital state", this.state.values);
   }
-  private toDefaultValues(questions: FormRelation<T>): FormCleared<T> {
-    const copy = copyFormRelation(questions);
-    const tree: Tree = new Tree(copy);
-    // const tree: Tree = new Tree(questions);
-    console.log("Tree Before Modification", tree);
-    tree.traverselDF((node, parent, level) => {
-      if (node instanceof Branch) {
-        const object: Object = node.toObject();
-        if (object instanceof FormField) {
-          // console.log("Object is instance of FormField");
-          if (parent) {
-            parent.replace(node, new Leaf<undefined>(undefined, level));
-            // console.log(
-            //   "FormField ",
-            //   parent.replace(node, new Leaf<undefined>(undefined, level))
-            // );
-          }
-        }
-        if (object instanceof FormFieldGroup) {
-          if (parent) {
-            parent.replace(node, new Leaf(object.questions(), level));
-            // console.log("FormFieldGroup ", parent);
-          }
-        }
+  private toDefaultValues<T>(questions: FormRelation<T>): FormCleared<T> {
+    let values = { ...questions };
+    Object.keys(values).forEach(key => {
+      let cur: any = values[key as keyof FormRelation<T>];
+      if (cur instanceof FormField) {
+        values = { ...values, [key]: undefined };
+      } else if (cur instanceof FormFieldGroup) {
+        values = { ...values, [key]: this.toDefaultValues(cur.questions()) };
       }
     });
-    console.log("Tree After Modification", tree);
-    console.log(
-      "Question Props After Modification",
-      this.props.fields.questions
-    );
-    return tree.toObject() as FormCleared<T>;
+    return (values as unknown) as FormCleared<T>;
   }
   private onInput = (sNode: string, sParent: string | null, value: any) => {
+    console.log(sNode, sParent, value);
     if (!sParent) {
       this.setState({
         ...this.state,
@@ -63,10 +48,13 @@ export class Form<T = any> extends Component<FormProps<T>, FormState<T>> {
       return;
     }
     const tree: Tree = new Tree(this.state.values);
+    console.log("tree", tree);
     tree.traverselDF((node, parent, level) => {
-      if (parent != null) {
+      if (parent != null && parent.getName() === sParent) {
         const children = parent.getChildren(sNode);
-        if (children instanceof Leaf) node = new Leaf<any>(value, level);
+        if (children instanceof Leaf) {
+          parent.replace(children, new Leaf(value, level));
+        }
       }
     });
     this.setState({
@@ -99,20 +87,10 @@ export class Form<T = any> extends Component<FormProps<T>, FormState<T>> {
     }
   };
   public componentDidUpdate() {
-    console.log("Form Component Updated", this.state.values);
+    console.log("Form New State", this.state.values);
   }
   public render() {
     const question = this.props.fields.questions;
-    // Object.keys(question).forEach(key => {
-    //   if (question[key as keyof FormRelation<T>] instanceof FormFieldGroup) {
-    //     console.log(
-    //       key,
-    //       (question[key as keyof FormRelation<T>] as FormFieldGroup<
-    //         any
-    //       >).questions()
-    //     );
-    //   }
-    // });
     return (
       <FormUI
         {...this.props}
