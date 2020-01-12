@@ -1,23 +1,9 @@
 import { MainPanelRoute } from "../../interface/MainPanel.interface";
-import CRUDWithRouter from "../../templates/CRUD.router";
-import Archive from "./Archive";
-
-const ArchiveRouter = CRUDWithRouter(
-  Archive,
-  {},
-  {
-    create: "/subscription/archive/add",
-    modify: "/subscription/archive/modify",
-    search: "/subscription/archive",
-    read: "/subscription/archive/details"
-  }
-);
+import CRUD from "./CRUD";
+import CRUDComponent from "../../containers/CRUDComponent";
 
 export const Router: MainPanelRoute[] = [
-  ArchiveRouter("create"),
-  ArchiveRouter("read"),
-  ArchiveRouter("search"),
-  ArchiveRouter("update&delete")
+  { path: CRUDComponent.Path("/subscription"), component: CRUD }
 ];
 
 export default Router;
