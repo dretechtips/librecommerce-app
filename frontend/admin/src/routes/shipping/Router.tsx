@@ -1,24 +1,9 @@
 import { MainPanelRoute } from "../../interface/MainPanel.interface";
-import CRUDWithRouter from "../../templates/CRUD.router";
-import Archive from "./Archive";
 import Unprocessed from "./Unprocessed";
-
-const ArchiveRouter = CRUDWithRouter(
-  Archive,
-  {},
-  {
-    create: "/shipping/archive/add",
-    search: "/shipping/archive/",
-    modify: "/shipping/archive/modify",
-    read: "/shipping/archive/details"
-  }
-);
-
+import CRUDComponent from "../../containers/CRUDComponent";
+import CRUD from "./CRUD";
 export const Router: MainPanelRoute[] = [
-  ArchiveRouter("create"),
-  ArchiveRouter("read"),
-  ArchiveRouter("update&delete"),
-  ArchiveRouter("search"),
+  { path: CRUDComponent.Path("/shipping"), component: CRUD },
   { path: "/shipping/unprocessed", component: Unprocessed }
 ];
 

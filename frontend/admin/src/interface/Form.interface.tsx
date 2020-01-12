@@ -61,8 +61,9 @@ export type FormCleared<T> = {
     : FormCleared<T>;
 };
 
-export interface AsyncForm
-  extends Array<AsyncFormField | AsyncFormFieldGroup> {}
+export type AsyncForm = {
+  [key: string]: AsyncFormField | AsyncFormFieldGroup;
+};
 
 export type AsyncFormField = {
   name: string;

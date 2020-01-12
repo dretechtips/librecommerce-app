@@ -1,21 +1,23 @@
 import { LookupbarResult } from "./Lookupbar.interface";
 import { FormModifier, FormRelation, AsyncForm } from "./Form.interface";
 import { AnyMap } from "../utils/Types";
+import { AxiosResponse } from "axios";
+import { RouteComponentProps } from "react-router";
 
-export interface CRUDComponentProps {
-  name: string;
-  getQuestions: (type: "client" | "server" | "all") => Promise<AsyncForm>;
-  result: (id: AnyMap) => Promise<LookupbarResult[]>;
-  fetch: (id: string) => Promise<AnyMap>;
-  new: (value: AnyMap) => Promise<void>;
-  delete: (id: string) => Promise<void>;
-  update: (value: AnyMap) => Promise<void>;
-  query: (value: AnyMap) => Promise<AnyMap[]>;
-  page: CRUDPage | undefined;
-  path: string;
+export interface CRUDComponentProps
+  extends RouteComponentProps<{ page?: string | undefined }> {
+  serverName: string;
+  clientName: string;
 }
 
-export interface CRUDComponentUIProps extends CRUDComponentProps {}
+export interface CRUDComponentUIProps extends CRUDComponentProps {
+  getQuestions: (type: CRUDQuestionsType) => Promise<AxiosResponse>;
+  fetch: (id: string) => Promise<AxiosResponse>;
+  new: (value: AnyMap) => Promise<AxiosResponse>;
+  delete: (id: string) => Promise<AxiosResponse>;
+  update: (value: AnyMap) => Promise<AxiosResponse>;
+  query: (value: AnyMap) => Promise<AxiosResponse>;
+}
 
 export interface CRUDComponentState {
   page: CRUDPage;
@@ -23,9 +25,11 @@ export interface CRUDComponentState {
 
 export type CRUDPage = "read" | "create" | "update" | "search";
 
+export type CRUDQuestionsType = "client" | "server" | "all";
+
 interface CRUDPageProps {
   title: string;
-  getQuestions: (type: "client" | "server" | "all") => Promise<AsyncForm>;
+  getQuestions: (type: CRUDQuestionsType) => Promise<AsyncForm>;
 }
 
 export interface CreatePageProps extends CRUDPageProps {

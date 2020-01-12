@@ -1,28 +1,48 @@
-import { default as axios, AxiosRequestConfig, AxiosInstance, AxiosResponse } from "axios";
+import {
+  default as axios,
+  AxiosRequestConfig,
+  AxiosInstance,
+  AxiosResponse
+} from "axios";
+import * as ENV from "../env";
 
-export class Http
-{
-  private static _value: AxiosRequestConfig = {
-    baseURL: "localhost",
-    timeout: 1000,
+export type HttpMethod = "GET" | "POST" | "PATCH" | "DELETE";
+
+export class HTTP {
+  private static readonly Mode = ENV.MODE;
+  private static readonly Target = ENV.TARGET;
+  private static readonly Development: AxiosRequestConfig = {
+    baseURL: "http://localhost/" + HTTP.Target + "/api/",
+    timeout: 1000
+  };
+  private static readonly Production: AxiosRequestConfig = {
+    baseURL: "https://rufftiger.com" + HTTP.Target + "/api/",
+    timeout: 1000
+  };
+  private path: string;
+  constructor(path: string) {
+    this.path = path;
   }
-  private static _instance: AxiosInstance = axios.create(Http._value);
-  public static get(path: string, config: AxiosRequestConfig): Promise<AxiosResponse>
-  {
-    return this._instance.get(this._value.baseURL +  path , config);
+  private getInstance() {
+    if (HTTP.Mode === "development") return axios.create(HTTP.Development);
+    else return axios.create(HTTP.Production);
   }
-  public static post(path: string, config: AxiosRequestConfig): Promise<AxiosResponse>
-  {
-    return this._instance.post(this._value.baseURL + path , config)
+  public get(config?: AxiosRequestConfig) {
+    if (config) config.method = "get";
+    return this.getInstance().get(this.path, config);
   }
-  public static patch(path: string, config: AxiosRequestConfig): Promise<AxiosResponse>
-  {
-    return this._instance.patch(this._value.baseURL + path , config);
+  public post(config?: AxiosRequestConfig) {
+    if (config) config.method = "post";
+    return this.getInstance().post(this.path, config);
   }
-  public static delete(path: string, config: AxiosRequestConfig): Promise<AxiosResponse>
-  {
-    return this._instance.delete(this._value.baseURL + path , config);
+  public patch(config?: AxiosRequestConfig) {
+    if (config) config.method = "patch";
+    return this.getInstance().patch(this.path, config);
+  }
+  public delete(config?: AxiosRequestConfig) {
+    if (config) config.method = "delete";
+    return this.getInstance().delete(this.path, config);
   }
 }
 
-export type HttpMethod = "GET" | "POST" | "PATCH" | "DELETE";
+export default HTTP;

@@ -1,5 +1,7 @@
 import React from "react";
 import { ScreenType } from "../utils/ScreenToSize";
+import { RouteComponentProps } from "react-router";
+import { NoRequired } from "../utils/Types";
 
 export interface MainPanelProps {
   routes: MainPanelRoute[];
@@ -11,5 +13,7 @@ export interface MainPanelProps {
 
 export interface MainPanelRoute {
   path: string;
-  component: React.ComponentType;
+  component: React.ComponentType<
+    RouteComponentProps<{ [x: string]: string | undefined }>
+  >;
 }
