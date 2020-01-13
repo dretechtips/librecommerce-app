@@ -1,11 +1,17 @@
-export const NewShippingData = {
-  days: Number,
-  provider: String
-};
+import * as Mongoose from "mongoose";
 
-export const ShippingData = {
-  days: Number,
-  provider: String,
-  price: Number,
-  cancelled: Boolean
-};
+export interface INewShipping {
+  days: number;
+  provider: string;
+}
+
+export interface INewShippingModel extends Mongoose.Document, INewShipping {
+  fullName: () => string;
+}
+
+export interface IShipping extends INewShipping {
+  price: number;
+  cancelled: boolean;
+}
+
+export interface IShippingModel extends Mongoose.Document, IShipping {}

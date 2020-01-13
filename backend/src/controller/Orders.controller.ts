@@ -20,7 +20,8 @@ const feeds: OrderFeed = new OrderFeed();
 export const Create = [
   /** Validates Data */
   HttpFunction("Client failed to provide an order data", (req, res, next) => {
-    const order = new NewOrder(req.body.order);
+    const order: Mongoose.Document = new NewOrder(req.body.order);
+    order.schema;
     order.validate(err => {
       if (err)
         throw new ClientError("Client failed to provide a correct order data");

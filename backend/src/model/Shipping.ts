@@ -1,15 +1,30 @@
 import Mongoose from "mongoose";
-import { NewShippingData, ShippingData } from "../interface/Shipping.interface";
+import {
+  INewShippingModel,
+  IShippingModel,
+  INewShipping
+} from "../interface/Shipping.interface";
 
-export const NewShippingSchema = new Mongoose.Schema(NewShippingData);
+export const NewShippingSchema = new Mongoose.Schema({
+  days: Number,
+  provider: String
+});
 
-export const NewShipping: Mongoose.Model<Mongoose.Document> = Mongoose.model(
+export const NewShipping = Mongoose.model<INewShippingModel>(
   "New Shipping",
   NewShippingSchema
 );
 
-export const ShippingSchema = new Mongoose.Schema(ShippingData);
+export const ShippingSchema = new Mongoose.Schema({
+  days: Number,
+  provider: String,
+  price: Number,
+  cancelled: Boolean
+});
 
-export const Shipping = Mongoose.model("Shipping", ShippingSchema);
+export const Shipping = Mongoose.model<IShippingModel>(
+  "Shipping",
+  ShippingSchema
+);
 
 export default Shipping;
