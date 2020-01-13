@@ -9,14 +9,6 @@ import { ExistingBody } from '../interface/Customer.interface';
 import CookieFactory from '../factory/Namespace.factory';
 import { CookieStorage, ResetPassword } from '../interface/Account.interface';
 
-declare global {
-  namespace Express {
-    interface Request {
-      customer: Customer;
-    }
-  }
-}
-
 const session: ActiveCustomer = new ActiveCustomer();
 
 const prl: AccountReset = new AccountReset();
@@ -26,6 +18,16 @@ const cf: CookieFactory = new CookieFactory('customer');
 const cs: CookieStorage = {
   accessToken: cf.new('accessToken')
 };
+
+export const VerifyCustomerIDFromLocals = HttpFunction('System was unable to verify the customer ID', (req, res, next) => {
+  if (res.locals.body.customer)
+    if (typeof res.locals.customer.id === "string") {
+      const customers: Customer[] = Customer.search({ id: req.body.customer.id });
+      if (customers.length > 0)
+        return next();
+    }
+  throw new ClientError("Client provided an invalid customer ID.");
+});
 
 export const get = HttpFunction(
   'System was unable to fetch the customer',

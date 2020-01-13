@@ -1,8 +1,14 @@
 {
   "compilerOptions": {
     "experimentalDecorators": true,
-    "module": "commonjs",
+    "module": "ESNext",
     "noImplicitAny": true,
+    "target": "ES2016",
+    "esModuleInterop": true,
+    "allowJs": false,
+    "strict": true,
+    "isolatedModules": true,
+    "noEmit": true,
     "baseUrl": "./src/libs",
     "paths": {
       "database": ["database"]

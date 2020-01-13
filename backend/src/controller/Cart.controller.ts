@@ -9,17 +9,9 @@ import { ClientError, ServerError } from '../type/Error';
 import * as IProduct from '../interface/Product.interface';
 import ProductVariation from '../model/ProductVariation';
 
-declare global {
-  namespace Express {
-    interface Request {
-      cart: Cart;
-    }
-  }
-}
-
 const session: CartSession = new CartSession();
 
-export const getSelf = HttpFunction(
+export const GetCart = HttpFunction(
   'System was unable to get the cart',
   (req, res, next) => {
     const cartID: string = req.cookies.cartID;
@@ -28,6 +20,8 @@ export const getSelf = HttpFunction(
     const cart = session.find(cartID);
     if (!cart)
       throw new ServerError('Unable to find the cart from the cart ID.');
+    res.locals.cart = cart.getProducts().forEach(product => product.toPrimObj());
+    return next(),
   }
 );
 

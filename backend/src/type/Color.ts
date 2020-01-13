@@ -1,23 +1,11 @@
+import { PersistableData } from "../interface/Model.interface";
+
 export type color = "blue" | "brown" | "cyan" | "green" | "grey" | "magenta" | "orange" | "pink" |
   "violet" | "red" | "white" | "yellow" | "black" ;
 
-export class Color
+export class Color implements PersistableData
 {
   private _color: color[];
-  private static _selectable: color[] =
-    ["black",
-    "blue",
-    "brown",
-    "cyan",
-    "green",
-    "grey",
-    "magenta",
-    "orange",
-    "pink",
-    "violet",
-    "red",
-    "white",
-    "yellow"];
   constructor(color: color[] | string)
   {
     if (typeof color === "string") 
@@ -25,15 +13,33 @@ export class Color
     else
       this._color = color;
   }
-  private parseColor(color: string): color[] {
+  private parseColor(color: string): color[]
+  {
     return color.split('/').map(cur => cur.trim()) as color[];
   }
   public toString(): string
   {
     return this._color.join('/');
   }
-  public static listAll(): color[] {
-    return this._selectable;
+  public static listAll(): color[]
+  {
+    return ["black",
+      "blue",
+      "brown",
+      "cyan",
+      "green",
+      "grey",
+      "magenta",
+      "orange",
+      "pink",
+      "violet",
+      "red",
+      "white",
+      "yellow"];
+  }
+  public persist()
+  {
+    return this._color;
   }
 }
 

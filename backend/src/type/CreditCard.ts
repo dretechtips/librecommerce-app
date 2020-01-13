@@ -1,4 +1,6 @@
-export class CreditCard {
+import { PersistableData } from "../interface/Model.interface";
+
+export class CreditCard implements PersistableData {
   private _number: number;
   private _cvv: number;
   private _exp: Date;
@@ -7,7 +9,7 @@ export class CreditCard {
     this._cvv = cvv;
     this._exp = exp;
   }
-  private verify() {}
+  private verify() { }
 }
 
 export default CreditCard;

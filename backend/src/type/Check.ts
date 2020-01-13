@@ -1,9 +1,11 @@
-export class Check {
-  private _routeing: number;
-  private _account: number;
+import { PersistableData } from "../interface/Model.interface";
+
+export class Check implements PersistableData {
+  private routing: number;
+  private account: number;
   constructor(routeing: number, account: number) {
-    this._routeing = routeing;
-    this._account = account;
+    this.routing = routeing;
+    this.account = account;
     this.verify();
   }
   private verify(): void {
@@ -11,6 +13,12 @@ export class Check {
   }
   public isValid(): boolean {
     return false;
+  }
+  public persist() {
+    return {
+      routing: this.routing,
+      account: this.account,
+    }
   }
 }
 

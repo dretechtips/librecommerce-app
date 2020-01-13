@@ -9,13 +9,6 @@ import { ClientError, ServerError } from '../type/Error';
 import { HttpFunction } from '../decorator/Http.decorator';
 import NamespaceFactory from '../factory/Namespace.factory';
 
-declare global {
-  namespace Express {
-    interface Request {
-      shipping: Shipping;
-    }
-  }
-}
 
 const name = new NamespaceFactory('shipping');
 
@@ -42,7 +35,7 @@ export const get = HttpFunction(
   }
 );
 
-export const add = HttpFunction(
+export const Add = HttpFunction(
   'System was unable to add the shipping.',
   (req, res, next) => {
     const bShipping: NewBody = req.body.shipping;
