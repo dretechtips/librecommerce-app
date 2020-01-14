@@ -1,17 +1,24 @@
 import * as Mongoose from "mongoose";
 
-export interface INewShipping {
+export interface ShippingData {
   days: number;
   provider: string;
-}
-
-export interface INewShippingModel extends Mongoose.Document, INewShipping {
-  fullName: () => string;
-}
-
-export interface IShipping extends INewShipping {
   price: number;
-  cancelled: boolean;
+  cancelled: string;
 }
 
-export interface IShippingModel extends Mongoose.Document, IShipping {}
+// export interface INewShipping {
+//   days: number;
+//   provider: string;
+// }
+
+// export interface INewShippingModel extends Mongoose.Document, INewShipping {
+//   setDays: (days: number) => void;
+// }
+
+// export interface IShipping extends INewShipping {
+//   price: number;
+//   cancelled: boolean;
+// }
+
+// export interface IShippingModel extends Mongoose.Document, IShipping {}

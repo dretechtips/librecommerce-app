@@ -1,30 +1,20 @@
 import Mongoose from "mongoose";
-import {
-  INewShippingModel,
-  IShippingModel,
-  INewShipping
-} from "../interface/Shipping.interface";
+import { ShippingData } from "../interface/Shipping.interface";
+import Model from "../factory/Model";
 
-export const NewShippingSchema = new Mongoose.Schema({
-  days: Number,
-  provider: String
-});
-
-export const NewShipping = Mongoose.model<INewShippingModel>(
-  "New Shipping",
-  NewShippingSchema
-);
-
-export const ShippingSchema = new Mongoose.Schema({
+const apple: Mongoose.TypedSchemaDefinition<ShippingData> = {
+  cancelled: String,
+  days: Number
+};
+const ShippingSchema = new Mongoose.Schema<ShippingData>({
   days: Number,
   provider: String,
   price: Number,
-  cancelled: Boolean
+  cancelled: Number
 });
 
-export const Shipping = Mongoose.model<IShippingModel>(
-  "Shipping",
-  ShippingSchema
-);
-
-export default Shipping;
+class Shipping extends Model("Shipping", ShippingSchema) {
+  public cancel() {
+    this.getModel().days;
+  }
+}

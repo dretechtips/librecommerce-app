@@ -1,0 +1,44 @@
+{
+  "Create CRUDComponent Function": {
+    "description": "Initializes a CRUDComponent as a Function",
+    "prefix": "CRUDComponent Function",
+    "body": [
+      "import React from 'react';",
+      "import CRUDComponent from '../../containers/CRUDComponent';",
+      "import { RouteComponentProps } from 'react-router';",
+      "",
+      "function ${TM_FILENAME_BASE/(.*)\\..+$/$1/}(props: RouteComponentProps<{ page?: string | undefined }>) {",
+      "  return <CRUDComponent ",
+      "    {...props}",
+      "    serverName={'name'}",
+      "    clientName={'name'}",
+      "  />",
+      "}",
+      "export default ${TM_FILENAME_BASE/(.*)\\..+$/$1/}"
+    ]
+  },
+  "Create CRUDComponent Class": {
+    "description": "Initializes a CRUDComponent as a Class",
+    "prefix": "CRUDComponent Class",
+    "body": [
+      "import React, { Component } from 'react';",
+      "import CRUDComponent from '../../containers/CRUDComponent';",
+      "import { RouteComponentProps } from 'react-router';",
+      "",
+      "class ${TM_FILENAME_BASE/(.*)\\..+$/$1/} extends Component<RouteComponentProps<{ page?: string | undefined }>> {",
+      "  constructor(props: RouteComponentProps<{ page?: string | undefined }>) {",
+      "    super(props)",
+      "  }",
+      "  public render() {",
+      "    return <CRUDComponent",
+      "      {...this.props}",
+      "      clientName={'name'}",
+      "      serverName={'name'}",
+      "    />",
+      "  }",
+      "}",
+      "",
+      "export default ${TM_FILENAME_BASE/(.*)\\..+$/$1/};"
+    ]
+  }
+}
