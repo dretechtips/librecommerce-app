@@ -1,17 +1,8 @@
-import { NewShippingData } from "./Shipping.interface";
-
-export const NewOrderData = {
-  customerID: String,
-  cartID: String,
-  shipping: NewShippingData
-};
-
-export const OrderData = {
-  customerID: String,
-  shippingID: String,
-  cartID: String,
-  cancelled: Boolean,
-  completed: Boolean,
-  cost: Number,
-  onHold: Boolean
-};
+export interface OrderCompileType {
+  customerID: string;
+  shippingID: string;
+  cartID: string;
+  cancelled: boolean;
+  cost: number;
+  onHold: boolean;
+}

@@ -1,4 +1,5 @@
 import { IPAddress } from "../type/Location";
+import Mongoose from "mongoose";
 
 type Storable =
   | boolean
@@ -11,7 +12,6 @@ type Storable =
   | { [x: string]: Storable };
 
 export interface DefaultPersistantData {
-  id: string;
   timestamp: string;
 }
 
@@ -21,4 +21,9 @@ export type PersistantData<T> = {
 
 export interface PersistableData {
   persist(): Storable;
+}
+
+export interface ModelType<T> {
+  new (data: any): T;
+  model: Mongoose.Model<Mongoose.Document & PersistableData>;
 }

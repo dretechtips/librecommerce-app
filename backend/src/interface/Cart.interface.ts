@@ -1,21 +1,8 @@
-import ProductVariation from '../model/ProductVariation';
-import * as IProduct from '../interface/Product.interface';
-
-export interface Constructor {
-  items: ProductVariation[];
+export interface CartCompileType {
+  products: CartItemCompileType;
 }
 
-export interface Value extends Constructor {
+export interface CartItemCompileType {
   id: string;
+  amount: number;
 }
-
-export interface NewBody {
-  items: string[];
-}
-
-export interface ExistingBody {
-  items: IProduct.ExistingBody[];
-  id: string;
-}
-
-export interface SearchQuery {}

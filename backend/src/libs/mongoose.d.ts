@@ -21,7 +21,10 @@ type ArrayifyProps<T extends {}> = {
 
 declare module "mongoose" {
   interface Schema<T = any> {
-    new (definition?: SchemaDefinition, options?: SchemaOptions): Schema<T>;
+    new (
+      definition?: TypedSchemaDefinition<T>,
+      options?: SchemaOptions
+    ): Schema<T>;
   }
 
   interface MappedType {
@@ -33,10 +36,10 @@ declare module "mongoose" {
     mixed: Object;
   }
   interface MappedValue {
-    number: typeof Number | "Number";
-    string: typeof String | "String";
-    boolean: typeof Boolean | "Boolean";
-    buffer: typeof Buffer | "Buffer";
+    number: typeof Number;
+    string: typeof String;
+    boolean: typeof Boolean;
+    buffer: typeof Buffer;
     array: [ExtractAllProps<Omit<MappedValue, "array">>];
     mixed: typeof Object;
   }
