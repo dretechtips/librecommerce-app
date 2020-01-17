@@ -1,22 +1,24 @@
 {
   "compilerOptions": {
-    "experimentalDecorators": true,
     "module": "ES6",
-    "noImplicitAny": true,
     "target": "ES2016",
+    "experimentalDecorators": true,
+    "noImplicitAny": true,
     "esModuleInterop": true,
     "allowJs": false,
     "strict": true,
     "isolatedModules": true,
     "noEmit": true,
     "baseUrl": "./src/libs",
-    "paths": {
-      "database": ["database"]
-    },
     "preserveConstEnums": true,
     "removeComments": true,
     "sourceMap": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "typeRoots": ["./node_modules/@types", "./src/libs"],
+    "paths": {
+      "database": [ "database" ]
+    }
   },
-  "include": ["./src/*"]
+  "include": [ "src/**/*" ],
+  "exclude": ["node_modules"]
 }

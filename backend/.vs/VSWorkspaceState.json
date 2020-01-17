@@ -1,14 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\dist",
     "\\src",
-    "\\src\\controller",
-    "\\src\\factory",
     "\\src\\interface",
-    "\\src\\model",
-    "\\src\\routes",
-    "\\src\\type"
+    "\\src\\libs",
+    "\\src\\model"
   ],
   "SelectedNode": "\\src\\model\\Cart.ts",
   "PreviewInSolutionExplorer": false

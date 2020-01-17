@@ -11,15 +11,3 @@ declare namespace NodeJS {
     hconsole: ConsolePlus;
   }
 }
-
-declare global {
-  const hconsole: ConsolePlus;
-  export namespace Express {
-    interface Request {
-      customer: Customer;
-      shipping: Shipping;
-      order: typeof Model;
-      product: Product;
-    }
-  }
-}

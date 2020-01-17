@@ -1,5 +1,5 @@
 export interface CartCompileType {
-  products: CartItemCompileType;
+  products: CartItemCompileType[];
 }
 
 export interface CartItemCompileType {

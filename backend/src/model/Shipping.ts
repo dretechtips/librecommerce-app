@@ -1,4 +1,5 @@
-import Mongoose from "mongoose"
+import Mongoose from "mongoose";
+import fs from "fs";
 import { ShippingCompileType } from "../interface/Shipping.interface";
 import Model from "../factory/Model";
 
@@ -13,10 +14,11 @@ const ShippingSchema = new Mongoose.Schema<ShippingCompileType>(
   ShippingRuntimeType
 );
 
-class Shipping extends Model("Shipping", ShippingSchema) {
+class Shipping extends Model("Shipping", ShippingSchema){
   constructor(data: any) {
     super(data);
     this.setPrice();
+    
   }
   public cancel(): void {
     this.data().cancelled = false;

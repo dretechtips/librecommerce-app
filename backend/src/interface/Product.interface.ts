@@ -1,37 +1,32 @@
-export interface Constructor {
+export interface ProductCompileType {
   name: string;
   categoryID: string;
   description: string;
   brand: string;
-  directions?: string[];
-  warning?: string;
-  ingredients?: string[];
-  benefits?: string[];
-}
-export interface Value extends Constructor {
-  id: string;
-  rating: number;
-  ratingAmount: number;
-}
-export interface NewBody {
-  name: string;
-  categoryID: string;
-  brand: string;
-  description: string;
-  directions?: string[];
-  warning?: string;
-  ingredients?: string[];
-  benefits?: string[];
-}
-export interface ExistingBody extends NewBody {
-  id: string;
+  directions: string[];
+  warning: string;
+  ingredients: string[];
+  benefits: string[];
   rating: number;
   ratingAmount: number;
 }
 
-export interface SearchQuery {
+export interface ProductReviewCompileType {
+  productID: string;
+  customerID: string;
+  stars: number;
+}
+
+export interface ProductVariationCompileType {
   name: string;
-  id: string;
-  categoryID: string;
-  rating: number;
+  productID: string;
+  price: number;
+  images: string[];
+  size: string;
+  color: string;
+  stock: number;
+}
+
+export interface ProductCategoryCompileType {
+  name: string;
 }

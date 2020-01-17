@@ -25,5 +25,5 @@ export interface PersistableData {
 
 export interface ModelType<T> {
   new (data: any): T;
-  model: Mongoose.Model<Mongoose.Document & PersistableData>;
+  model: Mongoose.Model<Mongoose.Document & DefaultPersistantData>;
 }
