@@ -1,17 +1,12 @@
-import { IPAddress } from '../type/Location';
+import { IPAddress } from "../type/Location";
 
-export interface NewBody {
+export interface BanCompileType {
   customerID: string;
-  reason: string;
+  date: string;
 }
 
-export interface ExistingBody extends NewBody {
-  id: string;
-}
-
-export interface SearchQuery {
-  customerID: string;
-  date: Date;
-  ipAddress: IPAddress[];
-  id: string;
+export interface BanAppealCompileType {
+  message: string;
+  banID: string;
+  resolution: string;
 }

@@ -14,11 +14,10 @@ const ShippingSchema = new Mongoose.Schema<ShippingCompileType>(
   ShippingRuntimeType
 );
 
-class Shipping extends Model("Shipping", ShippingSchema){
+class Shipping extends Model("Shipping", ShippingSchema) {
   constructor(data: any) {
     super(data);
     this.setPrice();
-    
   }
   public cancel(): void {
     this.data().cancelled = false;

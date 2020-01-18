@@ -1,16 +1,15 @@
 import { IPAddress, EmailAddress } from "../type/Location";
 
-export interface Constructor {
-  ipAddress: IPAddress,
-  orderID: string,
-  shippingID: string,
-  transactionID: string,
-  timestamp: Date,
+export interface TransactionCompileType {
+  ipAddress: string;
+  amountOwed: number;
+  amountPayed: number;
+  type: string;
 }
 
-export interface Body {
-  ipAddress: string,
-  orderID: string,
-  shippingID: string,
-  transactionID: string,
+export type TransactionClassType = "customer";
+
+export interface CustomerTransactionCompileType extends TransactionCompileType {
+  orderID: string;
+  shippingID: string;
 }

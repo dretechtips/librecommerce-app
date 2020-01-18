@@ -1,52 +1,32 @@
-import { default as Database } from './Database';
-import { IUser } from '../interface/User.interface';
-import uuid = require('uuid/v4');
-import { UserSM } from '../service/User.service';
-import { EmailAddress, Address, PhoneNum, IPAddress } from '../type/Location';
-import * as BanController from '../controller/Ban.controller';
-import { Time } from '../type/Time';
-import { Ban } from '../model/Ban';
-import Account from './Account';
-import AccountActive from './AccountActive';
-import { Password } from '../type/Password';
-import { Schedule } from './Schedule';
-import Payment from '../type/Payment';
+import Mongoose from "mongoose";
+import { UserCompileType } from "../interface/User.interface";
+import { AccountRuntimeType } from "../model/Account";
+import Model from "../factory/Model";
+import Payroll from "./Payroll";
+import { UserSchedule } from "./Schedule";
+import Account from "./Account";
 
-export class User extends Account {
-  protected _value: IUser.Value;
-  constructor(user: IUser.Constructor) {
-    const value: IUser.Value = {
-      ...user,
-      rank: 'RANK_2'
-    };
-    super(value);
+const UserRuntimeType: Mongoose.TypedSchemaDefinition<UserCompileType> = {
+  ...AccountRuntimeType,
+  scheduleID: String,
+  payrollID: String,
+  position: String,
+  lastPayed: String
+};
+
+const UserSchema = new Mongoose.Schema<UserCompileType>(UserRuntimeType);
+
+export class User extends Model<UserCompileType>("User", UserSchema, [
+  Account
+]) {
+  constructor(data: any) {
+    super(data);
   }
-  public getPayment(): Payment {
-    return this._value.payment;
+  public async validate() {
+    await super.validate();
+    if (!Payroll.isValidID(this.data().payrollID))
+      throw new Error("Invalid ID for User Payroll");
+    if (!UserSchedule.isValidID(this.data().scheduleID))
+      throw new Error("Invalid ID for User Schedule");
   }
-  public save(): void {}
-  public delete(): void {}
-  public update(): void {}
-  public static generate(body: IUser.NewBody): User {
-    const user: IUser.Constructor = {
-      id: uuid(),
-      firstName: body.firstName,
-      lastName: body.lastName,
-      privilege: body.privilege,
-      username: body.username,
-      password: new Password(body.password),
-      address: new Address(body.address),
-      emailAddress: new EmailAddress(body.emailAddress),
-      phoneNum: new PhoneNum(body.phoneNum),
-      schedule: Schedule.generate(body.schedule),
-      position: body.position,
-      alerts: [],
-      associatedIPs: [],
-      payment: body.payment
-    };
-    return new User(user);
-  }
-  public static search(): User[] {}
 }
-
-export default User;

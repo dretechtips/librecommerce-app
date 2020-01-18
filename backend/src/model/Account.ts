@@ -1,61 +1,34 @@
-import { IPAddress, Address } from '../type/Location';
-import { Constructor, NewBody } from '../interface/Account.interface';
-import { Ban } from '../model/Ban';
-import * as BanController from '../controller/Ban.controller';
-import { Time } from '../type/Time';
-import cron = require('node-cron');
-import uuid = require('uuid/v4');
-import { ClientError } from '../type/Error';
+import Mongoose from "mongoose";
+import { AccountCompileType } from "../interface/Account.interface";
+import Model from "../factory/Model";
 
-export abstract class Account {
-  protected _value: Constructor;
-  constructor(constructor: Constructor) {
-    this._value = constructor;
-  }
-  public abstract add(): void;
-  public abstract remove(): void;
-  public abstract save(): void;
-  public abstract update(body: Partial<NewBody>): void;
-  public getIPs(): IPAddress[] {
-    return this._value.associatedIPs;
-  }
-  public getName(): string {
-    return this._value.firstName + ' ' + this._value.lastName;
-  }
-  public getID(): string {
-    return this._value.id;
-  }
-  public getAddress(): Address {
-    return this._value.address;
-  }
-  public ban(reason: string): Ban {
-    const ban: Ban = new Ban(this.getID(), reason);
-    ban.add();
-    return ban;
-  }
-  public isPassword(password: string): boolean {
-    return this._value.password.toString() == password;
-  }
-  /**
-   *
-   * @param id Account ID
-   * @returns [Username] [Password]
-   */
-  public static decrypt(id: string): [string, string] | null {
-    try {
-      const buf: Buffer = Buffer.from(id, 'base64');
-      const sID: string = buf.toString();
-      const [username, password] = sID.split(':');
-      if (!username || !password)
-        throw new ClientError(
-          'Username and password could not be derived from the id'
-        );
-      return [username, password];
-    } catch (e) {
-      const ex: Error = e;
-      hconsole.error(ex);
-      return null;
-    }
+export const AccountRuntimeType: Mongoose.TypedSchemaDefinition<AccountCompileType> = {
+  firstName: String,
+  lastName: String,
+  username: String,
+  password: String,
+  associatedIPs: [String],
+  emailAddress: String,
+  phoneNum: String,
+  address: String,
+  alerts: [String]
+};
+
+const AccountSchema = new Mongoose.Schema<AccountCompileType>(
+  AccountRuntimeType
+);
+
+export class Account extends Model("Account", AccountSchema, [], true) {
+  public async validate() {
+    await super.validate();
+    if (this.data().firstName.length > 15)
+      throw new Error(
+        "Account first name should not be over 15 characters long."
+      );
+    if (this.data().lastName.length > 15)
+      throw new Error(
+        "Account last name should not be over 15 characters long."
+      );
   }
 }
 

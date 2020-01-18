@@ -23,7 +23,11 @@ export interface PersistableData {
   persist(): Storable;
 }
 
-export interface ModelType<T> {
-  new (data: any): T;
+export interface ModelInstanceType {
+  validate: () => Promise<void>;
+}
+
+export interface ModelType {
+  new (data: any): ModelInstanceType;
   model: Mongoose.Model<Mongoose.Document & DefaultPersistantData>;
 }

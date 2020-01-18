@@ -1,12 +1,11 @@
-import { IPAddress, EmailAddress } from '../type/Location';
-import uuid = require('uuid/v4');
-import cron = require('node-cron');
-import { User } from '../model/User';
-import Account from '../model/Account';
-import { ServerError } from '../type/Error';
-import { NewBody } from '../interface/Ban.interface';
-import { SearchQuery } from '../interface/Ban.interface';
-import * as database from 'database';
+import { IPAddress, EmailAddress } from "../type/Location";
+import uuid = require("uuid/v4");
+import cron = require("node-cron");
+import { User } from "../model/User";
+import Account from "../model/Account";
+import { ServerError } from "../type/Error";
+import { NewBody } from "../interface/Ban.interface";
+import { SearchQuery } from "../interface/Ban.interface";
 
 export class Ban {
   private readonly _accountID: string;
@@ -23,7 +22,7 @@ export class Ban {
   public getAccount(): Account | never {
     const account: Account | null = AccountManager.from.id(this._accountID);
     if (!account)
-      throw new ServerError('A ban cannot store an invalid account ID.');
+      throw new ServerError("A ban cannot store an invalid account ID.");
     else return account;
   }
   public getIPs(): IPAddress[] {

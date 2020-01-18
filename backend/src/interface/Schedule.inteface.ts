@@ -1,29 +1,37 @@
-import { WeekEvents } from '../type/Events';
-import { TimeRange } from '../type/Range';
-import { SingleEventBody } from './Events.interface';
+import Mongoose from "mongoose";
 
-export interface Constructor {
+export interface ScheduleSingleEvent {
+  name: string;
+  start: string;
+  end: string;
+  description: string;
+}
+
+export interface ScheduleDayEvent {
+  events: ScheduleSingleEvent[];
+}
+
+export interface ScheduleWeekEvent {
+  monday: ScheduleDayEvent;
+  tuesday: ScheduleDayEvent;
+  wednesday: ScheduleDayEvent;
+  thursday: ScheduleDayEvent;
+  friday: ScheduleDayEvent;
+  saturday: ScheduleDayEvent;
+  sunday: ScheduleDayEvent;
+}
+
+export interface ScheduleTracker {
+  month: number;
+  year: number;
+  calander: ScheduleDayEvent[];
+}
+
+export interface UserScheduleTrackerCompileType extends ScheduleTracker {
   userID: string;
-  events: WeekEvents;
-  hasOverTime: boolean;
 }
 
-export interface Value extends Constructor {
-  id: string;
-}
-
-export interface NewBody {
-  userID: string;
-  events: SingleEventBody[];
-  hasOverTime: boolean;
-}
-
-export interface ExistingBody extends NewBody {
-  id: string;
-}
-
-export interface SearchQuery {
-  id: string;
-  userID: string;
-  hasOverTime: boolean;
+export interface UserScheduleCompileType {
+  preset: ScheduleWeekEvent;
+  canOverTime: boolean;
 }

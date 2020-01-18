@@ -22,7 +22,12 @@ class ModelEvents {
 /**
  * @typedef D Data Schema
  */
-export function Model<D extends {}>(name: string, schema: Mongoose.Schema<D>) {
+export function Model<D extends {}>(
+  name: string,
+  schema: Mongoose.Schema<D>,
+  inherit: ModelType[] = [],
+  isTemplate: boolean = false
+) {
   schema.add({
     timestamp: String
   });
@@ -86,16 +91,21 @@ export function Model<D extends {}>(name: string, schema: Mongoose.Schema<D>) {
       return this.document;
     }
     public save() {
+      if (isTemplate) {
+        return console.log("Cannot save a template model.");
+      }
       this.document.save();
       this.onSave();
       return;
     }
     public update() {
+      if (isTemplate) return console.log("Cannot update a template model.");
       //this.document.update();
       this.onUpdate();
       return;
     }
     public delete() {
+      if (isTemplate) return console.log("Cannot delete a template model.");
       this.document.remove();
       this.onDelete();
       return;
@@ -103,7 +113,8 @@ export function Model<D extends {}>(name: string, schema: Mongoose.Schema<D>) {
     public id() {
       return this.document.id as string;
     }
-    public validate() {
+    public async validate() {
+      inherit.forEach(async Model => await new Model(this.data()).validate());
       return this.document.validate();
     }
   }

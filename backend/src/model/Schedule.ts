@@ -1,90 +1,84 @@
+import Mongoose from "mongoose";
 import {
-  Constructor,
-  NewBody,
-  SearchQuery,
-  Value
-} from '../interface/Schedule.inteface';
-import { WeekEvents, SingleEvent, DayEvents } from '../type/Events';
-import { TimeRange } from '../type/Range';
-import uuid = require('uuid/v4');
-import { Day } from '../interface/Events.interface';
-import fs = require('fs');
-import { ServerError } from '../type/Error';
+  UserScheduleCompileType,
+  ScheduleDayEvent,
+  ScheduleWeekEvent,
+  UserScheduleTrackerCompileType
+} from "../interface/Schedule.inteface";
+import Model from "../factory/Model";
 
-const operation_hours = new TimeRange('9:00AM', '1:00PM');
-const operation_event = new SingleEvent(
-  '[BUSINESS OPERATION]',
-  operation_hours
-);
-const operation_day = new DayEvents([operation_event], 1);
-const operation_days = Array<DayEvents>(7).fill(operation_day);
-export const operation_schedule: WeekEvents = new WeekEvents(operation_days);
+export const ScheduleDayEventCompileType: Mongoose.TypedSchemaDefinition<ScheduleDayEvent> = {
+  events: [
+    {
+      name: String,
+      start: String,
+      end: String,
+      description: String
+    }
+  ]
+};
 
-export class Schedule {
-  private _value: Value;
-  private _limits: number[] = [1, 1, 1, 1, 1, 1, 1];
-  constructor(schedule: Constructor) {
-    try {
-      if (schedule.events.getLimitAll() !== this._limits)
-        throw new Error(
-          'System cannot create a schedule with an exceedling limit.'
-        );
-      this._value = {
-        ...schedule,
-        id: uuid()
-      };
-    } catch (e) {
-      const ex: Error = e;
-      hconsole.error(ex);
-    }
-  }
-  public getUserID(): string {
-    return this._value.userID;
-  }
-  public update(body: Partial<Body>): void {
-    // Database Method
-  }
-  public save(): void {
-    // Database Method
-  }
-  public add(): void {
-    // Database Method
-  }
-  public remove(): void {}
-  public addEvent(name: string, day: Day, hours: TimeRange) {
-    try {
-      const totalHour: number = this._value.events.getTotalHours();
-      if (!this._value.hasOverTime && 40 < totalHour + hours.getTotalHours())
-        throw new Error("This employee schedule doesn't allow over time.");
-      this._value.events.addEvent(new SingleEvent(name, hours), day);
-    } catch (e) {
-      const ex: Error = e;
-      hconsole.error(ex);
-    }
-  }
-  public getValue(): Constructor {
-    return this._value;
-  }
-  public deleteEvent(eventID: string, day?: Day): void {
-    this._value.events.deleteEvent(eventID, day);
-  }
-  public static generate(body: ScheduleBody): Schedule {
-    const scheduleConstruct: Constructor = {
-      userID: body.userID,
-      events: WeekEvents.generate(body.events, [1, 1, 1, 1, 1, 1, 1]),
-      hasOverTime: body.hasOverTime
-    };
-    return new Schedule(scheduleConstruct);
-  }
-  public getID(): string {
-    return this.getValue().scheduleID;
-  }
-  public static search(query: Partial<SearchQuery>): Schedule[] {
-    // Database Method
+export const ScheduleWeekEventCompileType: Mongoose.TypedSchemaDefinition<ScheduleWeekEvent> = {
+  monday: ScheduleDayEventCompileType,
+  tuesday: ScheduleDayEventCompileType,
+  wednesday: ScheduleDayEventCompileType,
+  thursday: ScheduleDayEventCompileType,
+  friday: ScheduleDayEventCompileType,
+  saturday: ScheduleDayEventCompileType,
+  sunday: ScheduleDayEventCompileType
+};
+
+const UserScheduleTrackerRuntimeType: Mongoose.TypedSchemaDefinition<UserScheduleTrackerCompileType> = {
+  month: Number,
+  year: Number,
+  calander: [ScheduleDayEventCompileType],
+  userID: String
+};
+
+const UserScheduleTrackerSchema = new Mongoose.Schema<
+  UserScheduleTrackerCompileType
+>(UserScheduleTrackerRuntimeType);
+
+export class UserScheduleTracker extends Model(
+  "User Schedule Tracker",
+  UserScheduleTrackerSchema
+) {
+  public async validate() {
+    super.validate();
+    const month = this.data().month;
+    const year = this.data().year;
+    if (new Date(year, month, 0).getDate() !== this.data().calander.length)
+      throw new Error(
+        "System cannot store a calander with the wrong amount of days"
+      );
   }
 }
 
-export default Schedule;
+const UserScheduleRuntimeType: Mongoose.TypedSchemaDefinition<UserScheduleCompileType> = {
+  preset: ScheduleWeekEventCompileType,
+  canOverTime: Boolean
+};
+
+const UserScheduleSchema = new Mongoose.Schema(UserScheduleRuntimeType);
+
+export class UserSchedule extends Model("User Schedule", UserScheduleSchema) {
+  public getCompletedScheduleTracked(month: number, year: number) {
+    if (month < 0 || month > 11)
+      throw new Error("Months only go from Jan - Dec");
+    if (year < 1970 || year > 3000)
+      throw new Error("Years should only go from 1970 - 3000");
+    // Call TrackedScheduleAPI
+  }
+}
+
+// const operation_hours = new TimeRange('9:00AM', '1:00PM');
+// const operation_event = new SingleEvent(
+//   '[BUSINESS OPERATION]',
+//   operation_hours
+// );
+// const operation_day = new DayEvents([operation_event], 1);
+// const operation_days = Array<DayEvents>(7).fill(operation_day);
+// export const operation_schedule: WeekEvents = new WeekEvents(operation_days);
 
 // export class ActiveSchedule {
 //   private _schedule: Map<string, Schedule>;
