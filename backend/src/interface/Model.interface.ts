@@ -25,6 +25,7 @@ export interface PersistableData {
 
 export interface ModelInstanceType {
   validate: () => Promise<void>;
+  save: () => void;
 }
 
 export interface ModelType {

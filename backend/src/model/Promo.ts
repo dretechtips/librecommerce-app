@@ -1,28 +1,15 @@
-import { Constructor, Value } from '../interface/Promo.interface';
-import Product from './Product';
-import { Discount } from '../type/Discount';
+import Mongoose from "mongoose";
+import { PromoCompileType } from "../interface/Promo.interface";
+import Model from "../factory/Model";
 
-export class Promo {
-  private _value: Value;
-  constructor(promo: Constructor) {
-    this._value = {
-      ...promo,
-      timestamp: new Date()
-    };
-  }
-  public getDiscount(): Discount {
-    return this._value.discount;
-  }
-  public getProduct(): Product {
-    const id: string = this._value.productID;
-    return Product.search({ id })[0];
-  }
-  public setDiscount(discount: Discount | number): void {
-    if (typeof discount === 'number')
-      this._value.discount = new Discount(discount);
-    else this._value.discount = discount;
-    return;
-  }
-}
+export const PromoRuntimeType: Mongoose.TypedSchemaDefinition<PromoCompileType> = {
+  discount: Number,
+  start: String,
+  end: String
+};
+
+const PromoSchema = new Mongoose.Schema<PromoCompileType>(PromoRuntimeType);
+
+export class Promo extends Model("Promo", PromoSchema, [], true) {}
 
 export default Promo;

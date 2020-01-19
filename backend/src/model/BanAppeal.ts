@@ -1,64 +1,22 @@
-import Ban from './Ban';
-import uuid = require('uuid/v4');
-import {
-  Constructor,
-  AppealBody,
-  SearchQuery
-} from '../interface/BanAppeal.interface';
-import Account from './Account';
+import Mongoose from "mongoose";
+import { BanAppealCompileType } from "../interface/Ban.interface";
+import Model from "../factory/Model";
+import { Ban } from "./Ban";
 
-export class BanAppeal {
-  private readonly _message: string;
-  private readonly _case: string;
-  private readonly _ban: Ban;
-  private readonly _timestamp: Date;
-  private _resolution: 'resolve' | 'reject' | 'incomplete';
-  public static search(query: Partial<SearchQuery>): BanAppeal[] {
-    // Database Method
-  }
-  constructor(value: Constructor) {
-    this._message = value.msg;
-    this._case = uuid();
-    this._ban = value.ban;
-    this._timestamp = new Date();
-    this._resolution = 'incomplete';
-  }
-  public getAccount(): Account {}
-  public getMessage(): string {
-    return this._message;
-  }
-  public getCaseID(): string {
-    return this._case;
-  }
-  public getBan(): Ban {
-    return this._ban;
-  }
-  public hasResolution(): boolean {
-    if (!this._resolution) {
-      return false;
-    } else {
-      return true;
-    }
-  }
-  public getResolution(): 'resolve' | 'reject' | 'incomplete' {
-    return this._resolution;
-  }
-  public setResolution(res: 'resolve' | 'reject') {
-    this._resolution = res;
-  }
-  public add() {
-    // Database Method
-  }
-  public save() {
-    // Database Method
-  }
-  public toPrimObj(): AppealBody {
-    return {
-      ban: this._ban.toPrimObj(),
-      caseID: this._case,
-      message: this._message
-    };
+const BanAppealRuntimeType: Mongoose.TypedSchemaDefinition<BanAppealCompileType> = {
+  message: String,
+  banID: String,
+  resolution: String
+};
+
+const BanAppealSchema = new Mongoose.Schema<BanAppealCompileType>(
+  BanAppealRuntimeType
+);
+
+export class BanAppeal extends Model("Ban Appeal", BanAppealSchema) {
+  public async validate() {
+    await super.validate();
+    if (Ban.isValidID(this.data().banID))
+      throw new Error("Ban Appeal Ban ID is invalid");
   }
 }
-
-export default BanAppeal;

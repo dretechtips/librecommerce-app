@@ -29,3 +29,5 @@ export class Customer extends Model("Customer", CustomerSchema, [Account]) {
       throw new Error("Customer has an invalid order ID");
   }
 }
+
+export default Customer;

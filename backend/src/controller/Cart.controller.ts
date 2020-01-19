@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import Cart from '../model/Cart';
 import CartSession from '../model/CartSession';
 import Product from '../model/Product';
-import * as OrderController from './Orders.controller';
+import * as OrderController from './Order.controller';
 import { HttpMethod, HttpFunction } from '../decorator/Http.decorator';
 import { ExistingBody } from '../interface/Cart.interface';
 import { ClientError, ServerError } from '../type/Error';
