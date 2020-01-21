@@ -1,7 +1,9 @@
 import Mongoose from "mongoose";
 import {
   TransactionCompileType,
-  CustomerTransactionCompileType
+  CustomerTransactionCompileType,
+  Transactable,
+  TransactionType
 } from "../interface/Transaction.interface";
 import Model from "../factory/Model";
 import Order from "./Order";
@@ -12,7 +14,9 @@ const TransactionRuntimeType: Mongoose.TypedSchemaDefinition<TransactionCompileT
   ipAddress: String,
   amountOwed: Number,
   amountPayed: Number,
-  type: String
+  type: String,
+  tax: Number,
+  charges: [{ cost: Number, name: String }]
 };
 
 const TransactionSchema = new Mongoose.Schema<TransactionCompileType>(
@@ -25,6 +29,57 @@ export class Transaction extends Model(
   [],
   true
 ) {
+  /**
+   * This is only for Texas, USA. Interstate commerce has different tax laws.
+   */
+  private static taxRate: number = 0.0725;
+  public static async calcTotalPrice(
+    transactable: Transactable[]
+  ): Promise<number> {
+    const charges = await Promise.all(
+      transactable.map(cur => cur.getCharges())
+    );
+    return Number(
+      (
+        charges.reduce(
+          (prev, cur) => prev + cur.reduce((prev, cur) => prev + cur.cost, 0),
+          0
+        ) *
+          Transaction.taxRate +
+        1
+      ).toFixed(2)
+    );
+  }
+  public static async calcTaxPrice(
+    transactable: Transactable[]
+  ): Promise<number> {
+    const charges = await Promise.all(
+      transactable.map(cur => cur.getCharges())
+    );
+    return Number(
+      (
+        charges.reduce(
+          (prev, cur) => prev + cur.reduce((prev, cur) => prev + cur.cost, 0),
+          0
+        ) * Transaction.taxRate
+      ).toFixed(2)
+    );
+  }
+  public static async calcSubtotalPrice(
+    transactable: Transactable[]
+  ): Promise<number> {
+    const charges = await Promise.all(
+      transactable.map(cur => cur.getCharges())
+    );
+    return Number(
+      charges
+        .reduce(
+          (prev, cur) => prev + cur.reduce((prev, cur) => prev + cur.cost, 0),
+          0
+        )
+        .toFixed(2)
+    );
+  }
   public async validate() {
     if (!this.validateType())
       throw new Error("This transaction is an invalid type");
@@ -34,8 +89,8 @@ export class Transaction extends Model(
       );
   }
   private validateType() {
-    switch (this.data().type) {
-      case "sale":
+    switch (this.data().type as TransactionType) {
+      case "sales":
         return true;
       case "refund":
         return true;
@@ -47,32 +102,4 @@ export class Transaction extends Model(
   }
 }
 
-const CustomerTransactionRuntimeType: Mongoose.TypedSchemaDefinition<CustomerTransactionCompileType> = {
-  ...TransactionRuntimeType,
-  orderID: String,
-  shippingID: String
-};
-
-const CustomerTransactionSchema = new Mongoose.Schema<
-  CustomerTransactionCompileType
->(CustomerTransactionRuntimeType);
-
-export class CustomerTransaction extends Model(
-  "Customer Transaction",
-  CustomerTransactionSchema,
-  [Transaction]
-) {
-  public async getOrder() {
-    return Order.getSelfByID(this.data().orderID);
-  }
-  public async getShipping() {
-    return Shipping.getSelfByID(this.data().shippingID);
-  }
-  public async validate() {
-    await super.validate();
-    if (!Order.isValidID(this.data().orderID))
-      throw new Error("Customer Transaction Order ID is invalid");
-    if (!Shipping.isValidID(this.data().shippingID))
-      throw new Error("Customer Transaction Shipping ID is invalid");
-  }
-}
+export default Transaction;

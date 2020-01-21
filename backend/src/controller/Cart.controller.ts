@@ -1,15 +1,12 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, RequestHandler } from 'express';
 import Cart from '../model/Cart';
-import CartSession from '../model/CartSession';
-import Product from '../model/Product';
-import * as OrderController from './Order.controller';
-import { HttpMethod, HttpFunction } from '../decorator/Http.decorator';
-import { ExistingBody } from '../interface/Cart.interface';
-import { ClientError, ServerError } from '../type/Error';
-import * as IProduct from '../interface/Product.interface';
-import ProductVariation from '../model/ProductVariation';
+import Controller from "../factory/Controller";
 
-const session: CartSession = new CartSession();
+export const controller = new Controller("cart", Cart);
+
+export const Create: RequestHandler[] = [
+  
+]
 
 export const GetCart = HttpFunction(
   'System was unable to get the cart',

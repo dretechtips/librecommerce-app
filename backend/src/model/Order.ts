@@ -4,13 +4,10 @@ import Model from "../factory/Model";
 import Shipping from "./Shipping";
 import Customer from "./Customer";
 import Cart from "./Cart";
+import { Transactable, SubCost } from "../interface/Transaction.interface";
 
 const OrderRuntimeType: Mongoose.TypedSchemaDefinition<OrderCompileType> = {
-  customerID: String,
-  shippingID: String,
-  cartID: String,
   cancelled: Boolean,
-  cost: Number,
   onHold: Boolean
 };
 

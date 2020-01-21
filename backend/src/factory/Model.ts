@@ -85,7 +85,16 @@ export function Model<D extends {}>(
     }
     private stringToNum() {}
     public data(): D {
-      return this.document;
+      const BaseModel = Mongoose.model("Model");
+      const baseDocument = new BaseModel();
+      const baseDocKeys = Object.keys(baseDocument);
+      const safeData: any = {};
+      Object.keys(this.document).forEach(key => {
+        const doc = this.document;
+        if (!baseDocKeys.find(cur => cur === key))
+          safeData[key] = this.document[key as keyof typeof doc];
+      });
+      return safeData;
     }
     public meta(): { timestamp: string; _id: string } {
       return this.document;
