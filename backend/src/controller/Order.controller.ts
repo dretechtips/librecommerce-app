@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, RequestHandler } from "express";
 import * as Mongoose from "mongoose";
 import { wsServer } from "../index";
 import { HttpMethod, HttpFunction } from "../decorator/Http.decorator";
@@ -13,7 +13,9 @@ export const controller = new Controller("order", Order);
 /**
  * Create a new order for the client
  */
-export const Create = controller.create();
+export const Create = function(): RequestHandler {
+  return controller.create();
+};
 
 export const Delete = controller.delete();
 

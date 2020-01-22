@@ -4,9 +4,12 @@ import Controller from "../factory/Controller";
 
 export const controller = new Controller("cart", Cart);
 
-export const Create: RequestHandler[] = [
-  
-]
+/**
+ * Creates a new cart from client data
+ */
+export const Create = function (): RequestHandler {
+  return controller.create();
+}
 
 export const GetCart = HttpFunction(
   'System was unable to get the cart',

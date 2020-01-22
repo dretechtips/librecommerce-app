@@ -39,6 +39,8 @@ export class Controller<T extends ReturnType<typeof Model>> {
   }
   /**
    * This HTTP function sends data to the client as read ONLY!
+   *
+   * Only reads the function if it's store in the req.locals object
    * @param fn Convert Model Data => Client Data
    */
   public read(fn?: (data: InstanceType<T>["data"]) => any) {

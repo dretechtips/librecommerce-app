@@ -8,7 +8,7 @@ import {
 import Model from "../factory/Model";
 import Order from "./Order";
 import Shipping from "./Shipping";
-import { threadId } from "worker_threads";
+import { CustomerCompileType } from "../interface/Customer.interface";
 
 const TransactionRuntimeType: Mongoose.TypedSchemaDefinition<TransactionCompileType> = {
   ipAddress: String,
@@ -99,6 +99,9 @@ export class Transaction extends Model(
       default:
         return false;
     }
+  }
+  public pay(customer: CustomerCompileType) {
+    customer.
   }
 }
 
