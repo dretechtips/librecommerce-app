@@ -1,5 +1,6 @@
 import { IPAddress } from "../type/Location";
 import Mongoose from "mongoose";
+import Model from "../factory/Model";
 
 type Storable =
   | boolean
@@ -23,12 +24,4 @@ export interface PersistableData {
   persist(): Storable;
 }
 
-export interface ModelInstanceType {
-  validate: () => Promise<void>;
-  save: () => void;
-}
-
-export interface ModelType {
-  new (data: any): ModelInstanceType;
-  model: Mongoose.Model<Mongoose.Document & DefaultPersistantData>;
-}
+export type ModelType = ReturnType<typeof Model>;

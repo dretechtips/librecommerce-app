@@ -1,7 +1,7 @@
 /**
  * This algorithm implements Luhn formula
- * @param number Number that going to get checksumed
- * @param by Divide By to validate the sum
+ * @param number Number that going to get check sumed
+ * @param by Divide by this to validate the sum
  */
 export function ValidateCheckSum(number: number, by: number): boolean {
   const boxed = Array.from(number.toFixed()).map(cur => Number(cur));
@@ -15,5 +15,13 @@ export function ValidateCheckSum(number: number, by: number): boolean {
     } else if (index % 2) container[index] = num;
   });
   if (container.reduce((prev, cur) => prev + cur) % by === 0) return true;
+  return false;
+}
+
+export function IsFloat(number: number): boolean {
+  const decimalRegExp = /^[-+]?[0-9]+\.[0-9]+$/;
+  const s: string = String(number);
+  const b: number = s.search(decimalRegExp);
+  if (b !== -1) return true;
   return false;
 }

@@ -3,4 +3,5 @@ export interface CreditCardCompileType {
   cvv: number;
   expMonth: number;
   expYear: number;
+  provider: string;
 }
