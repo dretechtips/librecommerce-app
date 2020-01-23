@@ -4,7 +4,6 @@ import {
   ModelType
 } from "../interface/Model.interface";
 import Mongoose from "mongoose";
-import uuid from "uuid/v4";
 
 class ModelEvents {
   protected onSave(): void {
@@ -181,15 +180,21 @@ export function Model<D extends {}>(
       return this.document.validate();
     }
     /**
+     * 
+     * @param target Extract the reference to the prop to manipulate its data
+     */
+    private async attachData<T>(target: (data: ReturnType<this["data"]>) => T extends { [C in keyof ReturnType<this["data"]>]: ReturnType<this["data"]>[C] }[keyof ReturnType<this["data"]>] ? T : never) {
+      
+    }
+    /**
      * Adds a single id to the related data id container
      * @param fn Gets the id storage container for any related data
      * @param model Related data model
      * @param id Document ID for the inputted model
      */
-    protected async addID(
+    protected async addID<T>(
       fn: (data: ReturnType<this["data"]>) => string[],
       model: {
-        new (data: any): InstanceType<ModelType>;
         isValidID: (id: string) => Promise<boolean>;
       },
       id: string
@@ -206,7 +211,6 @@ export function Model<D extends {}>(
     protected async addIDs(
       fn: (doc: ReturnType<this["data"]>) => string[],
       model: {
-        new (data: any): InstanceType<ModelType>;
         getSelvesByIDs: (ids: string[]) => Promise<Model[] | null>;
       },
       ids: string[]
@@ -215,6 +219,10 @@ export function Model<D extends {}>(
       const docs = await model.getSelvesByIDs(ids);
       if (docs && docs.length === ids.length) storage.push(...ids);
     }
+    protected async removeID(fn :(doc: ReturnType<this["data"]>) => string[], 
+    model: {
+      isValidID: (id: string) =>
+    })
   }
   return Model;
 }

@@ -20,6 +20,7 @@ export class CreditCard extends Model("Credit Card", CreditCardSchema) {
     await super.validate();
     this.validateCCNumber();
     this.validateCVV();
+    this.validateProvider();
     if (
       this.data().expMonth < 0 ||
       (this.data().expMonth > 11 && NumberUtil.IsFloat(this.data().expMonth))
