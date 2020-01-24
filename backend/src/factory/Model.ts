@@ -4,6 +4,7 @@ import {
   ModelType
 } from "../interface/Model.interface";
 import Mongoose from "mongoose";
+import { ExtractAllProps } from "../util/Types";
 
 class ModelEvents {
   protected onSave(): void {
@@ -180,19 +181,12 @@ export function Model<D extends {}>(
       return this.document.validate();
     }
     /**
-     * 
-     * @param target Extract the reference to the prop to manipulate its data
-     */
-    private async attachData<T>(target: (data: ReturnType<this["data"]>) => T extends { [C in keyof ReturnType<this["data"]>]: ReturnType<this["data"]>[C] }[keyof ReturnType<this["data"]>] ? T : never) {
-      
-    }
-    /**
      * Adds a single id to the related data id container
      * @param fn Gets the id storage container for any related data
      * @param model Related data model
      * @param id Document ID for the inputted model
      */
-    protected async addID<T>(
+    protected async addID(
       fn: (data: ReturnType<this["data"]>) => string[],
       model: {
         isValidID: (id: string) => Promise<boolean>;
@@ -219,28 +213,37 @@ export function Model<D extends {}>(
       const docs = await model.getSelvesByIDs(ids);
       if (docs && docs.length === ids.length) storage.push(...ids);
     }
-    protected async removeID(fn :(doc: ReturnType<this["data"]>) => string[], 
-    model: {
-      isValidID: (id: string) =>
-    })
+    /**
+     * Remove id from the data object
+     * @param fn Gets the id storage container for any related data
+     * @param id Document ID to remove
+     */
+    protected removeID(
+      fn: (data: ReturnType<this["data"]>) => string[],
+      id: string
+    ) {
+      const storage = fn(this.data() as ReturnType<this["data"]>);
+      const index = storage.indexOf(id);
+      if (index !== -1) storage.splice(index);
+    }
+    /**
+     * Remove id from the data object
+     * @param fn Gets the id storage container for any related data
+     * @param ids Document IDs to remove
+     */
+    protected removeIDs(
+      fn: (data: ReturnType<this["data"]>) => string[],
+      ids: string[]
+    ) {
+      const storage = fn(this.data() as ReturnType<this["data"]>);
+      const validIDs = ids
+        .map(id => storage.indexOf(id))
+        .filter(cur => cur !== -1)
+        .map(index => ids[index]);
+      if (validIDs.length === ids.length) storage.push(...validIDs);
+    }
   }
   return Model;
 }
 
 export default Model;
-
-// export abstract class Model<T extends PersistantData<T>, C extends T> {
-//   protected data: Partial<C> & DefaultPersistantData;
-//   constructor(data: Partial<C>) {
-//     this.data = { ...data, id: uuid(), timestamp: new Date().toString() };
-//   }
-//   private save() {
-
-//   }
-//   private update() {
-
-//   }
-//   private delete() {
-
-//   }
-// }

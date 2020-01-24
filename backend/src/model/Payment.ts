@@ -6,8 +6,7 @@ import Bank from "./Bank";
 
 const PaymentRuntimeType: Mongoose.TypedSchemaDefinition<PaymentCompileType> = {
   creditCardIDs: [String],
-  bankIDs: [String],
-  paypalMe: [String]
+  bankIDs: [String]
 };
 
 const PaymentSchema = new Mongoose.Schema<PaymentCompileType>(
@@ -30,9 +29,11 @@ export class Payment extends Model("Payment", PaymentSchema) {
     this.addID(data => data.bankIDs, Bank, id);
   }
   public removeCreditCard(id: string) {
-    // Create this.deleteID
+    this.removeID(data => data.creditCardIDs, id);
   }
   public removeBankAccount(id: string) {
-    // Create this.deleteID
+    this.removeID(data => data.bankIDs, id);
   }
 }
+
+export default Payment;

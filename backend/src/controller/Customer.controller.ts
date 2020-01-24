@@ -1,15 +1,20 @@
 import { Request, Response, NextFunction, RequestHandler } from "express";
 import Customer from "../model/Customer";
 import { HttpMethod, HttpFunction } from "../decorator/Http.decorator";
-import CookieFactory from "../factory/Namespace.factory";
 import Controller from "../factory/Controller";
 
-const controller = new Controller("customer", Customer);
+export const controller = new Controller("customer", Customer);
 
 /**
  * Get customer from ID and stores it temporarily
  */
-export const GetFromBody = function(): RequestHandler {};
+export const GetFromBody = function(): RequestHandler {
+  return controller.get();
+};
+
+export const GetFromID = function(id: string): RequestHandler {
+  return controller.get(id);
+};
 
 /**
  * Get customer from ID stored within the cookies and stores it temporarily

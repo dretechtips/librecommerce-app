@@ -10,9 +10,14 @@ import Cart from "../model/Cart";
 import Shipping from "../model/Shipping";
 import { SaleCompileType } from "../interface/Sale.interface";
 import { Sale } from "../model/Sale";
+import Controller from "../factory/Controller";
+import Transaction from "../model/Transaction";
+import * as PaymentController from "./Payment.controller";
+
+const controller = new Controller("sale", Sale);
 
 /**
- * Creates a cart, shipping, and order and returns a transaction to fill out by the client
+ * Creates a cart, shipping, and order
  * @param type User Type
  */
 export const Create = function(type: "admin" | "client"): RequestHandler[] {
@@ -28,9 +33,14 @@ export const Create = function(type: "admin" | "client"): RequestHandler[] {
       "sales"
     ),
     CustomerController.Get(type),
-    Capture(),
-    ...TransactionController.Read()
+    Capture()
   ];
+};
+/**
+ * Sends sales data to the client
+ */
+export const Read = function() {
+  return controller.read();
 };
 
 /**
@@ -51,6 +61,7 @@ export const Capture = function(): RequestHandler {
       const doc = new Sale(sale);
       doc.validate();
       doc.save();
+      res.locals[controller.getBodyObjKey()] = sale;
       return next();
     }
   );
@@ -59,13 +70,28 @@ export const Capture = function(): RequestHandler {
 /**
  * Pays for the new transaction
  */
-export const Pay = function(): RequestHandler {
-  return HttpFunction(
-    "Sale could not successfully get paid",
-    async (req, res) => {
-      
-    }
-  );
+export const Pay = function(type: "admin" | "client"): RequestHandler[] {
+  let customerID: string = "";
+  return [
+    ...controller.validateID(),
+    HttpFunction(
+      "Sale could not successfully get paid",
+      async (req, res, next) => {
+        const { id } = req.body[controller.getBodyObjKey()];
+        const sale = (await Sale.getSelfByID(id)) as Sale | null;
+        if (!sale) throw new Error("Invalid Sale ID");
+        const customer = (await Customer.getSelfByID(
+          sale.id()
+        )) as Customer | null;
+        if (!customer) throw new Error("Sale customer ID was invalid");
+        customerID = customer.id();
+        return next();
+      }
+    ),
+    CustomerController.GetFromID(customerID),
+    PaymentController.Pay(),
+    TransactionController.Pay(type)
+  ];
 };
 
 export const Refund = function(): RequestHandler[] {};

@@ -9,9 +9,12 @@ import {
 } from "../interface/Transaction.interface";
 import { HttpFunction } from "../decorator/Http.decorator";
 import { Transaction } from "../model/Transaction";
-import Model from "../factory/Model";
+import * as PaymentController from "./Payment.controller";
+import Payment from "../model/Payment";
+import * as CustomerController from "./Customer.controller";
+import Customer from "../model/Customer";
 
-const controller = new Controller("transaction", Transaction);
+export const controller = new Controller("transaction", Transaction);
 
 /**
  * Creates a transaction based off the expected models and controller and stores it to the server
@@ -55,10 +58,34 @@ export const Create = function(
     }
   );
 };
+/**
+ * Pays for an already created transaction using the customer model
+ */
+export const Pay = function(type: "client" | "admin"): RequestHandler {
+  return HttpFunction(
+      controller.getBodyObjKey().toUpperCase() + " was unable to get paid",
+      async (req, res, next) => {
+        const customer = new Customer(
+          res.locals[CustomerController.controller.getBodyObjKey()]
+        );
+        await customer.validate();
+        const payment = customer.getPayment();
+
+        return next();
+      }
+    ),
+};
 
 /**
  * Sends transaction data to be sent back to the client.
  */
 export const Read = function() {
   return controller.read();
+};
+
+/**
+ * Verify if the body id is a valid transaction id
+ */
+export const IsValidID = function() {
+  return controller.validateID();
 };

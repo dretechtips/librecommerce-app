@@ -1,27 +1,9 @@
-type ExtractProps<T, TProps extends T[keyof T]> = Pick<
-  T,
-  ExtractPropsKey<T, TProps>
->;
-
-type ExtractAllProps<T> = {
-  [C in keyof T]: T[C];
-}[keyof T];
-
-export type ExtractPropsKey<T, TProps extends T[keyof T]> = {
-  [P in keyof T]: T[P] extends TProps
-    ? TProps extends T[P]
-      ? P
-      : never
-    : never;
-}[keyof T];
-
-type ArrayifyProps<T extends {}> = {
-  [C in keyof T]: T[C][];
-};
-
-type ExtractArrayType<T extends Array<any>> = T extends Array<infer D>
-  ? D
-  : never;
+import {
+  ExtractAllProps,
+  ArrayifyProps,
+  ExtractArrayType,
+  ExtractPropsKey
+} from "../util/Types";
 
 declare module "mongoose" {
   interface Schema<T = any> {
