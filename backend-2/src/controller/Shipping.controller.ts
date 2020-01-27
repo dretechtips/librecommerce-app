@@ -37,3 +37,5 @@ class ShippingController {
     if (!shipping) throw new Error("Invalid Shipping ID passed in.");
   }
 }
+
+export default ShippingController;

@@ -1,5 +1,14 @@
-import { Controller, Post, Body, Req, Next } from "@nestjs/common";
-import { Request } from "express";
+import {
+  Controller,
+  Post,
+  Body,
+  Req,
+  Next,
+  Get,
+  Patch,
+  Res
+} from "@nestjs/common";
+import { Response } from "express";
 import { CartDOT, CartItemDOT } from "../interface/Cart.interface";
 import { CartValidationPipe, CartItemValidationPipe } from "src/pipe/Cart.pipe";
 import { prefix as customerPrefix } from "./Customer.controller";
@@ -16,6 +25,10 @@ export class CartController {
   @Post("add")
   public async add(@Body(prefix, CartItemValidationPipe) dot: CartItemDOT) {
     this.cart.add(dot);
+  }
+  @Patch("clear")
+  public clear(@Res() res: Response) {
+    res.cookie(prefix, "");
   }
 }
 
