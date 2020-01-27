@@ -1,6 +1,6 @@
 import Mongoose from "mongoose";
 import { OrderCompileType } from "../interface/Order.interface";
-import Model from "../factory/Model";
+import Model from "./Model";
 import Shipping from "./Shipping";
 import Customer from "./Customer";
 import Cart from "./Cart";

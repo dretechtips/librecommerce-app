@@ -1,7 +1,7 @@
 import { CustomerCompileType } from "../interface/Customer.interface";
 import Account, { AccountRuntimeType } from "../model/Account";
 import Mongoose from "mongoose";
-import Model from "../factory/Model";
+import Model from "./Model";
 import Order from "./Order";
 import Payment from "./Payment";
 
@@ -16,7 +16,7 @@ const CustomerSchema = new Mongoose.Schema<CustomerCompileType>(
   CustomerRuntimeType
 );
 
-export class Customer extends Model("Customer", CustomerSchema, [Account]) {
+export class Customer extends Model("Customer", CustomerSchema /*[Account]*/) {
   public async getOrders(): Promise<Order[] | null> {
     return Promise.all(
       this.data().orderIDs.map(id => Order.getSelfByID(id))

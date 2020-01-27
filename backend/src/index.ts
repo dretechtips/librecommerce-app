@@ -1,39 +1,20 @@
 /// <reference path="./libs/global.d.ts" />
 /// <reference path="./libs/node.d.ts" />
-
-import express from "express";
-import * as http from "http";
+import Koa from "koa";
 import WebSocket from "ws";
+import express from "express";
 
 import HttpErrorHandler from "./helper/HttpErrorHandler";
 
-const app: express.Express = express();
-const server: http.Server = http
-  .createServer(app)
-  .listen(8000, "127.0.0.1", () => {
-    console.log(
-      `Initalizing HTTP Server with the IP Address of ${server.address()}`
-    );
-  });
-export const wsServer: WebSocket.Server = new WebSocket.Server(
-  { server },
-  () => {
-    console.log(
-      `Initalizing WebSocket Server with the IP Address of ${server.address()}`
-    );
-  }
-);
+const app = new Koa();
+app.listen(8000);
 
-app.set("view engine", require("pug"));
-
-app.use(HttpErrorHandler);
-
-app.use((req, res, next) => {
+app.use(async (ctx, next) => {
   console.log(
     `There a new connection from the IP Address ${req.connection
       .remoteAddress || req.header("x-forward-for")}`
   );
-  next();
+  await next();
 });
 
 app.use("/", require("./routes/landing"));

@@ -1,6 +1,6 @@
 import Mongoose from "mongoose";
 import { ProductVariationCompileType } from "../interface/Product.interface";
-import Model from "../factory/Model";
+import Model from "./Model";
 
 const ProductVariationRuntimeType: Mongoose.TypedSchemaDefinition<ProductVariationCompileType> = {
   name: String,

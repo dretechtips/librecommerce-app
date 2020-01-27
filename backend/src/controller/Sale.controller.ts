@@ -1,4 +1,4 @@
-import { RequestHandler } from "express";
+import Koa from "koa";
 import { HttpFunction } from "../decorator/Http.decorator";
 import * as TransactionController from "./Transaction.controller";
 import * as OrderController from "./Order.controller";
@@ -15,6 +15,12 @@ import Transaction from "../model/Transaction";
 import * as PaymentController from "./Payment.controller";
 
 const controller = new Controller("sale", Sale);
+
+export const Create = function(type: "admin" | "client") {
+  return (ctx: Koa.Context, next: Koa.Next) {
+    
+  }
+}
 
 /**
  * Creates a cart, shipping, and order
@@ -50,12 +56,11 @@ export const Capture = function(): RequestHandler {
   return HttpFunction(
     "Sale was unable to be captured",
     async (req, res, next) => {
-      const locals = res.locals;
       const sale: SaleCompileType = {
-        shippingID: locals[ShippingController.controller.getBodyObjKey()],
-        orderID: locals[OrderController.controller.getBodyObjKey()],
-        cartID: locals[CartController.controller.getBodyObjKey()],
-        transactionID: locals[OrderController.controller.getBodyObjKey()],
+        shippingID: res.locals[ShippingController.controller.getBodyObjKey()],
+        orderID: res.locals[OrderController.controller.getBodyObjKey()],
+        cartID: res.locals[CartController.controller.getBodyObjKey()],
+        transactionID: res.locals[OrderController.controller.getBodyObjKey()],
         customerID: "getCustomerID"
       };
       const doc = new Sale(sale);
@@ -73,7 +78,6 @@ export const Capture = function(): RequestHandler {
 export const Pay = function(type: "admin" | "client"): RequestHandler[] {
   let customerID: string = "";
   return [
-    ...controller.validateID(),
     HttpFunction(
       "Sale could not successfully get paid",
       async (req, res, next) => {
@@ -94,4 +98,15 @@ export const Pay = function(type: "admin" | "client"): RequestHandler[] {
   ];
 };
 
-export const Refund = function(): RequestHandler[] {};
+/**
+ * Refunds a sales
+ */
+export const Refund = function(): RequestHandler[] {
+  return [
+    HttpFunction("Sale was unable to get refunded", async (req, res) => {
+      const { id } = req.body[controller.getBodyObjKey()];
+      const sale = await Sale.getSelfByID(id);
+      if (!sale) throw new Error("Invalid Sale ID");
+    })
+  ];
+};

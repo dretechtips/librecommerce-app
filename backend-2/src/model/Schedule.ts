@@ -5,7 +5,7 @@ import {
   ScheduleWeekEvent,
   UserScheduleTrackerCompileType
 } from "../interface/Schedule.inteface";
-import Model from "../factory/Model";
+import Model from "./Model";
 
 export const ScheduleDayEventCompileType: Mongoose.TypedSchemaDefinition<ScheduleDayEvent> = {
   events: [

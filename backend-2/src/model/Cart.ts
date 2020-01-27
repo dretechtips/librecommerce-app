@@ -1,10 +1,10 @@
 import Mongoose from "mongoose";
-import { CartCompileType } from "../interface/Cart.interface";
-import Model from "../factory/Model";
-import ProductVariation from "../model/ProductVariation";
+import { CartDOT } from "../interface/Cart.interface";
+import Model from "./Model";
+import ProductVariation from "./ProductVariation";
 import { Transactable, SubCost } from "../interface/Transaction.interface";
 
-const CartRuntimeType: Mongoose.TypedSchemaDefinition<CartCompileType> = {
+const CartRuntimeType: Mongoose.TypedSchemaDefinition<CartDOT> = {
   products: [
     {
       id: String,
@@ -12,7 +12,7 @@ const CartRuntimeType: Mongoose.TypedSchemaDefinition<CartCompileType> = {
     }
   ]
 };
-export const CartSchema = new Mongoose.Schema<CartCompileType>(CartRuntimeType);
+export const CartSchema = new Mongoose.Schema<CartDOT>(CartRuntimeType);
 
 class Cart extends Model("Cart", CartSchema) implements Transactable {
   public async getProducts() {

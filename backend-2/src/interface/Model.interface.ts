@@ -1,6 +1,4 @@
-import { IPAddress } from "../type/Location";
 import Mongoose from "mongoose";
-import Model from "../factory/Model";
 
 type Storable =
   | boolean
@@ -23,5 +21,3 @@ export type PersistantData<T> = {
 export interface PersistableData {
   persist(): Storable;
 }
-
-export type ModelType = ReturnType<typeof Model>;

@@ -138,32 +138,6 @@ export class Controller<T extends ReturnType<typeof Model>> {
       }
     );
   }
-
-  // /**
-  //  * Attach an id from one model to another model
-  //  * @param target Used to extract out the res locals data that stores the data that needs an attached id
-  //  * @param prop The res locals data prop that stores the id
-  //  */
-  // public attachId<T extends ReturnType<typeof Model>>(
-  //   target: Controller<T>,
-  //   prop: keyof ReturnType<InstanceType<T>["data"]>
-  // ): RequestHandler[] {
-  //   return [
-  //     ...this.validateID(),
-  //     HttpFunction(
-  //       "System was unable to transfer ID from " +
-  //         this.getBodyObjKey().toUpperCase() +
-  //         " to " +
-  //         target.getBodyObjKey().toUpperCase(),
-  //       async (req, res, next) => {
-  //         const { id } = res.locals[this.getBodyObjKey()];
-  //         let replace = res.locals[target.getBodyObjKey()][prop];
-  //         replace = { ...replace, [prop]: id };
-  //         return next();
-  //       }
-  //     )
-  //   ];
-  // }
 }
 
 export default Controller;

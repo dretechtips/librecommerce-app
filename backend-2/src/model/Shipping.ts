@@ -1,21 +1,15 @@
 import Mongoose from "mongoose";
-import fs from "fs";
-import {
-  ShippingCompileType,
-  ShippingProvider
-} from "../interface/Shipping.interface";
-import Model from "../factory/Model";
+import { ShippingDOT } from "../interface/Shipping.interface";
+import Model from "./Model";
 import { Transactable, SubCost } from "../interface/Transaction.interface";
 
-const ShippingRuntimeType: Mongoose.TypedSchemaDefinition<ShippingCompileType> = {
+const ShippingRuntimeType: Mongoose.TypedSchemaDefinition<ShippingDOT> = {
   cancelled: Boolean,
   days: Number,
   provider: String
 };
 
-const ShippingSchema = new Mongoose.Schema<ShippingCompileType>(
-  ShippingRuntimeType
-);
+const ShippingSchema = new Mongoose.Schema<ShippingDOT>(ShippingRuntimeType);
 
 class Shipping extends Model("Shipping", ShippingSchema)
   implements Transactable {

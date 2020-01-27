@@ -1,6 +1,6 @@
 import Mongoose from "mongoose";
 import { PaymentCompileType } from "../interface/Payment.interface";
-import Model from "../factory/Model";
+import Model from "./Model";
 import CreditCard from "./CreditCard";
 import Bank from "./Bank";
 

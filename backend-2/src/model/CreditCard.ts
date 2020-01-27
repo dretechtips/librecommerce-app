@@ -1,6 +1,6 @@
 import Mongoose from "mongoose";
 import { CreditCardCompileType } from "../interface/CreditCard.interface";
-import Model from "../factory/Model";
+import Model from "./Model";
 import * as NumberUtil from "../util/NumberUtil";
 
 const CreditCardRuntimeType: Mongoose.TypedSchemaDefinition<CreditCardCompileType> = {
