@@ -26,3 +26,5 @@ export type ArrayifyProps<T extends {}> = {
 export type ExtractArrayType<T extends Array<any>> = T extends Array<infer D>
   ? D
   : never;
+
+export type IDOnly = { id: string };
