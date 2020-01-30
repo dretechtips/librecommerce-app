@@ -16,6 +16,7 @@ export class CustomerController {
     customer = {...customer, accountID};
     const doc = new Customer(customer);
     doc.validate();
+    return doc.id();
   }
   @Get("orders")
   public async orders(@Body(prefix, CustomerIDValidationPipe) customer: IDOnly) {

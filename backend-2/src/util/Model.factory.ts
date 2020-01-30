@@ -128,6 +128,15 @@ export function Model<D extends {}>(
       return safeData;
     }
     /**
+     * Set document data
+     */
+    public setData(data: D): void {
+      this.document = {
+        ...data,
+        ...this.document
+      };
+    }
+    /**
      * Gets the document meta data for server side purpose and validations
      */
     public meta(): { timestamp: string; id: string } {

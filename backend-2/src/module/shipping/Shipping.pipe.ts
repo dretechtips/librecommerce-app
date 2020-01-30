@@ -1,9 +1,9 @@
 import { PipeTransform, ArgumentMetadata } from "@nestjs/common";
-import Shipping from "src/model/Shipping";
+import Shipping from "./Shipping.model";
 import {
   ValidationPipeFactory,
   IDValidationPipeFactory
-} from "../util/Pipe.factory";
+} from "src/util/Pipe.factory";
 
 export class ShippingValidationPipe extends ValidationPipeFactory(Shipping) {}
 

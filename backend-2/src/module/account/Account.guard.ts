@@ -1,7 +1,8 @@
-import { CanActivate, ExecutionContext } from "@nestjs/common";
+import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import Model from "src/util/Model.factory";
 import { Request, Response } from "express";
 
+@Injectable()
 export class AccountLoginGuard implements CanActivate {
   constructor(
     private readonly prefix: string,

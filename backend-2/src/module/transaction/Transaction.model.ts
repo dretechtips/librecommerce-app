@@ -4,11 +4,11 @@ import {
   CustomerTransactionCompileType,
   Transactable,
   TransactionType
-} from "../interface/Transaction.interface";
-import Model from "../factory/Model";
-import Order from "./Order";
-import Shipping from "./Shipping";
-import { CustomerCompileType } from "../interface/Customer.interface";
+} from "./Transaction.interface";
+import Model from "src/util/Model.factory";
+import Order from "../order/Order.model";
+import Shipping from "../shipping/Shipping.model";
+import { CustomerDOT } from "../account/customer/Customer.interface";
 
 const TransactionRuntimeType: Mongoose.TypedSchemaDefinition<TransactionCompileType> = {
   ipAddress: String,
@@ -29,57 +29,6 @@ export class Transaction extends Model(
   [],
   true
 ) {
-  /**
-   * This is only for Texas, USA. Interstate commerce has different tax laws.
-   */
-  private static taxRate: number = 0.0725;
-  public static async calcTotalPrice(
-    transactable: Transactable[]
-  ): Promise<number> {
-    const charges = await Promise.all(
-      transactable.map(cur => cur.getCharges())
-    );
-    return Number(
-      (
-        charges.reduce(
-          (prev, cur) => prev + cur.reduce((prev, cur) => prev + cur.cost, 0),
-          0
-        ) *
-          Transaction.taxRate +
-        1
-      ).toFixed(2)
-    );
-  }
-  public static async calcTaxPrice(
-    transactable: Transactable[]
-  ): Promise<number> {
-    const charges = await Promise.all(
-      transactable.map(cur => cur.getCharges())
-    );
-    return Number(
-      (
-        charges.reduce(
-          (prev, cur) => prev + cur.reduce((prev, cur) => prev + cur.cost, 0),
-          0
-        ) * Transaction.taxRate
-      ).toFixed(2)
-    );
-  }
-  public static async calcSubtotalPrice(
-    transactable: Transactable[]
-  ): Promise<number> {
-    const charges = await Promise.all(
-      transactable.map(cur => cur.getCharges())
-    );
-    return Number(
-      charges
-        .reduce(
-          (prev, cur) => prev + cur.reduce((prev, cur) => prev + cur.cost, 0),
-          0
-        )
-        .toFixed(2)
-    );
-  }
   public async validate() {
     if (!this.validateType())
       throw new Error("This transaction is an invalid type");

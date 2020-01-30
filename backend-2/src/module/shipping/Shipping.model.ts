@@ -1,7 +1,10 @@
 import Mongoose from "mongoose";
-import { ShippingDOT } from "../interface/Shipping.interface";
-import Model from "./Model";
-import { Transactable, SubCost } from "../interface/Transaction.interface";
+import { ShippingDOT, ShippingProvider } from "./Shipping.interface";
+import Model from "src/util/Model.factory";
+import {
+  Transactable,
+  SubCost
+} from "src/module/transaction/Transaction.interface";
 
 const ShippingRuntimeType: Mongoose.TypedSchemaDefinition<ShippingDOT> = {
   cancelled: Boolean,

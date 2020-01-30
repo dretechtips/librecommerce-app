@@ -9,3 +9,5 @@ export interface AccountDOT {
   address: string;
   alerts: string[];
 }
+
+export type AccountType = "customer" | "admin";
