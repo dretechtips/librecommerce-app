@@ -1,6 +1,6 @@
 import Mongoose from "mongoose";
-import { BankCompileType } from "../interface/Bank.interface";
-import Model from "../util/Model.factory";
+import { BankCompileType } from "../../../../interface/Bank.interface";
+import Model from "../../../../util/Model.factory";
 
 const BankRuntimeType: Mongoose.TypedSchemaDefinition<BankCompileType> = {
   account: Number,

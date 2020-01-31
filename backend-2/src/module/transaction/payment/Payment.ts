@@ -1,8 +1,8 @@
 import Mongoose from "mongoose";
-import { PaymentCompileType } from "../interface/Payment.interface";
-import Model from "../util/Model.factory";
-import CreditCard from "./CreditCard";
-import Bank from "./Bank";
+import { PaymentCompileType } from "../../../interface/Payment.interface";
+import Model from "../../../util/Model.factory";
+import CreditCard from "./credit_card/CreditCard.model";
+import Bank from "./ach/Bank.model";
 
 const PaymentRuntimeType: Mongoose.TypedSchemaDefinition<PaymentCompileType> = {
   creditCardIDs: [String],

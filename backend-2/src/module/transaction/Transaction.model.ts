@@ -1,7 +1,6 @@
 import Mongoose from "mongoose";
 import {
-  TransactionCompileType,
-  CustomerTransactionCompileType,
+  TransactionDOT,
   Transactable,
   TransactionType
 } from "./Transaction.interface";
@@ -10,7 +9,7 @@ import Order from "../order/Order.model";
 import Shipping from "../shipping/Shipping.model";
 import { CustomerDOT } from "../account/customer/Customer.interface";
 
-const TransactionRuntimeType: Mongoose.TypedSchemaDefinition<TransactionCompileType> = {
+const TransactionRuntimeType: Mongoose.TypedSchemaDefinition<TransactionDOT> = {
   ipAddress: String,
   amountOwed: Number,
   amountPayed: Number,
@@ -19,7 +18,7 @@ const TransactionRuntimeType: Mongoose.TypedSchemaDefinition<TransactionCompileT
   charges: [{ cost: Number, name: String }]
 };
 
-const TransactionSchema = new Mongoose.Schema<TransactionCompileType>(
+const TransactionSchema = new Mongoose.Schema<TransactionDOT>(
   TransactionRuntimeType
 );
 
@@ -48,9 +47,6 @@ export class Transaction extends Model(
       default:
         return false;
     }
-  }
-  public pay(customer: CustomerCompileType) {
-    customer.
   }
 }
 

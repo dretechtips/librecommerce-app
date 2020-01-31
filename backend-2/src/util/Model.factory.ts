@@ -66,10 +66,7 @@ export function Model<D extends {}>(
      * @param prop Depth of One data key
      * @param value The value of the prop your looking for
      */
-    public static async getSelfBy(
-      prop: keyof D,
-      value: string
-    ): Promise<Model[] | null> {}
+    public static async getSelfBy(props: Partial<D>): Promise<Model[] | null> {}
     public static async isValidID(id: string): Promise<boolean> {
       const data = await Model.getSelfByID(id);
       if (data) return true;

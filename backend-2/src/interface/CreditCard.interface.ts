@@ -4,4 +4,7 @@ export interface CreditCardCompileType {
   expMonth: number;
   expYear: number;
   provider: string;
+  type: string;
 }
+
+export type CardType = "credit" | "debit";
