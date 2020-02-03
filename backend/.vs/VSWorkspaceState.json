@@ -2,10 +2,15 @@
   "ExpandedNodes": [
     "",
     "\\src",
-    "\\src\\interface",
+    "\\src\\api",
+    "\\src\\api\\product",
+    "\\src\\api\\product\\variation",
+    "\\src\\config",
     "\\src\\libs",
-    "\\src\\model"
+    "\\src\\vendor",
+    "\\src\\vendor\\amazon",
+    "\\src\\vendor\\amazon\\feed"
   ],
-  "SelectedNode": "\\src\\model\\Cart.ts",
+  "SelectedNode": "\\src\\vendor\\amazon\\feed\\Feed.service.ts",
   "PreviewInSolutionExplorer": false
 }
