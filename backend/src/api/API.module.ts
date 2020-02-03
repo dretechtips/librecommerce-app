@@ -14,9 +14,14 @@ import SaleModule from "./sale/Sale.module";
 import ScheduleModule from "./schedule/Schedule.module";
 import SubscriptionModule from "./subscription/Subscription.module";
 import TransactionModule from "./transaction/Transaction.module";
+import APIController from "./API.controller";
+import { APIService } from "./API.service";
 
 @Module({
-  exports: [AccountModule,
+  controllers: [APIController],
+  providers: [APIService],
+  exports: [
+    AccountModule,
     AlertModule,
     BanModule,
     BillingModule,
@@ -30,7 +35,8 @@ import TransactionModule from "./transaction/Transaction.module";
     SaleModule,
     ScheduleModule,
     SubscriptionModule,
-    TransactionModule],
+    TransactionModule
+  ]
 })
 export class APIModule {}
 
