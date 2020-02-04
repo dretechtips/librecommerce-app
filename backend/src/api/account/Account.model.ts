@@ -1,6 +1,7 @@
 import Mongoose from "mongoose";
 import { AccountDOT, AccountType } from "./Account.interface";
 import Model from "src/util/Model.factory";
+import { Alert } from "../alert/Alert.model";
 
 export const AccountRuntimeType: Mongoose.TypedSchemaDefinition<AccountDOT> = {
   firstName: String,
@@ -11,7 +12,7 @@ export const AccountRuntimeType: Mongoose.TypedSchemaDefinition<AccountDOT> = {
   emailAddress: String,
   phoneNum: String,
   address: String,
-  alerts: [String]
+  alertIDs: [String]
 };
 
 const AccountSchema = new Mongoose.Schema<AccountDOT>(AccountRuntimeType);
@@ -33,6 +34,13 @@ export class Account extends Model("Account", AccountSchema, [], true) {
    */
   public async getType(): Promise<AccountType> {
     return "admin";
+  }
+  public async getAlerts(): Promise<Alert[] | null> {}
+  public async addAlert(alert: Alert) {
+    this.data().alertIDs.push(alert.id());
+  }
+  public async removeAlert(alertID: string) {
+    this.data().alertIDs = this.data().alertIDs.filter(cur => cur !== alertID);
   }
 }
 

@@ -28,3 +28,5 @@ export type ExtractArrayType<T extends Array<any>> = T extends Array<infer D>
   : never;
 
 export type IDOnly = { id: string };
+
+export type IDsOnly = { ids: string[] };

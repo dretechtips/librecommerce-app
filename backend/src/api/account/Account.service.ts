@@ -30,6 +30,9 @@ export class AccountService {
       password
     }) as Promise<Account | null>;
   }
+  public async getAccounts(accountIds: string[]): Promise<Account[] | null> {
+    return Account.getSelvesByIDs(accountIds) as Promise<Account[] | null>;
+  }
 }
 
 export default AccountService;

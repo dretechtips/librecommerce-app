@@ -7,7 +7,7 @@ export interface AccountDOT {
   emailAddress: string;
   phoneNum: string;
   address: string;
-  alerts: string[];
+  alertIDs: string[];
 }
 
 export type AccountType = "customer" | "admin";

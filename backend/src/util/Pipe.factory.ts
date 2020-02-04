@@ -1,5 +1,6 @@
 import { PipeTransform, ArgumentMetadata } from "@nestjs/common";
 import Model from "src/util/Model.factory";
+import { IDsOnly } from "./Types";
 
 export function ValidationPipeFactory(model: ReturnType<typeof Model>) {
   return class Pipe implements PipeTransform {
@@ -23,6 +24,30 @@ export function IDValidationPipeFactory(model: ReturnType<typeof Model>) {
         throw new Error(
           "Invalid ID was passed into the body id validation pipeline."
         );
+    }
+  };
+}
+/**
+ * @return IDsOnly
+ * @param model Model Type
+ */
+export function IDsValidationPipeFactory(model: ReturnType<typeof Model>) {
+  return class Pipe implements PipeTransform<any, Promise<IDsOnly>> {
+    public async transform(
+      value: any,
+      meta: ArgumentMetadata
+    ): Promise<IDsOnly> {
+      const { ids } = value;
+      if (Array.isArray(ids)) {
+        if (ids.filter(cur => !(cur instanceof String)).length == 0) {
+          if ((await model.getSelvesByIDs(ids as string[])) !== null) {
+            return value as IDsOnly;
+          }
+          throw new Error("Make sure that every IDs passed in is a valid ID");
+        }
+        throw new TypeError("Make sure every IDs passed in is a string");
+      }
+      throw new TypeError("Make sure the IDs passed in is an array.");
     }
   };
 }

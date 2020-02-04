@@ -6,6 +6,7 @@ import AccountService from "../account/Account.service";
 import { LoginDOT } from "./Login.interface";
 import { AccountType } from "../account/Account.interface";
 import { prefix } from "./Login.controller";
+import Account from "../account/Account.model";
 
 @Injectable()
 export class LoginService {
@@ -23,7 +24,7 @@ export class LoginService {
    * @param credientals Login Credientals
    */
   public async addToken(ip: string, credientals: LoginDOT): Promise<string> {
-    const account = await this.account.getAccount(
+    const account = await this.account.getAccountWithCredientals(
       credientals.username,
       credientals.password
     );
@@ -35,18 +36,32 @@ export class LoginService {
     return clientToken;
   }
   public verifyToken(ip: string, loginID: string): boolean {
-    return this.getToken(ip, loginID) ? true : false;
+    return this.getAccountID(ip, loginID) ? true : false;
   }
-  public getToken(ip: string, loginID: string): string | undefined {
+  public getAccountID(ip: string, loginID: string): string | undefined {
     const serverToken = this.hash(ip, loginID);
     const accountID = this.store.get(serverToken);
     return accountID;
+  }
+  public async getAccount(
+    ip: string,
+    loginID: string
+  ): Promise<Account | null> {
+    const accountID = this.getAccountID(ip, loginID);
+    if (!accountID) return null;
+    return Account.getSelfByID(accountID) as Promise<Account | null>;
   }
   private hash(ip: string, clientToken: string): string {
     const secret: string = crypto
       .createCipheriv(this.encryption, ip, null)
       .update(clientToken, "utf8", "hex");
     return secret;
+  }
+  public async getOwnAccount(req: Request): Promise<Account | null> {
+    const ip = req.ip;
+    const loginID = req.cookies[prefix];
+    if (typeof loginID === "string") return this.getAccount(ip, loginID);
+    return null;
   }
   private setClearToken(secret: string): void {
     setTimeout(() => this.store.delete(secret), this.timeoutMS);
