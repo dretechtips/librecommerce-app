@@ -1,6 +1,6 @@
 import Mongoose from "mongoose";
 import { SaleDOT } from "./Sale.interface";
-import Model from "src/util/Model.factory";
+import Model from "src/common/factory/Model.factory";
 import Cart from "src/api/cart/Cart.model";
 import Shipping from "src/api/shipping/Shipping.model";
 import Order from "src/api/order/Order.model";

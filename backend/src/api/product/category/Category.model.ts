@@ -1,6 +1,6 @@
 import Mongoose from "mongoose";
 import { CategoryDOT } from "./Category.interface";
-import Model from "src/util/Model.factory";
+import Model from "src/common/factory/Model.factory";
 
 const ProductCategoryRuntimeType: Mongoose.TypedSchemaDefinition<CategoryDOT> = {
   name: String

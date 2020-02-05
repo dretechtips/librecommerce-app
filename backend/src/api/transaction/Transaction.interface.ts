@@ -9,7 +9,7 @@ export interface TransactionDOT {
 
 export type TransactionClassType = "customer";
 
-export type TransactionType = "sales" | "refund" | "rebate";
+export type TransactionType = "sale" | "refund" | "rebate";
 
 export interface Transactable {
   getCharges: () => Promise<SubCost[]>;

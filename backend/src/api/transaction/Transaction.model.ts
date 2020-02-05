@@ -4,10 +4,11 @@ import {
   Transactable,
   TransactionType
 } from "./Transaction.interface";
-import Model from "src/util/Model.factory";
+import Model from "src/common/factory/Model.factory";
 import Order from "../order/Order.model";
 import Shipping from "../shipping/Shipping.model";
 import { CustomerDOT } from "../account/customer/Customer.interface";
+import { PayflowTransactionType } from "src/vendor/paypal/payflow/Payflow.interface";
 
 const TransactionRuntimeType: Mongoose.TypedSchemaDefinition<TransactionDOT> = {
   ipAddress: String,
@@ -28,6 +29,18 @@ export class Transaction extends Model(
   [],
   true
 ) {
+  public toPayflowTransaction(): PayflowTransactionType | null {
+    switch (this.data().type as TransactionType) {
+      case "rebate":
+        return PayflowTransactionType.REFUND;
+      case "refund":
+        return PayflowTransactionType.REFUND;
+      case "sale":
+        return PayflowTransactionType.SALE;
+      default:
+        return null;
+    }
+  }
   public async validate() {
     if (!this.validateType())
       throw new Error("This transaction is an invalid type");
@@ -38,7 +51,7 @@ export class Transaction extends Model(
   }
   private validateType() {
     switch (this.data().type as TransactionType) {
-      case "sales":
+      case "sale":
         return true;
       case "refund":
         return true;

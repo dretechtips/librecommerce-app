@@ -1,6 +1,6 @@
 import Mongoose from "mongoose";
 import { ReviewDOT } from "./Review.interface";
-import Model from "src/util/Model.factory";
+import Model from "src/common/factory/Model.factory";
 import Product from "src/api/product/Product.model";
 
 const ProductReviewRuntimeType: Mongoose.TypedSchemaDefinition<ReviewDOT> = {

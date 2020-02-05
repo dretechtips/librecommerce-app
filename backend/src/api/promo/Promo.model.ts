@@ -1,6 +1,6 @@
 import Mongoose from "mongoose";
 import { PromoDOT } from "./Promo.interface";
-import Model from "src/util/Model.factory";
+import Model from "src/common/factory/Model.factory";
 
 export const PromoRuntimeType: Mongoose.TypedSchemaDefinition<PromoDOT> = {
   discount: Number,

@@ -1,6 +1,6 @@
 import Mongoose from "mongoose";
 import { BanDOT } from "./Ban.interface";
-import Model from "src/util/Model.factory";
+import Model from "src/common/factory/Model.factory";
 import Customer from "src/api/account/customer/Customer.model";
 
 const BanRuntimeType: Mongoose.TypedSchemaDefinition<BanDOT> = {
@@ -17,3 +17,5 @@ export class Ban extends Model("Ban", BanSchema) {
       throw new Error("Ban Customer ID is invalid");
   }
 }
+
+export default Ban;

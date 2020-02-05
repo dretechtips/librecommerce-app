@@ -1,6 +1,6 @@
 import Mongoose from "mongoose";
 import { BillingCompileType } from "./Billing.interface";
-import Model from "src/util/Model.factory";
+import Model from "src/common/factory/Model.factory";
 
 const BillingRuntimeType: Mongoose.TypedSchemaDefinition<BillingCompileType> = {
   ipAddress: String,

@@ -2,22 +2,20 @@ import { Injectable } from "@nestjs/common";
 import { Request } from "express";
 import TagService from "src/common/services/Tag.service";
 import { TransactionDOT, Transactable, SubCost } from "./Transaction.interface";
-import ServiceFactory from "src/util/Service.factory";
+import ServiceFactory from "src/common/factory/Service.factory";
 import Transaction from "./Transaction.model";
-import { PaymentMethod } from "./payment/Payment.interface";
-import PayflowService from "src/vendor/paypal/payflow/Payflow.service";
+import PaymentsService from "./payments/Payments.service";
+import Customer from "../account/customer/Customer.model";
 
 @Injectable()
-export class TransactionService extends ServiceFactory<TransactionDOT>(
-  Transaction
-) {
+export class TransactionService extends ServiceFactory(Transaction) {
   /**
    * This is only for Texas, USA. Interstate commerce has different tax laws.
    */
   private taxRate: number = 0.0725;
   constructor(
     public readonly tag: TagService<TransactionDOT>,
-    private readonly payflow: PayflowService
+    private readonly payments: PaymentsService
   ) {
     super();
   }
@@ -52,14 +50,15 @@ export class TransactionService extends ServiceFactory<TransactionDOT>(
     return transaction;
   }
   public async capture(
-    payment: PaymentMethod,
+    customer: Customer,
+    paymentID: string,
     transactionID: string
   ): Promise<void> {
     const transaction = (await Transaction.getSelfByID(
       transactionID
     )) as Transaction | null;
     if (!transaction) throw new Error("Invalid Transaction ID");
-    await this.payflow.payWithPaymentMethod(payment, transaction);
+    await this.payments.pay(transaction, customer, paymentID);
   }
 }
 

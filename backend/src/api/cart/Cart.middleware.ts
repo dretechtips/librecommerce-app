@@ -1,10 +1,10 @@
 import { NestMiddleware, Injectable } from "@nestjs/common";
 import { Request, Response } from "express";
-import { prefix } from "../controller/Cart.controller";
-import Cart from "src/model/Cart";
-import { CartDOT } from "src/interface/Cart.interface";
-import { ValidateCookieIDMiddleware } from "src/util/Middleware.factory";
-import CartService from "src/service/Cart.service";
+import { prefix } from "./Cart.controller";
+import Cart from "./Cart.model";
+import { CartDOT } from "./Cart.interface";
+import { ValidateCookieIDMiddleware } from "src/common/factory/Middleware.factory";
+import CartService from "./Cart.service";
 
 @Injectable()
 export class CustomerCartTrackerMidddleware implements NestMiddleware {

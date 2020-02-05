@@ -1,9 +1,9 @@
 import {
   PersistantData,
   DefaultPersistantData
-} from "../common/interface/Model.interface";
+} from "../interface/Model.interface";
 import Mongoose from "mongoose";
-import { ExtractAllProps } from "./Types";
+import { ExtractAllProps } from "../../util/Types";
 
 class ModelEvents {
   protected onSave(): void {

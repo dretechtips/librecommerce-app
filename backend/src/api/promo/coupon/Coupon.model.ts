@@ -1,6 +1,6 @@
 import Mongoose from "mongoose";
 import { CouponDOT } from "./Coupon.interface";
-import Model from "src/util/Model.factory";
+import Model from "src/common/factory/Model.factory";
 
 const PromoCouponRuntimeType: Mongoose.TypedSchemaDefinition<CouponDOT> = {
   promoID: String,

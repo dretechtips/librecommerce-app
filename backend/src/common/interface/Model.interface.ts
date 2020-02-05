@@ -1,4 +1,4 @@
-import Mongoose from "mongoose";
+import Model from "src/common/factory/Model.factory";
 
 type Storable =
   | boolean
@@ -21,3 +21,7 @@ export type PersistantData<T> = {
 export interface PersistableData {
   persist(): Storable;
 }
+
+export type ExtractData<T extends ReturnType<typeof Model>> = ReturnType<
+  InstanceType<T>["data"]
+>;

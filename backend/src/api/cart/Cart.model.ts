@@ -1,6 +1,6 @@
 import Mongoose from "mongoose";
 import { CartDOT } from "./Cart.interface";
-import Model from "src/util/Model.factory";
+import Model from "src/common/factory/Model.factory";
 import ProductVariation from "src/api/product/variation/Variation.model";
 import {
   Transactable,

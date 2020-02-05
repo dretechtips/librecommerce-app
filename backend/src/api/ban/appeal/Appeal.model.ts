@@ -1,22 +1,22 @@
 import Mongoose from "mongoose";
-import { BanAppealCompileType } from "../interface/Ban.interface";
-import Model from "../factory/Model";
-import { Ban } from "./Ban";
+import { AppealDOT } from "./Appeal.interface";
+import Model from "src/common/factory/Model.factory";
+import Ban from "../Ban.model";
 
-const BanAppealRuntimeType: Mongoose.TypedSchemaDefinition<BanAppealCompileType> = {
+const AppealRuntimeType: Mongoose.TypedSchemaDefinition<AppealDOT> = {
   message: String,
   banID: String,
   resolution: String
 };
 
-const BanAppealSchema = new Mongoose.Schema<BanAppealCompileType>(
-  BanAppealRuntimeType
-);
+const AppealSchema = new Mongoose.Schema<AppealDOT>(AppealRuntimeType);
 
-export class BanAppeal extends Model("Ban Appeal", BanAppealSchema) {
+export class Appeal extends Model("Ban Appeal", AppealSchema) {
   public async validate() {
     await super.validate();
     if (Ban.isValidID(this.data().banID))
       throw new Error("Ban Appeal Ban ID is invalid");
   }
 }
+
+export default Appeal;

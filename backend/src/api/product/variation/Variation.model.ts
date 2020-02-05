@@ -1,6 +1,6 @@
 import Mongoose from "mongoose";
 import { VariationDOT } from "./Variation.interface";
-import Model from "src/util/Model.factory";
+import Model from "src/common/factory/Model.factory";
 
 const VariationRuntimeType: Mongoose.TypedSchemaDefinition<VariationDOT> = {
   name: String,
@@ -12,13 +12,8 @@ const VariationRuntimeType: Mongoose.TypedSchemaDefinition<VariationDOT> = {
   stock: Number
 };
 
-const VariationSchema = new Mongoose.Schema<VariationDOT>(
-  VariationRuntimeType
-);
+const VariationSchema = new Mongoose.Schema<VariationDOT>(VariationRuntimeType);
 
-export class Variation extends Model(
-  "Product Variation",
-  VariationSchema
-) {}
+export class Variation extends Model("Product Variation", VariationSchema) {}
 
 export default Variation;

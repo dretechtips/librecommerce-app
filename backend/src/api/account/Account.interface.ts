@@ -10,4 +10,4 @@ export interface AccountDOT {
   alertIDs: string[];
 }
 
-export type AccountType = "customer" | "admin";
+export type AccountType = "customer" | "admin" | "none";

@@ -1,8 +1,8 @@
 import Mongoose from "mongoose";
 import { UserCompileType } from "./User.interface";
-import Model from "src/util/Model.factory";
+import Model from "src/common/factory/Model.factory";
 import Payroll from "src/api/payroll/Payroll.model";
-import { UserSchedule } from "src/api/schedule/Schedule";
+import { UserSchedule } from "src/api/schedule/Schedule.model";
 import Account, { AccountRuntimeType } from "src/api/account/Account.model";
 
 const UserRuntimeType: Mongoose.TypedSchemaDefinition<UserCompileType> = {

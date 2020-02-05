@@ -5,16 +5,19 @@ import TagService from "src/common/services/Tag.service";
 import Account from "./Account.model";
 import LoginService from "../login/Login.service";
 import { prefix as loginPrefix } from "../login/Login.controller";
+import ServiceFactory from "src/common/factory/Service.factory";
 
 /**
  * @todo Get Account Type
  */
 @Injectable()
-export class AccountService {
+export class AccountService extends ServiceFactory(Account) {
   constructor(
     public readonly tag: TagService<AccountDOT>,
     private readonly login: LoginService
-  ) {}
+  ) {
+    super();
+  }
   public getAccountTypeWithCredientals(
     username: string,
     password: string

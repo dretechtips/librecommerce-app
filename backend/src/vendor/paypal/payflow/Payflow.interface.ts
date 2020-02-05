@@ -18,16 +18,6 @@ export interface PayflowCorePayment {
   ORDERID?: string;
 }
 
-export interface PayflowCardPayment extends PayflowCorePayment {
-  TENDER: PayflowTender.CREDIT_CARD | PayflowTender.DEBIT_CARD;
-  EXPDATE: number;
-  CVV: number;
-}
-
-export interface PayflowACHPayment extends PayflowCorePayment {
-  TENDER: PayflowTender.ACH;
-}
-
 export enum PayflowTender {
   ACH = "A",
   CREDIT_CARD = "C",

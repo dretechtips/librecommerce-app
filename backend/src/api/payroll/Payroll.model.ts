@@ -1,6 +1,6 @@
 import { PayrollCompileType } from "./Payroll.interface";
 import Mongoose from "mongoose";
-import Model from "src/util/Model.factory";
+import Model from "src/common/factory/Model.factory";
 
 const PayrollRuntimeType: Mongoose.TypedSchemaDefinition<PayrollCompileType> = {
   userID: String,

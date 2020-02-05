@@ -1,6 +1,6 @@
 import { ProductDOT } from "./Product.interface";
 import Mongoose from "mongoose";
-import Model from "src/util/Model.factory";
+import Model from "src/common/factory/Model.factory";
 import ProductReview from "./review/Review.model";
 
 const ProductRuntimeType: Mongoose.TypedSchemaDefinition<ProductDOT> = {

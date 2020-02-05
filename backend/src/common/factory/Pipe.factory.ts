@@ -1,6 +1,6 @@
 import { PipeTransform, ArgumentMetadata } from "@nestjs/common";
-import Model from "src/util/Model.factory";
-import { IDsOnly } from "./Types";
+import Model from "src/common/factory/Model.factory";
+import { IDsOnly } from "../../util/Types";
 
 export function ValidationPipeFactory(model: ReturnType<typeof Model>) {
   return class Pipe implements PipeTransform {

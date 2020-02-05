@@ -4,22 +4,21 @@ import {
   PayflowCredientals,
   PayflowCorePayment,
   PayflowTransactionType,
-  PayflowTender,
-  PayflowCardPayment,
-  PayflowACHPayment
+  PayflowTender
 } from "./Payflow.interface";
-import CreditCard, { Card } from "src/api/transaction/payment/card/Card.model";
+import CreditCard, { Card } from "src/api/transaction/payments/card/Card.model";
 import Transaction from "src/api/transaction/Transaction.model";
-import Bank from "src/api/transaction/payment/ach/Bank.model";
+import Bank from "src/api/transaction/payments/bank/Bank.model";
 import { TransactionType } from "src/api/transaction/Transaction.interface";
-import { CardType } from "src/api/transaction/payment/card/Card.interface";
-import { PaymentMethod } from "src/api/transaction/payment/Payment.interface";
+import { CardType } from "src/api/transaction/payments/card/Card.interface";
+import { PaymentMethod } from "src/api/transaction/payments/Payments.interface";
 
 @Injectable()
 export class PayflowService {
-  private credientals: PayflowCredientals | null = null;
+  private credientals: PayflowCredientals | null;
   constructor(private readonly config: ConfigService) {
     this.init();
+    this.credientals = null;
   }
   private async init() {
     this.credientals = await this.config.get<PayflowCredientals>(
@@ -27,13 +26,13 @@ export class PayflowService {
       "payflow"
     );
   }
-  private async pay(payment: PayflowCorePayment) {
+  public async pay(payment: PayflowCorePayment) {
     await this.verify(payment);
   }
-  private async verify(payment: PayflowCorePayment) {}
+  public async verify(payment: PayflowCorePayment) {}
   private getTransactionType(transaction: Transaction) {
     switch (transaction.data().type as TransactionType) {
-      case "sales":
+      case "sale":
         return PayflowTransactionType.SALE;
       case "rebate":
         return PayflowTransactionType.REFUND;
@@ -54,35 +53,35 @@ export class PayflowService {
   private formatExpDate(month: number, year: number): number {
     return Number(month + "" + year);
   }
-  public async payWithCard(
-    card: CreditCard,
-    transaction: Transaction
-  ): Promise<void> {
-    const payment: PayflowCardPayment = {
-      ...this.getTransactionData(transaction),
-      TENDER: PayflowTender.CREDIT_CARD,
-      ACCT: card.data().number,
-      CVV: card.data().cvv,
-      EXPDATE: this.formatExpDate(card.data().expMonth, card.data().expYear)
-    };
-    await this.pay(payment);
-  }
-  public async payWithACH(bank: Bank, transaction: Transaction): Promise<void> {
-    const payment: PayflowACHPayment = {
-      ...this.getTransactionData(transaction),
-      TENDER: PayflowTender.ACH,
-      ACCT: bank.data().account
-    };
-    await this.pay(payment);
-  }
-  public async payWithPaymentMethod(
-    method: PaymentMethod,
-    transaction: Transaction
-  ) {
-    if (method instanceof Bank) this.payWithACH(method, transaction);
-    if (method instanceof Card) this.payWithCard(method, transaction);
-    throw new Error("Invalid Payment Method");
-  }
+  // public async payWithCard(
+  //   card: CreditCard,
+  //   transaction: Transaction
+  // ): Promise<void> {
+  //   const payment: PayflowCardPayment = {
+  //     ...this.getTransactionData(transaction),
+  //     TENDER: PayflowTender.CREDIT_CARD,
+  //     ACCT: card.data().number,
+  //     CVV: card.data().cvv,
+  //     EXPDATE: this.formatExpDate(card.data().expMonth, card.data().expYear)
+  //   };
+  //   await this.pay(payment);
+  // }
+  // public async payWithACH(bank: Bank, transaction: Transaction): Promise<void> {
+  //   const payment: PayflowACHPayment = {
+  //     ...this.getTransactionData(transaction),
+  //     TENDER: PayflowTender.ACH,
+  //     ACCT: bank.data().account
+  //   };
+  //   await this.pay(payment);
+  // }
+  // public async payWithPaymentMethod(
+  //   method: PaymentMethod,
+  //   transaction: Transaction
+  // ) {
+  //   if (method instanceof Bank) this.payWithACH(method, transaction);
+  //   if (method instanceof Card) this.payWithCard(method, transaction);
+  //   throw new Error("Invalid Payment Method");
+  // }
 }
 
 export default PayflowService;

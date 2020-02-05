@@ -1,7 +1,13 @@
 import Mongoose from "mongoose";
-import { CardDOT } from "./Card.interface";
-import Model from "../../../../util/Model.factory";
+import { CardDOT, CardType } from "./Card.interface";
+import Model from "../../../../common/factory/Model.factory";
 import * as NumberUtil from "../../../../util/NumberUtil";
+import { PaymentOption } from "../Payments.interface";
+import Transaction from "../../Transaction.model";
+import {
+  PayflowCorePayment,
+  PayflowTender
+} from "src/vendor/paypal/payflow/Payflow.interface";
 
 const CardRuntimeType: Mongoose.TypedSchemaDefinition<CardDOT> = {
   number: Number,
@@ -14,7 +20,29 @@ const CardRuntimeType: Mongoose.TypedSchemaDefinition<CardDOT> = {
 
 const CardSchema = new Mongoose.Schema<CardDOT>(CardRuntimeType);
 
-export class Card extends Model("Card", CardSchema) {
+export class Card extends Model("Card", CardSchema) implements PaymentOption {
+  public toPayflow(transaction: Transaction): PayflowCorePayment {
+    const TRXTYPE = transaction.toPayflowTransaction();
+    if (!TRXTYPE) throw new Error("Invalid Transaction Type");
+    const TENDER = this.toPayflowTender();
+    if (!TENDER) throw new Error("Invalid Card Type");
+    return {
+      TENDER: TENDER,
+      TRXTYPE: TRXTYPE,
+      ACCT: this.data().number,
+      AMT: transaction.data().amountPayed
+    };
+  }
+  private toPayflowTender(): PayflowTender | null {
+    switch (this.data().type as CardType) {
+      case "credit":
+        return PayflowTender.CREDIT_CARD;
+      case "debit":
+        return PayflowTender.DEBIT_CARD;
+      default:
+        return null;
+    }
+  }
   public async validate() {
     await super.validate();
     this.validateCCNumber();

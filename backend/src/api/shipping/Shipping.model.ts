@@ -1,6 +1,6 @@
 import Mongoose from "mongoose";
 import { ShippingDOT, ShippingProvider } from "./Shipping.interface";
-import Model from "src/util/Model.factory";
+import Model from "src/common/factory/Model.factory";
 import {
   Transactable,
   SubCost

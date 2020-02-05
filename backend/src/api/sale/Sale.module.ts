@@ -2,7 +2,7 @@ import { Module, NestModule, MiddlewareConsumer } from "@nestjs/common";
 import SaleController from "./Sale.controller";
 import SaleService from "./Sale.service";
 import CustomerService from "../account/customer/Customer.service";
-import PaymentService from "../transaction/payment/Payment.service";
+import PaymentService from "../transaction/payments/Payment.service";
 import CartService from "../cart/Cart.service";
 import OrderService from "../order/Order.service";
 import TransactionService from "../transaction/Transaction.service";

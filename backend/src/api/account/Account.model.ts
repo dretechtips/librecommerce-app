@@ -1,6 +1,6 @@
 import Mongoose from "mongoose";
 import { AccountDOT, AccountType } from "./Account.interface";
-import Model from "src/util/Model.factory";
+import Model from "src/common/factory/Model.factory";
 import { Alert } from "../alert/Alert.model";
 
 export const AccountRuntimeType: Mongoose.TypedSchemaDefinition<AccountDOT> = {
