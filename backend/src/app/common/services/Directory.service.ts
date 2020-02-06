@@ -6,7 +6,7 @@ class DirectoryService {
   public doesDirExist(path: string): Promise<boolean> {
     return new Promise((res, rej) => {
       fs.access(path, error => {
-        if (error.code === "ENOENT") res(false);
+        if (error?.code === "ENOENT") res(false);
         if (error) rej(error);
         res(true);
       });

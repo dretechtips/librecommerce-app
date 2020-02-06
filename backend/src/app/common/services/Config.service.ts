@@ -17,10 +17,11 @@ class ConfigService {
   }
   /**
    * @typedef D Config Return Type
+   * @params path from config
    */
-  public async get<D>(namespace: string, fileName: string): Promise<D> {
+  public async get<D>(configPath: string): Promise<D> {
     const data = (await this.directory.serializeDataAsString(
-      path.join(this.dir, namespace, fileName + ".txt")
+      path.join(this.dir, configPath)
     )) as [string, string][];
     const object: any = {};
     for (let keyValue in data) {

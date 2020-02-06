@@ -6,12 +6,8 @@ import {
   PayflowTransactionType,
   PayflowTender
 } from "./Payflow.interface";
-import CreditCard, { Card } from "src/app/api/transaction/payments/card/Card.model";
 import Transaction from "src/app/api/transaction/Transaction.model";
-import Bank from "src/app/api/transaction/payments/bank/Bank.model";
 import { TransactionType } from "src/app/api/transaction/Transaction.interface";
-import { CardType } from "src/app/api/transaction/payments/card/Card.interface";
-import { PaymentMethod } from "src/app/api/transaction/payments/Payments.interface";
 
 @Injectable()
 export class PayflowService {
@@ -22,9 +18,11 @@ export class PayflowService {
   }
   private async init() {
     this.credientals = await this.config.get<PayflowCredientals>(
-      "paypal",
-      "payflow"
+      "paypal/payflow"
     );
+  }
+  public validateCredientals() {
+    if (!this.credientals) throw new Error("Invalid Credientals");
   }
   public async pay(payment: PayflowCorePayment) {
     await this.verify(payment);
@@ -53,35 +51,6 @@ export class PayflowService {
   private formatExpDate(month: number, year: number): number {
     return Number(month + "" + year);
   }
-  // public async payWithCard(
-  //   card: CreditCard,
-  //   transaction: Transaction
-  // ): Promise<void> {
-  //   const payment: PayflowCardPayment = {
-  //     ...this.getTransactionData(transaction),
-  //     TENDER: PayflowTender.CREDIT_CARD,
-  //     ACCT: card.data().number,
-  //     CVV: card.data().cvv,
-  //     EXPDATE: this.formatExpDate(card.data().expMonth, card.data().expYear)
-  //   };
-  //   await this.pay(payment);
-  // }
-  // public async payWithACH(bank: Bank, transaction: Transaction): Promise<void> {
-  //   const payment: PayflowACHPayment = {
-  //     ...this.getTransactionData(transaction),
-  //     TENDER: PayflowTender.ACH,
-  //     ACCT: bank.data().account
-  //   };
-  //   await this.pay(payment);
-  // }
-  // public async payWithPaymentMethod(
-  //   method: PaymentMethod,
-  //   transaction: Transaction
-  // ) {
-  //   if (method instanceof Bank) this.payWithACH(method, transaction);
-  //   if (method instanceof Card) this.payWithCard(method, transaction);
-  //   throw new Error("Invalid Payment Method");
-  // }
 }
 
 export default PayflowService;
