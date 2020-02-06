@@ -1,4 +1,4 @@
-import { FeedSubmit } from "src/vendor/amazon/feed/Feed.interface";
+import { FeedSubmit } from "src/app/vendor/amazon/feed/Feed.interface";
 
 declare module "amazon-mws" {
   interface Feeds extends BaseAmazonMWS {
