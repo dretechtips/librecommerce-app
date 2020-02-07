@@ -4,6 +4,9 @@ import {
 } from "../interface/Model.interface";
 import Mongoose from "mongoose";
 import { ExtractAllProps } from "../../../util/Types";
+import DatabasesModule from "../databases/Databases.module";
+
+export const mongoose = new Mongoose.Mongoose();
 
 /**
  * @typedef D Data Schema
@@ -24,7 +27,7 @@ export function Model<D extends {}>(
     public static readonly model: Mongoose.Model<
       D & Mongoose.Document & DefaultPersistantData,
       {}
-    > = Mongoose.model(name, schema);
+    > = mongoose.model(name, schema);
     /**
      * Gets the document of the model by the id
      * @param id Mongoose Object ID
@@ -69,7 +72,6 @@ export function Model<D extends {}>(
      * @param data Any data that going to be used by the model
      */
     constructor(data: any) {
-      super();
       if (data instanceof Mongoose.Document) {
         if (this.isValidDocument(data)) this.document = data;
       }
