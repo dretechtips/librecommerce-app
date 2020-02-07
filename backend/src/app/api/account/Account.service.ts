@@ -1,11 +1,11 @@
 import { Injectable, Scope } from "@nestjs/common";
 import { Request } from "express";
 import { AccountDOT, AccountType } from "./Account.interface";
-import TagService from "src/app/common/services/Tag.service";
+import TagService from "src/app/common/tag/Tag.service";
 import Account from "./Account.model";
 import LoginService from "../login/Login.service";
 import { prefix as loginPrefix } from "../login/Login.controller";
-import ServiceFactory from "src/app/common/factory/Service.factory";
+import ServiceFactory from "src/app/common/service/Service.factory";
 
 /**
  * @todo Get Account Type
@@ -35,6 +35,9 @@ export class AccountService extends ServiceFactory(Account) {
   }
   public async getAccounts(accountIds: string[]): Promise<Account[] | null> {
     return Account.getSelvesByIDs(accountIds) as Promise<Account[] | null>;
+  }
+  public async create(type: string, accountDOT: AccountDOT) {
+    // @todo
   }
 }
 

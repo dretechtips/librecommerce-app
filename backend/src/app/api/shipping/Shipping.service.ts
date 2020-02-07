@@ -1,6 +1,6 @@
 import { Injectable, Scope } from "@nestjs/common";
-import { ShippingDOT } from "./Shipping.interface";
-import ServiceFactory from "src/app/common/factory/Service.factory";
+import { ShippingDOT } from "./Shikspping.interface";
+import ServiceFactory from "src/app/common/service/Service.factory";
 import Shipping from "./Shipping.model";
 
 @Injectable()

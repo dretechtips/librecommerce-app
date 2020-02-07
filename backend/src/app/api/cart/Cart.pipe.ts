@@ -1,7 +1,7 @@
 import {
   ValidationPipeFactory,
   IDValidationPipeFactory
-} from "src/app/common/factory/Pipe.factory";
+} from "src/app/common/pipe/Pipe.factory";
 import Cart from "src/app/api/cart/Cart.model";
 import { PipeTransform, ArgumentMetadata } from "@nestjs/common";
 import { CartItemDOT } from "./Cart.interface";

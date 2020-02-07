@@ -1,4 +1,4 @@
-import { LoggerMiddleware } from "./common/logger/Logger.middleware";
+import { LoggerMiddleware } from "./common/middleware/Logger.middleware";
 import { Request, Response } from "express";
 
 export class AppLoggerMiddleware extends LoggerMiddleware {

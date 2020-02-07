@@ -5,7 +5,9 @@ import DatabasesService from "./Databases.service";
 export class DatabasesController {
   constructor(private readonly database: DatabasesService) {}
   @Get()
-  public getCurrentDatabase(): string {}
+  public getCurrentDatabase(): string {
+    return this.database.getLocation();
+  }
 }
 
 export default DatabasesController;

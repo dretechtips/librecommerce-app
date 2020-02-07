@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { Request } from "express";
 import TagService from "src/app/common/services/Tag.service";
 import { TransactionDOT, Transactable, SubCost } from "./Transaction.interface";
-import ServiceFactory from "src/app/common/factory/Service.factory";
+import ServiceFactory from "src/app/common/service/Service.factory";
 import Transaction from "./Transaction.model";
 import PaymentsService from "./payments/Payments.service";
 import Customer from "../account/customer/Customer.model";

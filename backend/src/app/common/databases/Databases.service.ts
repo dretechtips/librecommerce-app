@@ -8,8 +8,8 @@ export class DatabasesService {
   constructor(
     @Inject(locationToken) private readonly location: LocationService
   ) {}
-  public getLocation() {
-    this.location.where();
+  public getLocation(): string {
+    return this.location.where();
   }
 }
 

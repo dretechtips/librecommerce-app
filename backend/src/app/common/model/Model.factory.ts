@@ -1,7 +1,4 @@
-import {
-  PersistantData,
-  DefaultPersistantData
-} from "../interface/Model.interface";
+import { PersistantData, DefaultPersistantData } from "./Model.interface";
 import Mongoose from "mongoose";
 import { ExtractAllProps } from "../../../util/Types";
 import DatabasesModule from "../databases/Databases.module";

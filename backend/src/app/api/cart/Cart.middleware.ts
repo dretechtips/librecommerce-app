@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { prefix } from "./Cart.controller";
 import Cart from "./Cart.model";
 import { CartDOT } from "./Cart.interface";
-import { ValidateCookieIDMiddleware } from "src/app/common/factory/Middleware.factory";
+import { ValidateCookieIDMiddleware } from "src/app/common/middleware/Middleware.factory";
 import CartService from "./Cart.service";
 
 @Injectable()

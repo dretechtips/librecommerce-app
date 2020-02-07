@@ -3,7 +3,7 @@ import Shipping from "./Shipping.model";
 import {
   ValidationPipeFactory,
   IDValidationPipeFactory
-} from "src/app/common/factory/Pipe.factory";
+} from "src/app/common/pipe/Pipe.factory";
 
 export class ShippingValidationPipe extends ValidationPipeFactory(Shipping) {}
 

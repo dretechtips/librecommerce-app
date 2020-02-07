@@ -11,7 +11,7 @@ import { IDOnly } from "src/util/Types";
 import { ShippingDOT } from "../shipping/Shipping.interface";
 import { OrderDOT } from "../order/Order.interface";
 import { CartDOT } from "../cart/Cart.interface";
-import ServiceFactory from "src/app/common/factory/Service.factory";
+import ServiceFactory from "src/app/common/service/Service.factory";
 import { Sale } from "./Sale.model";
 import Customer from "../account/customer/Customer.model";
 import PaymentsService from "../transaction/payments/Payments.service";

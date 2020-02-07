@@ -1,5 +1,5 @@
-import Model from "./Model.factory";
-import { ExtractData } from "src/app/common/interface/Model.interface";
+import Model from "../model/Model.factory";
+import { ExtractData } from "src/app/common/model/Model.interface";
 import { IDOnly } from "../../../util/Types";
 
 /**

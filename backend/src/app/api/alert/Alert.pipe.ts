@@ -1,7 +1,7 @@
 import {
   ValidationPipeFactory,
   IDsValidationPipeFactory
-} from "src/app/common/factory/Pipe.factory";
+} from "src/app/common/pipe/Pipe.factory";
 import { Alert } from "./Alert.model";
 import { ArgumentMetadata } from "@nestjs/common";
 import { AlertDOT, AlertType } from "./Alert.interface";
