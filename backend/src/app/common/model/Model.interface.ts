@@ -1,4 +1,4 @@
-import Model from "src/app/common/factory/Model.factory";
+import Model from "src/app/common/model/Model.factory";
 
 type Storable =
   | boolean

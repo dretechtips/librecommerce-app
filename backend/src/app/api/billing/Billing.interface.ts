@@ -1,8 +1,5 @@
-import { TransactionCompileType } from "./Transaction.interface";
-
-export interface BillingCompileType {
-  start: string;
-  end: string;
-  ipAddress: string;
+export interface BillingDOT {
+  start: Date;
+  end: Date;
   transactionIDs: string[];
 }

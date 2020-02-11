@@ -1,36 +1,17 @@
 import Mongoose from "mongoose";
-import { BillingCompileType } from "./Billing.interface";
-import Model from "src/app/common/factory/Model.factory";
+import { BillingDOT } from "./Billing.interface";
+import Model, { ModelFactory } from "src/app/common/model/Model.factory";
+import { Typegoose, arrayProp, prop } from "typegoose";
 
-const BillingRuntimeType: Mongoose.TypedSchemaDefinition<BillingCompileType> = {
-  ipAddress: String,
-  start: String,
-  end: String,
-  transactionIDs: [String]
-};
-
-const BillingSchema = new Mongoose.Schema<BillingCompileType>(
-  BillingRuntimeType
-);
-
-export class Billing extends Model("Billing", BillingSchema) {
-  public static readonly getAllTransactionType = function() {
-    return [CustomerTransaction];
-  };
-  public static readonly getTransactionType = function(
-    type: TransactionClassType
-  ) {
-    switch (type) {
-      case "customer":
-        return CustomerTransaction;
-      default:
-        return null;
-    }
-  };
-  public async validate() {
-    await super.validate();
-    const transactionType = Billing.getAllTransactionType();
-    // Promise.all(this.data().transactionIDs
-    //.map(id => ))
-  }
+class BillingSchema extends Typegoose implements BillingDOT {
+  @prop({ required: true })
+  start: Date;
+  @prop({ required: true })
+  end: Date;
+  @arrayProp({ required: true })
+  transactionIDs: string[];
 }
+
+export const Billing = ModelFactory(BillingSchema);
+
+export default Billing;

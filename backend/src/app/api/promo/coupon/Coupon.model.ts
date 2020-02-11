@@ -1,19 +1,17 @@
 import Mongoose from "mongoose";
 import { CouponDOT } from "./Coupon.interface";
-import Model from "src/app/common/factory/Model.factory";
+import ModelFactory from "src/app/common/model/Model.factory";
+import { Typegoose, prop } from "typegoose";
 
-const PromoCouponRuntimeType: Mongoose.TypedSchemaDefinition<CouponDOT> = {
-  promoID: String,
-  code: String,
-  customerID: String
-};
+class CouponSchema extends Typegoose implements CouponDOT {
+  @prop({ required: true })
+  promoID: string;
+  @prop({ required: true })
+  customerID: string;
+  @prop({ required: true })
+  code: string;
+}
 
-const PromoCouponSchema = new Mongoose.Schema<CouponDOT>(
-  PromoCouponRuntimeType
-);
-
-export class PromoCoupon extends Model("Promo Coupon", PromoCouponSchema, [
-  Promo
-]) {}
+export const Coupon = ModelFactory(CouponSchema);
 
 export default PromoCoupon;

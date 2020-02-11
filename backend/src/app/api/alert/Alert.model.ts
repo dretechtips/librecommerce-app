@@ -1,14 +1,17 @@
 ﻿import Mongoose from "mongoose";
 import { AlertDOT, AlertType } from "./Alert.interface";
-import Model from "src/app/common/factory/Model.factory";
+import ModelFactory from "src/app/common/model/Model.factory";
+import { Typegoose, prop } from "typegoose";
+import { Model } from "mongoose";
+import { Document } from "mongoose";
 
-const AlertRuntimeType: Mongoose.TypedSchemaDefinition<AlertDOT> = {
-  msg: String,
-  type: String
-};
-
-const AlertSchema = new Mongoose.Schema<AlertDOT>(AlertRuntimeType);
-
-export class Alert extends Model("alert", AlertSchema) {
-  public async validate(): Promise<void> {}
+class AlertSchema extends Typegoose implements AlertDOT {
+  @prop({ required: true })
+  msg: string;
+  @prop({ required: true, enum: AlertType })
+  type: AlertType;
 }
+
+export class Alert extends ModelFactory(AlertSchema) {}
+
+export default Alert;

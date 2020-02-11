@@ -1,54 +1,41 @@
-import { Injectable, Scope } from "@nestjs/common";
-import { Request } from "express";
-import { AlertDOT, AlertType } from "./Alert.interface";
-import { Alert } from "./Alert.model";
+import { Injectable, Scope, OnModuleInit } from "@nestjs/common";
+import { ModuleRef } from "@nestjs/core";
+import { Document } from "mongoose";
+import { AlertDOT, AlertType, AlertContainer } from "./Alert.interface";
+import Alert from "./Alert.model";
 import Account from "../account/Account.model";
+import ServiceFactory from "src/app/common/service/Service.factory";
 import LoginService from "../login/Login.service";
-import AccountService from "../account/Account.service";
 
 @Injectable()
-export class AlertService {
-  constructor(
-    private readonly login: LoginService,
-    private readonly account: AccountService
-  ) {}
-  public async getAlerts(account: Account): Promise<Alert[] | null> {
-    return account.getAlerts();
+export class AlertService extends ServiceFactory(Alert)
+  implements OnModuleInit {
+  private login: LoginService;
+  constructor(private readonly moduleRef: ModuleRef) {
+    super();
   }
-  public async getAlertsWithLoginToken(
-    ip: string,
-    loginID: string
-  ): Promise<Alert[] | null> {
-    const account = await this.login.getAccount(ip, loginID);
-    if (!account) return null;
-    return await this.getAlerts(account);
+  public onModuleInit() {
+    this.login = this.moduleRef.get(LoginService);
+  }
+  public async getAlerts(container: AlertContainer): Promise<Alert[] | null> {
+    const alertIDs = container.alertIDs;
+    const alerts = await this.getAll(alertIDs);
+    return alerts;
   }
   public async broadcast(
-    alert: Omit<AlertDOT, "type">,
-    type: AlertType,
-    accountIDs: string[]
+    alertDOT: AlertDOT,
+    target: (AlertContainer & Document)[]
   ): Promise<void> {
-    const alertDOT: AlertDOT = {
-      ...alert,
-      type: type
-    };
-    await this.add(alertDOT);
-    const accounts = await this.getAccounts(accountIDs);
-    if (accounts === null) throw new Error("Invalid Account ID");
-    accounts.forEach(account => account.addAlert(new Alert(alert)));
+    const alerts = await this.add(alertDOT);
+    target.forEach(cur => cur.alertIDs.push(alerts.id));
+    return target.forEach(cur => cur.save());
   }
-  private async add(alertDOT: AlertDOT) {
-    const alert = new Alert(alertDOT);
-    await alert.validate();
-    alert.save();
-  }
-  public getAccounts(ids: string[]) {
-    return this.account.getAccounts(ids);
-  }
-  public async dismissSelf(req: Request, alertID: string) {
-    const account = await this.login.getOwnAccount(req);
-    if (!account) throw new Error("Invalid Login Token");
-    await account.removeAlert(alertID);
+  public async dismiss(
+    container: AlertContainer & Document,
+    alertID: string
+  ): Promise<void> {
+    container.alertIDs = container.alertIDs.filter(cur => cur !== alertID);
+    await container.save();
   }
 }
 

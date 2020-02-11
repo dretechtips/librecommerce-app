@@ -1,36 +1,21 @@
 import Mongoose from "mongoose";
-import { UserCompileType } from "./User.interface";
-import Model from "src/app/common/factory/Model.factory";
-import Payroll from "src/app/api/payroll/Payroll.model";
-import { UserSchedule } from "src/app/api/schedule/Schedule.model";
-import Account, { AccountRuntimeType } from "src/app/api/account/Account.model";
+import { UserDOT } from "./User.interface";
+import { Typegoose, prop } from "typegoose";
+import ModelFactory from "src/app/common/model/Model.factory";
 
-const UserRuntimeType: Mongoose.TypedSchemaDefinition<UserCompileType> = {
-  accountID: String,
-  scheduleID: String,
-  payrollID: String,
-  position: String,
-  lastPayed: String
-};
-
-const UserSchema = new Mongoose.Schema<UserCompileType>(UserRuntimeType);
-
-export class User extends Model<UserCompileType>(
-  "User",
-  UserSchema /*[
-  Account
-]*/
-) {
-  constructor(data: any) {
-    super(data);
-  }
-  public async validate() {
-    await super.validate();
-    if (!Payroll.isValidID(this.data().payrollID))
-      throw new Error("Invalid ID for User Payroll");
-    if (!UserSchedule.isValidID(this.data().scheduleID))
-      throw new Error("Invalid ID for User Schedule");
-  }
+class UserSchema extends Typegoose implements UserDOT {
+  @prop({ required: true })
+  accountID: string;
+  @prop({ required: true })
+  scheduleID: string;
+  @prop({ required: true })
+  position: string;
+  @prop({ required: true })
+  lastPayed: string;
+  @prop({ required: true })
+  payrollID: string;
 }
+
+export const User = ModelFactory(UserSchema);
 
 export default User;

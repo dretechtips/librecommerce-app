@@ -6,11 +6,12 @@ import {
   PayflowTransactionType,
   PayflowTender
 } from "./Payflow.interface";
-import Transaction from "src/app/api/transaction/Transaction.model";
-import { TransactionType } from "src/app/api/transaction/Transaction.interface";
+import Transaction from "src/app/api/billing/transaction/Transaction.model";
+import { TransactionType } from "src/app/api/billing/transaction/Transaction.interface";
 
 @Injectable()
 export class PayflowService {
+  k;
   private credientals: PayflowCredientals | null;
   constructor(private readonly config: ConfigService) {
     this.init();

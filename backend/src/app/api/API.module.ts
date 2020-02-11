@@ -13,7 +13,7 @@ import PromoModule from "./promo/Promo.module";
 import SaleModule from "./sale/Sale.module";
 import ScheduleModule from "./schedule/Schedule.module";
 import SubscriptionModule from "./subscription/Subscription.module";
-import TransactionModule from "./transaction/Transaction.module";
+import TransactionModule from "./billing/transaction/Transaction.module";
 import APIController from "./API.controller";
 import { APIService } from "./API.service";
 import { APILoggerMiddleware } from "./API.middleware";

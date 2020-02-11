@@ -1,4 +1,5 @@
 export interface BanDOT {
-  customerID: string;
+  accountID: string;
   date: string;
+  reason: string;
 }

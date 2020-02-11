@@ -6,7 +6,7 @@ import CustomerService from "../account/customer/Customer.service";
 import OrderService from "../order/Order.service";
 import CartService from "../cart/Cart.service";
 import ShippingService from "../shipping/Shipping.service";
-import TransactionService from "../transaction/Transaction.service";
+import TransactionService from "../billing/transaction/Transaction.service";
 import { IDOnly } from "src/util/Types";
 import { ShippingDOT } from "../shipping/Shipping.interface";
 import { OrderDOT } from "../order/Order.interface";
@@ -14,7 +14,7 @@ import { CartDOT } from "../cart/Cart.interface";
 import ServiceFactory from "src/app/common/service/Service.factory";
 import { Sale } from "./Sale.model";
 import Customer from "../account/customer/Customer.model";
-import PaymentsService from "../transaction/payments/Payments.service";
+import PaymentsService from "../billing/payments/Payments.service";
 import AccountService from "../account/Account.service";
 
 @Injectable()

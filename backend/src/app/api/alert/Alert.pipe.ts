@@ -3,14 +3,19 @@ import {
   IDsValidationPipeFactory
 } from "src/app/common/pipe/Pipe.factory";
 import { Alert } from "./Alert.model";
-import { ArgumentMetadata } from "@nestjs/common";
+import { ArgumentMetadata, Injectable } from "@nestjs/common";
 import { AlertDOT, AlertType } from "./Alert.interface";
+import AlertService from "./Alert.service";
 
-export class ValidateAlertFromAdmin extends ValidationPipeFactory(Alert) {
+@Injectable()
+export class ValidateAlertFromAdmin extends ValidationPipeFactory(
+  AlertService
+) {
   public async transform(value: any, meta: ArgumentMetadata) {
     ((value as AlertDOT).type as AlertType) = AlertType.ADMIN;
     return super.transform(value, meta);
   }
 }
 
-export class ValidateAlertID extends IDsValidationPipeFactory(Alert) {}
+@Injectable()
+export class ValidateAlertID extends IDsValidationPipeFactory(AlertService) {}

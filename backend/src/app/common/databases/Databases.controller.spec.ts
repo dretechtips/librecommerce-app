@@ -6,7 +6,7 @@ import { AvaliableLocation } from "./location/Location.interface";
 /**
  * @returns Database Location
  */
-export const mockDatabasesController = describe("DatabasesController", () => {
+describe("DatabasesController", () => {
   let databasesController: DatabasesController;
   beforeEach(async () => {
     const database: TestingModule = await Test.createTestingModule(

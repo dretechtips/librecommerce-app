@@ -1,42 +1,13 @@
 import Mongoose from "mongoose";
-import { CartDOT } from "./Cart.interface";
-import Model from "src/app/common/factory/Model.factory";
-import ProductVariation from "src/app/api/product/variation/Variation.model";
-import {
-  Transactable,
-  SubCost
-} from "src/app/api/transaction/Transaction.interface";
+import { CartDOT, CartItemDOT } from "./Cart.interface";
+import ModelFactory from "src/app/common/model/Model.factory";
+import { arrayProp, Typegoose } from "typegoose";
 
-const CartRuntimeType: Mongoose.TypedSchemaDefinition<CartDOT> = {
-  products: [
-    {
-      id: String,
-      amount: Number
-    }
-  ]
-};
-export const CartSchema = new Mongoose.Schema<CartDOT>(CartRuntimeType);
-
-class Cart extends Model("Cart", CartSchema) implements Transactable {
-  public async getProducts() {
-    const productIDs = this.data().products.map(product => product.id);
-    const product = await ProductVariation.getSelvesByIDs(productIDs);
-    return product as ProductVariation[] | null;
-  }
-  public async getCharges(): Promise<SubCost[]> {
-    const products = await this.getProducts();
-    if (products) {
-      const subcosts: SubCost[] = products.map(cur => {
-        const subcost: SubCost = {
-          name: cur.data().name,
-          cost: cur.data().price
-        };
-        return subcost;
-      });
-      return subcosts;
-    }
-    return [];
-  }
+class CardSchema extends Typegoose implements CartDOT {
+  @arrayProp({ required: true })
+  products: CartItemDOT[];
 }
+
+export const Card = ModelFactory(CardSchema);
 
 export default Cart;

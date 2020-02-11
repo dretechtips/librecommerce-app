@@ -1,18 +1,12 @@
 import Mongoose from "mongoose";
 import { CategoryDOT } from "./Category.interface";
-import Model from "src/app/common/factory/Model.factory";
+import ModelFactory from "src/app/common/model/Model.factory";
+import { Typegoose } from "typegoose";
 
-const ProductCategoryRuntimeType: Mongoose.TypedSchemaDefinition<CategoryDOT> = {
-  name: String
-};
+export class CategorySchema extends Typegoose implements CategoryDOT {
+  name: string;
+}
 
-const ProductCategorySchema = new Mongoose.Schema<CategoryDOT>(
-  ProductCategoryRuntimeType
-);
-
-class ProductCategory extends Model(
-  "Product Category",
-  ProductCategorySchema
-) {}
+export const Category = ModelFactory(CategorySchema);
 
 export default ProductCategory;

@@ -10,6 +10,7 @@ import { Request, Response, NextFunction } from "express";
 import path from "path";
 import { prefix } from "./Login.controller";
 import LoginService from "./Login.service";
+import { AccountType } from "../account/Account.interface";
 
 @Injectable()
 export class LoginInterceptor implements NestInterceptor {
@@ -30,7 +31,26 @@ export class LoginInterceptor implements NestInterceptor {
       !this.login.verifyToken(req.ip, req.cookies[prefix])
     )
       errorHandler(
-        "Please login to the system, before you try to use the API."
+        "Please login tco the system, before you try to use the API."
       );
+  }
+}
+
+@Injectable()
+export class RestrictAccessInterceptor implements NestInterceptor {
+  constructor(private readonly login: LoginService) {}
+  protected allowed: AccountType[];
+  public intercept(
+    context: ExecutionContext,
+    call: CallHandler
+  ): Observable<any> {
+    const req = context.switchToHttp().getRequest();
+    // Get Login ID
+    const account = this.login.getOwnAccount(req);
+    // Get Get Account From Login ID
+    // With the Account get Account Type
+    // If the account type matches the the value passed into the decorator than proceed
+    // Otherwise throw no permission error
+    return call.handle();
   }
 }

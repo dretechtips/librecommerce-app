@@ -1,9 +1,12 @@
 import { Module } from "@nestjs/common";
 import BanController from "./Ban.controller";
+import BanService from "./Ban.service";
+import AppealModule from "./appeal/Appeal.module";
 
 @Module({
   controllers: [BanController],
-  exports: [BanModule]
+  providers: [BanService],
+  exports: [AppealModule]
 })
 export class BanModule {}
 

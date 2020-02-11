@@ -12,5 +12,4 @@ describe("AccountController", () => {
     }).compile();
     accountController = account.get(AccountController);
   });
-  describe("");
 });

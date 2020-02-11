@@ -1,6 +1,22 @@
-import { PipeTransform, ArgumentMetadata } from "@nestjs/common";
+import { PipeTransform, ArgumentMetadata, Injectable } from "@nestjs/common";
 import { IDsOnly } from "src/util/Types";
-import { IDsValidationPipeFactory } from "src/app/common/pipe/Pipe.factory";
+import {
+  IDsValidationPipeFactory,
+  IDValidationPipeFactory,
+  ValidationPipeFactory
+} from "src/app/common/pipe/Pipe.factory";
 import Account from "./Account.model";
+import AccountService from "./Account.service";
 
-export class ValidateAccountIDs extends IDsValidationPipeFactory(Account) {}
+@Injectable()
+export class ValidateAccountIDs extends IDsValidationPipeFactory(
+  AccountService
+) {}
+
+@Injectable()
+export class ValidateAccountID extends IDValidationPipeFactory(
+  AccountService
+) {}
+
+@Injectable()
+export class ValidateAccount extends ValidationPipeFactory(AccountService) {}

@@ -1,4 +1,4 @@
 export interface OrderDOT {
   cancelled: boolean;
-  onHold: boolean;
+  isHeld: boolean;
 }

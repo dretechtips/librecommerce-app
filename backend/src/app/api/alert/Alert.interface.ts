@@ -1,12 +1,16 @@
 ﻿export interface AlertDOT {
   msg: string;
-  type: string;
+  type: AlertType;
 }
 
 export enum AlertType {
-  SERVER = "SERVER",
-  DATABASE = "DATABASE",
-  ADMIN = "ADMIN",
-  PAYPAL = "PAYPAL",
-  GOOGLE = "GOOGLE"
+  SERVER,
+  DATABASE,
+  ADMIN,
+  PAYPAL,
+  GOOGLE
+}
+
+export interface AlertContainer {
+  alertIDs: string[];
 }

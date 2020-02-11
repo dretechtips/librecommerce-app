@@ -1,20 +1,13 @@
-export interface PayrollCompileType {
+export interface PayrollDOT {
   userID: string;
-  active: string;
-  wage: PayrollWage;
-  salary: PayrollSalary;
-  commission: PayrollCommission;
+  active: PayrollType;
+  wageID?: string;
+  salaryID?: string;
+  commissionID?: string;
 }
 
-export interface PayrollWage {
-  hourlyRate: number;
-}
-
-export interface PayrollSalary {
-  base: number;
-  bonuses: number[];
-}
-
-export interface PayrollCommission {
-  percent: number;
+export enum PayrollType {
+  SALARY,
+  COMMISSION,
+  WAGE
 }

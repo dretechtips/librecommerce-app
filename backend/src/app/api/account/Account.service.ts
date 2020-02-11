@@ -1,21 +1,20 @@
-import { Injectable, Scope } from "@nestjs/common";
-import { Request } from "express";
+import { Injectable, Scope, OnModuleInit } from "@nestjs/common";
+import { Request, Response } from "express";
 import { AccountDOT, AccountType } from "./Account.interface";
-import TagService from "src/app/common/tag/Tag.service";
-import Account from "./Account.model";
-import LoginService from "../login/Login.service";
-import { prefix as loginPrefix } from "../login/Login.controller";
+import Account, { AccountClass } from "./Account.model";
+import { prefix } from "./Account.controller";
 import ServiceFactory from "src/app/common/service/Service.factory";
+import CustomerService from "./customer/Customer.service";
+import UserService from "./user/User.service";
+import { ModuleRef } from "@nestjs/core";
+import LoginService from "../login/Login.service";
 
 /**
  * @todo Get Account Type
  */
 @Injectable()
 export class AccountService extends ServiceFactory(Account) {
-  constructor(
-    public readonly tag: TagService<AccountDOT>,
-    private readonly login: LoginService
-  ) {
+  constructor() {
     super();
   }
   public getAccountTypeWithCredientals(
@@ -33,11 +32,8 @@ export class AccountService extends ServiceFactory(Account) {
       password
     }) as Promise<Account | null>;
   }
-  public async getAccounts(accountIds: string[]): Promise<Account[] | null> {
-    return Account.getSelvesByIDs(accountIds) as Promise<Account[] | null>;
-  }
-  public async create(type: string, accountDOT: AccountDOT) {
-    // @todo
+  public async getAccountsFromFingerprint(fingerprintID: string) {
+    return this.getByArrayValue("fingerprints", fingerprintID);
   }
 }
 

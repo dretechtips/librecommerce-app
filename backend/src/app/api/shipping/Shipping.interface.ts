@@ -1,13 +1,11 @@
 export interface ShippingDOT {
-  provider: string;
+  provider: ShippingProvider;
   cancelled: boolean;
   days: number;
 }
 
-export type ShippingProvider =
-  | "usps"
-  | "ups"
-  | "fedex"
-  | "USPS"
-  | "UPS"
-  | "fedex";
+export enum ShippingProvider {
+  FEDEX,
+  USPS,
+  UPS
+}

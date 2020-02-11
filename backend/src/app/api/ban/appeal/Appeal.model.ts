@@ -1,22 +1,18 @@
 import Mongoose from "mongoose";
 import { AppealDOT } from "./Appeal.interface";
-import Model from "src/app/common/factory/Model.factory";
+import ModelFactory from "src/app/common/model/Model.factory";
 import Ban from "../Ban.model";
+import { Typegoose, prop } from "typegoose";
 
-const AppealRuntimeType: Mongoose.TypedSchemaDefinition<AppealDOT> = {
-  message: String,
-  banID: String,
-  resolution: String
-};
-
-const AppealSchema = new Mongoose.Schema<AppealDOT>(AppealRuntimeType);
-
-export class Appeal extends Model("Ban Appeal", AppealSchema) {
-  public async validate() {
-    await super.validate();
-    if (Ban.isValidID(this.data().banID))
-      throw new Error("Ban Appeal Ban ID is invalid");
-  }
+class AppealSchema extends Typegoose implements AppealDOT {
+  @prop({ required: true })
+  message: string;
+  @prop({ required: true })
+  banID: string;
+  @prop({ required: true })
+  resolution: string;
 }
+
+export const Appeal = ModelFactory(AppealSchema);
 
 export default Appeal;

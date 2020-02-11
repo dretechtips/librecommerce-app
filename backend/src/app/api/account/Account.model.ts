@@ -1,47 +1,31 @@
-import Mongoose from "mongoose";
-import { AccountDOT, AccountType } from "./Account.interface";
-import { Alert } from "../alert/Alert.model";
-import Model from "src/app/common/model/Model.factory";
+import { Typegoose, prop, arrayProp } from "typegoose";
+import { AccountDOT } from "./Account.interface";
+import ModelFactory from "src/app/common/model/Model.factory";
 
-export const AccountRuntimeType: Mongoose.TypedSchemaDefinition<AccountDOT> = {
-  firstName: String,
-  lastName: String,
-  username: String,
-  password: String,
-  associatedIPs: [String],
-  emailAddress: String,
-  phoneNum: String,
-  address: String,
-  alertIDs: [String]
-};
-
-const AccountSchema = new Mongoose.Schema<AccountDOT>(AccountRuntimeType);
-
-export class Account extends Model("Account", AccountSchema, [], true) {
-  public async validate() {
-    await super.validate();
-    if (this.data().firstName.length > 15)
-      throw new Error(
-        "Account first name should not be over 15 characters long."
-      );
-    if (this.data().lastName.length > 15)
-      throw new Error(
-        "Account last name should not be over 15 characters long."
-      );
-  }
-  /**
-   * @todo Get Type from Model through relations.
-   */
-  public async getType(): Promise<AccountType> {
-    return "admin";
-  }
-  public async getAlerts(): Promise<Alert[] | null> {}
-  public async addAlert(alert: Alert) {
-    this.data().alertIDs.push(alert.id());
-  }
-  public async removeAlert(alertID: string) {
-    this.data().alertIDs = this.data().alertIDs.filter(cur => cur !== alertID);
+class AccountSchema extends Typegoose implements AccountDOT {
+  @prop({ required: true, maxlength: 32 })
+  public firstName: string;
+  @prop({ required: true, maxlength: 32 })
+  public lastName: string;
+  @prop({ required: true })
+  public username: string;
+  @prop({ required: true })
+  public password: string;
+  @arrayProp({ required: true })
+  public fingerprints: string[];
+  @prop({ required: true })
+  public emailAddress: string;
+  @prop({ required: true })
+  phoneNum: string;
+  @prop({ required: true })
+  address: string;
+  @prop({ required: true })
+  alertIDs: string[];
+  public get fullName(): string {
+    return this.firstName + " " + this.lastName;
   }
 }
+
+export class Account extends ModelFactory(AccountSchema) {}
 
 export default Account;

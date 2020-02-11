@@ -1,19 +1,25 @@
 import Mongoose from "mongoose";
 import { VariationDOT } from "./Variation.interface";
-import Model from "src/app/common/factory/Model.factory";
+import Model, { ModelFactory } from "src/app/common/model/Model.factory";
+import { Typegoose, prop, arrayProp } from "typegoose";
 
-const VariationRuntimeType: Mongoose.TypedSchemaDefinition<VariationDOT> = {
-  name: String,
-  productID: String,
-  price: Number,
-  images: [String],
-  size: String,
-  color: String,
-  stock: Number
-};
+class VariationSchema extends Typegoose implements VariationDOT {
+  @prop({ required: true })
+  public name: string;
+  @prop({ required: true })
+  public productID: string;
+  @prop({ required: true })
+  public price: number;
+  @arrayProp({ required: true })
+  public images: string[];
+  @prop({ required: true })
+  public size: string;
+  @prop({ required: true })
+  public color: string;
+  @prop({ required: true })
+  public stock: number;
+}
 
-const VariationSchema = new Mongoose.Schema<VariationDOT>(VariationRuntimeType);
-
-export class Variation extends Model("Product Variation", VariationSchema) {}
+export const Variation = ModelFactory(VariationSchema);
 
 export default Variation;

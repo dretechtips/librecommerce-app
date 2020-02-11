@@ -1,15 +1,17 @@
 import Mongoose from "mongoose";
 import { PromoDOT } from "./Promo.interface";
-import Model from "src/app/common/factory/Model.factory";
+import ModelFactory from "src/app/common/model/Model.factory";
+import { Typegoose, prop } from "typegoose";
 
-export const PromoRuntimeType: Mongoose.TypedSchemaDefinition<PromoDOT> = {
-  discount: Number,
-  start: String,
-  end: String
-};
+class PromoSchema extends Typegoose implements PromoDOT {
+  @prop({ required: true })
+  discount: number;
+  @prop({ required: true })
+  start: string;
+  @prop({ required: true })
+  end: string;
+}
 
-const PromoSchema = new Mongoose.Schema<PromoDOT>(PromoRuntimeType);
-
-export class Promo extends Model("Promo", PromoSchema, [], true) {}
+export const Promo = ModelFactory(PromoSchema);
 
 export default Promo;

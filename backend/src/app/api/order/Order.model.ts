@@ -1,35 +1,15 @@
 import Mongoose from "mongoose";
 import { OrderDOT } from "./Order.interface";
-import Model from "src/app/common/factory/Model.factory";
-import Shipping from "src/app/api/shipping/Shipping.model";
-import Customer from "src/app/api/account/customer/Customer.model";
-import Cart from "src/app/api/cart/Cart.model";
-import {
-  Transactable,
-  SubCost
-} from "src/app/api/transaction/Transaction.interface";
+import ModelFactory from "src/app/common/model/Model.factory";
+import { Typegoose, prop } from "typegoose";
 
-const OrderRuntimeType: Mongoose.TypedSchemaDefinition<OrderDOT> = {
-  cancelled: Boolean,
-  onHold: Boolean
-};
-
-const OrderSchema = new Mongoose.Schema<OrderDOT>(OrderRuntimeType);
-
-class Order extends Model("Order", OrderSchema) {
-  constructor(data: any) {
-    super(data);
-  }
-  public async isCustomer(): Promise<boolean> {
-    // Call Customer Model
-    return false;
-  }
-  public enableHold(): void {
-    this.data().onHold = true;
-  }
-  public disableHold(): void {
-    this.data().onHold = false;
-  }
+class OrderSchema extends Typegoose implements OrderDOT {
+  @prop({ required: true })
+  cancelled: boolean;
+  @prop({ required: true })
+  isHeld: boolean;
 }
+
+export const Order = ModelFactory(OrderSchema);
 
 export default Order;

@@ -1,29 +1,41 @@
 import { PipeTransform, ArgumentMetadata } from "@nestjs/common";
-import Model from "src/app/common/factory/Model.factory";
+import { Model } from "mongoose";
+import ServiceFactory from "src/app/common/service/Service.factory";
 import { IDsOnly } from "../../../util/Types";
+import { Document } from "mongoose";
 
-export function ValidationPipeFactory(model: ReturnType<typeof Model>) {
+export function ValidationPipeFactory<
+  T extends ReturnType<typeof ServiceFactory>
+>(Service: T) {
   return class Pipe implements PipeTransform {
+    constructor(private readonly service: InstanceType<typeof Service>) {}
     public async transform(value: any, meta: ArgumentMetadata) {
-      const doc = new model(value);
-      await doc.validate();
+      await this.service.validateDOT(value);
       return value;
     }
   };
 }
 
-export function IDValidationPipeFactory(model: ReturnType<typeof Model>) {
+export function IDValidationPipeFactory<
+  T extends ReturnType<typeof ServiceFactory>
+>(Service: T) {
   return class Pipe implements PipeTransform {
+    constructor(private readonly service: InstanceType<typeof Service>) {}
     public async transform(value: any, meta: ArgumentMetadata) {
+      if (typeof value === "string") {
+        const { id } = await this.transform({ id: value }, meta);
+        return id;
+      }
       const { id } = value;
       if (typeof id !== "string")
         throw new TypeError(
           "Invalid ID type was passed into the body id validation pipeline."
         );
-      if (!model.isValidID(id))
+      if (!(await this.service.validateID(id)))
         throw new Error(
           "Invalid ID was passed into the body id validation pipeline."
         );
+      return value;
     }
   };
 }
@@ -31,16 +43,20 @@ export function IDValidationPipeFactory(model: ReturnType<typeof Model>) {
  * @return IDsOnly
  * @param model Model Type
  */
-export function IDsValidationPipeFactory(model: ReturnType<typeof Model>) {
+export function IDsValidationPipeFactory<
+  T extends ReturnType<typeof ServiceFactory>
+>(Service: T) {
   return class Pipe implements PipeTransform<any, Promise<IDsOnly>> {
-    public async transform(
-      value: any,
-      meta: ArgumentMetadata
-    ): Promise<IDsOnly> {
+    constructor(private readonly service: InstanceType<typeof Service>) {}
+    public async transform(value: any, meta: ArgumentMetadata) {
+      if (Array.isArray(value)) {
+        const { ids } = await this.transform({ ids: value }, meta);
+        return ids;
+      }
       const { ids } = value;
       if (Array.isArray(ids)) {
         if (ids.filter(cur => !(cur instanceof String)).length == 0) {
-          if ((await model.getSelvesByIDs(ids as string[])) !== null) {
+          if (!(await this.service.validateIDs(ids as string[]))) {
             return value as IDsOnly;
           }
           throw new Error("Make sure that every IDs passed in is a valid ID");
