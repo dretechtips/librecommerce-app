@@ -10,4 +10,4 @@ class LoginSchema extends Typegoose implements LoginDOT {
   timestamp: Date;
 }
 
-export const Login = ModelFactory(LoginSchema);
+export class Login extends ModelFactory(LoginSchema) {}

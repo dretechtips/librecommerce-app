@@ -1,12 +1,12 @@
 import { PipeTransform, ArgumentMetadata } from "@nestjs/common";
 import { Model } from "mongoose";
-import ServiceFactory from "src/app/common/service/Service.factory";
+import Service from "src/app/common/service/Service.factory";
 import { IDsOnly } from "../../../util/Types";
 import { Document } from "mongoose";
 
-export function ValidationPipeFactory<
-  T extends ReturnType<typeof ServiceFactory>
->(Service: T) {
+export function ValidationPipeFactory<T extends Service<any>>(Service: {
+  new (...arg: any): T;
+}) {
   return class Pipe implements PipeTransform {
     constructor(private readonly service: InstanceType<typeof Service>) {}
     public async transform(value: any, meta: ArgumentMetadata) {
@@ -16,11 +16,11 @@ export function ValidationPipeFactory<
   };
 }
 
-export function IDValidationPipeFactory<
-  T extends ReturnType<typeof ServiceFactory>
->(Service: T) {
+export function IDValidationPipeFactory<T extends Service<any>>(Service: {
+  new (...arg: any): T;
+}) {
   return class Pipe implements PipeTransform {
-    constructor(private readonly service: InstanceType<typeof Service>) {}
+    constructor(private readonly service: T) {}
     public async transform(value: any, meta: ArgumentMetadata) {
       if (typeof value === "string") {
         const { id } = await this.transform({ id: value }, meta);
@@ -31,7 +31,7 @@ export function IDValidationPipeFactory<
         throw new TypeError(
           "Invalid ID type was passed into the body id validation pipeline."
         );
-      if (!(await this.service.validateID(id)))
+      if (!(await this.service.validateDOT(id)))
         throw new Error(
           "Invalid ID was passed into the body id validation pipeline."
         );
@@ -43,9 +43,9 @@ export function IDValidationPipeFactory<
  * @return IDsOnly
  * @param model Model Type
  */
-export function IDsValidationPipeFactory<
-  T extends ReturnType<typeof ServiceFactory>
->(Service: T) {
+export function IDsValidationPipeFactory<T extends Service<any>>(Service: {
+  new (...arg: any): T;
+}) {
   return class Pipe implements PipeTransform<any, Promise<IDsOnly>> {
     constructor(private readonly service: InstanceType<typeof Service>) {}
     public async transform(value: any, meta: ArgumentMetadata) {

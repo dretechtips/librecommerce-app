@@ -1,16 +1,15 @@
 import { Injectable, Scope, OnModuleInit } from "@nestjs/common";
 import { CustomerDOT } from "./Customer.interface";
-import ServiceFactory from "src/app/common/service/Service.factory";
+import Service from "src/app/common/service/Service.factory";
 import Customer from "./Customer.model";
 import PaymentsService from "../../billing/payments/Payments.service";
 import { ModuleRef } from "@nestjs/core";
 
 @Injectable()
-export class CustomerService extends ServiceFactory(Customer)
-  implements OnModuleInit {
+export class CustomerService extends Service<Customer> implements OnModuleInit {
   public payment: PaymentsService;
   constructor(private readonly moduleRef: ModuleRef) {
-    super();
+    super(Customer);
   }
   public onModuleInit(): void {
     this.payment = this.moduleRef.get(PaymentsService);

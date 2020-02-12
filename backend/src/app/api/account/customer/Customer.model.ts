@@ -13,6 +13,6 @@ class CustomerSchema extends Typegoose implements CustomerDOT {
   paymentsID: string;
 }
 
-export const Customer = ModelFactory(CustomerSchema);
+export class Customer extends ModelFactory(CustomerSchema) {}
 
 export default Customer;

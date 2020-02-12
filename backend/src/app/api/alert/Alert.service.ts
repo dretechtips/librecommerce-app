@@ -4,15 +4,14 @@ import { Document } from "mongoose";
 import { AlertDOT, AlertType, AlertContainer } from "./Alert.interface";
 import Alert from "./Alert.model";
 import Account from "../account/Account.model";
-import ServiceFactory from "src/app/common/service/Service.factory";
+import Service from "src/app/common/service/Service.factory";
 import LoginService from "../login/Login.service";
 
 @Injectable()
-export class AlertService extends ServiceFactory(Alert)
-  implements OnModuleInit {
+export class AlertService extends Service<Alert> implements OnModuleInit {
   private login: LoginService;
   constructor(private readonly moduleRef: ModuleRef) {
-    super();
+    super(Alert);
   }
   public onModuleInit() {
     this.login = this.moduleRef.get(LoginService);

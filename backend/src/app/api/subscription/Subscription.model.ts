@@ -11,6 +11,6 @@ class SubscriptionSchema extends Typegoose implements SubscriptionDOT {
   discount?: number;
 }
 
-export const Subscription = ModelFactory(SubscriptionSchema);
+export class Subscription extends ModelFactory(SubscriptionSchema) {}
 
 export default Subscription;

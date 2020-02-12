@@ -13,6 +13,6 @@ class AppealSchema extends Typegoose implements AppealDOT {
   resolution: string;
 }
 
-export const Appeal = ModelFactory(AppealSchema);
+export class Appeal extends ModelFactory(AppealSchema) {}
 
 export default Appeal;

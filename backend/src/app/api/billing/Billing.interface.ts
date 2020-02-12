@@ -1,5 +1,5 @@
 export interface BillingDOT {
-  start: Date;
-  end: Date;
-  transactionIDs: string[];
+  paymentID?: string;
+  transactionID: string;
+  date: Date;
 }

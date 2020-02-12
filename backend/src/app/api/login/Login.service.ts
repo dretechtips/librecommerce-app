@@ -7,9 +7,11 @@ import { LoginDOT } from "./Login.interface";
 import { AccountType } from "../account/Account.interface";
 import { prefix } from "./Login.controller";
 import Account from "../account/Account.model";
+import Service from "src/app/common/service/Service.factory";
+import { Login } from "./Login.model";
 
 @Injectable()
-export class LoginService {
+export class LoginService extends Service<Login> {
   private store: Map<string, string> = new Map();
   private encryption: crypto.CipherCCMTypes | crypto.CipherGCMTypes =
     "aes-256-gcm";
@@ -17,7 +19,9 @@ export class LoginService {
    * Preset 1 Hour
    */
   private timeoutMS: number = 3600000;
-  constructor(private readonly account: AccountService) {}
+  constructor(private readonly account: AccountService) {
+    super(Login);
+  }
   /**
    * @returns Client Token
    * @param ip IP Address

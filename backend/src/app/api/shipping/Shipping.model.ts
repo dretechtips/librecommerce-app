@@ -16,6 +16,6 @@ class ShippingSchema extends Typegoose implements ShippingDOT {
   days: number;
 }
 
-export const Shipping = ModelFactory(ShippingSchema);
+export class Shipping extends ModelFactory(ShippingSchema) {}
 
 export default Shipping;

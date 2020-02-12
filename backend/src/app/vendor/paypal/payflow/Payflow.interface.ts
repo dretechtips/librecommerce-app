@@ -5,7 +5,7 @@ export interface PayflowCredientals {
   PWD: string;
 }
 
-export interface PayflowCorePayment {
+export interface PayflowCoreParameters {
   TENDER: PayflowTender;
   TRXTYPE: PayflowTransactionType;
   ACCT: number;
@@ -15,8 +15,17 @@ export interface PayflowCorePayment {
   COMMENT2?: string;
   CVV?: number;
   RECURRING?: PayflowBoolean;
-  ORDERID?: string;
 }
+
+export type PayflowCoreTransaction = Pick<
+  PayflowCoreParameters,
+  "AMT" | "COMMENT1" | "COMMENT2" | "RECURRING" | "TRXTYPE"
+>;
+
+export type PayflowCorePayment = Pick<
+  PayflowCoreParameters,
+  "TENDER" | "ACCT" | "CVV" | "EXPDATE"
+>;
 
 export enum PayflowTender {
   ACH = "A",

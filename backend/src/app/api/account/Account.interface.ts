@@ -16,6 +16,6 @@ export type PreAccountDOT = Omit<AccountDOT, "alertIDs" | "fingerprints">;
 
 export type AccountType = "customer" | "admin" | "none";
 
-export interface AccountCanPayDOT {
+export interface PaymentsContainer {
   paymentsID: string;
 }

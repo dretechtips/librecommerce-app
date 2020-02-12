@@ -16,6 +16,6 @@ class UserSchema extends Typegoose implements UserDOT {
   payrollID: string;
 }
 
-export const User = ModelFactory(UserSchema);
+export class User extends ModelFactory(UserSchema) {}
 
 export default User;

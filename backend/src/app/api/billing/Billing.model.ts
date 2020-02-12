@@ -5,13 +5,13 @@ import { Typegoose, arrayProp, prop } from "typegoose";
 
 class BillingSchema extends Typegoose implements BillingDOT {
   @prop({ required: true })
-  start: Date;
+  public date: Date;
+  @prop({ required: false })
+  public paymentID?: string;
   @prop({ required: true })
-  end: Date;
-  @arrayProp({ required: true })
-  transactionIDs: string[];
+  public transactionID: string;
 }
 
-export const Billing = ModelFactory(BillingSchema);
+export class Billing extends ModelFactory(BillingSchema) {}
 
 export default Billing;

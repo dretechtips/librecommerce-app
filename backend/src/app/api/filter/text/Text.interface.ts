@@ -1,4 +1,3 @@
-export interface SpeechFilterBody {
-  name: string;
-  words: string;
+export interface TextDOT {
+  word: string;
 }
