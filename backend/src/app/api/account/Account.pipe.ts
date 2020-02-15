@@ -3,7 +3,8 @@ import { IDsOnly } from "src/util/Types";
 import {
   IDsValidationPipeFactory,
   IDValidationPipeFactory,
-  ValidationPipeFactory
+  ValidationPipeFactory,
+  ExtractDocFromID
 } from "src/app/common/pipe/Pipe.factory";
 import Account from "./Account.model";
 import AccountService from "./Account.service";
@@ -20,3 +21,6 @@ export class ValidateAccountID extends IDValidationPipeFactory(
 
 @Injectable()
 export class ValidateAccount extends ValidationPipeFactory(AccountService) {}
+
+@Injectable()
+export class ExtractAccountDocFromID extends ExtractDocFromID(AccountService) {}

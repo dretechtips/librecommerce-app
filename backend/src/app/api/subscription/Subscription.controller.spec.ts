@@ -1,0 +1,3 @@
+describe("SubscriptionController", () => {
+  beforeEach(async () => {});
+});

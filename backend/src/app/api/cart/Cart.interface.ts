@@ -1,8 +1,8 @@
 export interface CartDOT {
-  products: CartItemDOT[];
+  products: CartProductDOT[];
 }
 
-export interface CartItemDOT {
+export interface CartProductDOT {
   id: string;
   amount: number;
 }

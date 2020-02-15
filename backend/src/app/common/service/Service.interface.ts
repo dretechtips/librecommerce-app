@@ -1,0 +1,1 @@
+import { Typegoose } from "typegoose";

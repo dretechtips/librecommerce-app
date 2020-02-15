@@ -5,7 +5,7 @@ import Service from "src/app/common/service/Service.factory";
 import Cart from "./Cart.model";
 
 @Injectable()
-export class CartService extends Service<Cart> {
+export class CartService extends Service<typeof Cart> {
   constructor() {
     super(Cart);
   }

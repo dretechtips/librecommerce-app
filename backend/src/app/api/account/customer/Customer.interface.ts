@@ -1,6 +1,6 @@
-import { AccountCanPayDOT } from "../Account.interface";
+import { SubscriptionLink } from "../../subscription/Subscription.interface";
 
-export interface CustomerDOT extends AccountCanPayDOT {
+export interface CustomerDOT extends SubscriptionLink {
   accountID: string;
   orderIDs: string[];
   lastOrderDate: string;

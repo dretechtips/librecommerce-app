@@ -2,12 +2,13 @@ import Mongoose from "mongoose";
 import { CartDOT, CartItemDOT } from "./Cart.interface";
 import ModelFactory from "src/app/common/model/Model.factory";
 import { arrayProp, Typegoose } from "typegoose";
+import { Transactable } from "../billing/transaction/Transaction.interface";
 
-class CardSchema extends Typegoose implements CartDOT {
+class CartSchema extends Typegoose implements CartDOT {
   @arrayProp({ required: true })
-  products: CartItemDOT[];
+  public products: CartItemDOT[];
 }
 
-export const Card = ModelFactory(CardSchema);
+export class Cart extends ModelFactory(CartSchema) {}
 
 export default Cart;

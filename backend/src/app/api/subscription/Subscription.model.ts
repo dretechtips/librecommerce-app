@@ -1,14 +1,17 @@
 import { SubscriptionDOT } from "./Subscription.interface";
-import { Typegoose, prop } from "typegoose";
+import { Typegoose, prop, arrayProp } from "typegoose";
 import ModelFactory from "src/app/common/model/Model.factory";
+import { CartProductDOT } from "../cart/Cart.interface";
 
 class SubscriptionSchema extends Typegoose implements SubscriptionDOT {
   @prop({ required: true })
-  name: string;
-  @prop({ required: true })
-  productsID: string;
-  @prop({ required: false })
-  discount?: number;
+  public name: string;
+  @arrayProp({ required: true })
+  public products: CartProductDOT[];
+  @prop({ required: true, default: false })
+  public active: boolean;
+  @prop({ required: false, min: 0, max: 100 })
+  public discount?: number;
 }
 
 export class Subscription extends ModelFactory(SubscriptionSchema) {}

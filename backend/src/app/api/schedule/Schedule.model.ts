@@ -1,75 +1,15 @@
-import Mongoose from "mongoose";
-import {
-  UserScheduleCompileType,
-  ScheduleDayEvent,
-  ScheduleWeekEvent,
-  UserScheduleTrackerCompileType
-} from "../interface/Schedule.inteface";
-import Model from "./Model";
+import { Typegoose, prop } from "typegoose";
+import { ScheduleDOT } from "./Schedule.interface";
+import ModelFactory from "src/app/common/model/Model.factory";
 
-export const ScheduleDayEventCompileType: Mongoose.TypedSchemaDefinition<ScheduleDayEvent> = {
-  events: [
-    {
-      name: String,
-      start: String,
-      end: String,
-      description: String
-    }
-  ]
-};
-
-export const ScheduleWeekEventCompileType: Mongoose.TypedSchemaDefinition<ScheduleWeekEvent> = {
-  monday: ScheduleDayEventCompileType,
-  tuesday: ScheduleDayEventCompileType,
-  wednesday: ScheduleDayEventCompileType,
-  thursday: ScheduleDayEventCompileType,
-  friday: ScheduleDayEventCompileType,
-  saturday: ScheduleDayEventCompileType,
-  sunday: ScheduleDayEventCompileType
-};
-
-const UserScheduleTrackerRuntimeType: Mongoose.TypedSchemaDefinition<UserScheduleTrackerCompileType> = {
-  month: Number,
-  year: Number,
-  calander: [ScheduleDayEventCompileType],
-  userID: String
-};
-
-const UserScheduleTrackerSchema = new Mongoose.Schema<
-  UserScheduleTrackerCompileType
->(UserScheduleTrackerRuntimeType);
-
-export class UserScheduleTracker extends Model(
-  "User Schedule Tracker",
-  UserScheduleTrackerSchema
-) {
-  public async validate() {
-    super.validate();
-    const month = this.data().month;
-    const year = this.data().year;
-    if (new Date(year, month, 0).getDate() !== this.data().calander.length)
-      throw new Error(
-        "System cannot store a calander with the wrong amount of days"
-      );
-  }
+class ScheduleSchema extends Typegoose implements ScheduleDOT {
+  @prop({ required: true })
+  public monday: "event";
 }
 
-const UserScheduleRuntimeType: Mongoose.TypedSchemaDefinition<UserScheduleCompileType> = {
-  preset: ScheduleWeekEventCompileType,
-  canOverTime: Boolean
-};
+class Schedule extends ModelFactory(ScheduleSchema) {}
 
-const UserScheduleSchema = new Mongoose.Schema(UserScheduleRuntimeType);
-
-export class UserSchedule extends Model("User Schedule", UserScheduleSchema) {
-  public getCompletedScheduleTracked(month: number, year: number) {
-    if (month < 0 || month > 11)
-      throw new Error("Months only go from Jan - Dec");
-    if (year < 1970 || year > 3000)
-      throw new Error("Years should only go from 1970 - 3000");
-    // Call TrackedScheduleAPI
-  }
-}
+export default Schedule;
 
 // const operation_hours = new TimeRange('9:00AM', '1:00PM');
 // const operation_event = new SingleEvent(

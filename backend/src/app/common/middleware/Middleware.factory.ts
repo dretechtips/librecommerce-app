@@ -1,4 +1,3 @@
-import Model from "src/app/common/factory/Model.factory";
 import { NestMiddleware } from "@nestjs/common";
 import { Request, Response } from "express";
 import { ClassProvider, Provider } from "@nestjs/common/interfaces";

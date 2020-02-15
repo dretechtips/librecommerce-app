@@ -1,4 +1,5 @@
-import Model from "src/app/common/model/Model.factory";
+import { Document, Model } from "mongoose";
+import { Typegoose } from "typegoose";
 
 type Storable =
   | boolean
@@ -22,6 +23,13 @@ export interface PersistableData {
   persist(): Storable;
 }
 
-export type ExtractData<T extends ReturnType<typeof Model>> = ReturnType<
-  InstanceType<T>["data"]
+export type ExtractSchema<T extends Model<Document>> = T extends Model<
+  infer D & Document
+>
+  ? D
+  : never;
+
+export type ExtractSchemaData<T extends Model<Document>> = Omit<
+  ExtractSchema<T>,
+  keyof Typegoose
 >;

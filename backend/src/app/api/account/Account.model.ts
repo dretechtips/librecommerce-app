@@ -1,6 +1,7 @@
 import { Typegoose, prop, arrayProp } from "typegoose";
 import { AccountDOT } from "./Account.interface";
 import ModelFactory from "src/app/common/model/Model.factory";
+import { ExtractSchema } from "src/app/common/model/Model.interface";
 
 class AccountSchema extends Typegoose implements AccountDOT {
   @prop({ required: true, maxlength: 32 })

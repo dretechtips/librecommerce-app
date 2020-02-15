@@ -1,0 +1,5 @@
+describe("BanController", () => {
+  beforeEach(() => {});
+
+  describe("", () => {});
+});

@@ -21,6 +21,6 @@ class SaleSchema extends Typegoose implements SaleDOT {
   customerID: string;
 }
 
-export const Sale = ModelFactory(SaleSchema);
+export class Sale extends ModelFactory(SaleSchema) {}
 
 export default Sale;

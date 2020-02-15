@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import ConfigService from "src/app/common/services/Config.service";
 import {
   PayflowCredientals,
   PayflowCorePayment,
@@ -13,7 +12,7 @@ import { TransactionType } from "src/app/api/billing/transaction/Transaction.int
 export class PayflowService {
   k;
   private credientals: PayflowCredientals | null;
-  constructor(private readonly config: ConfigService) {
+  constructor() {
     this.init();
     this.credientals = null;
   }

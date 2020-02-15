@@ -14,7 +14,15 @@ export interface AccountDOT extends AlertContainer {
 
 export type PreAccountDOT = Omit<AccountDOT, "alertIDs" | "fingerprints">;
 
-export type AccountType = "customer" | "admin" | "none";
+export interface AccountTypeService {
+  isAccountType(id: string): Promise<boolean>;
+}
+
+export enum AccountType {
+  CUSTOMER,
+  ADMIN,
+  NONE
+}
 
 export interface PaymentsContainer {
   paymentsID: string;

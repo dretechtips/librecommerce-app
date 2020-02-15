@@ -27,9 +27,11 @@ export type ExtractArrayType<T extends Array<any>> = T extends Array<infer D>
   ? D
   : never;
 
-export type ExtractKeyOfArrayProp<T> = {
+export type ExtractArrayPropKey<T> = {
   [C in keyof T]: T[C] extends Array<any> ? C : never;
 }[keyof T];
+
+export type ExtractArrayProp<T> = Pick<T, ExtractArrayPropKey<T>>;
 
 export type IDOnly = { id: string };
 

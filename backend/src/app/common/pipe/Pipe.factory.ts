@@ -46,7 +46,7 @@ export function IDValidationPipeFactory<T extends Service<any>>(Service: {
 export function IDsValidationPipeFactory<T extends Service<any>>(Service: {
   new (...arg: any): T;
 }) {
-  return class Pipe implements PipeTransform<any, Promise<IDsOnly>> {
+  return class Pipe implements PipeTransform<any, string[]> {
     constructor(private readonly service: InstanceType<typeof Service>) {}
     public async transform(value: any, meta: ArgumentMetadata) {
       if (Array.isArray(value)) {
@@ -57,13 +57,27 @@ export function IDsValidationPipeFactory<T extends Service<any>>(Service: {
       if (Array.isArray(ids)) {
         if (ids.filter(cur => !(cur instanceof String)).length == 0) {
           if (!(await this.service.validateIDs(ids as string[]))) {
-            return value as IDsOnly;
+            return value;
           }
           throw new Error("Make sure that every IDs passed in is a valid ID");
         }
         throw new TypeError("Make sure every IDs passed in is a string");
       }
       throw new TypeError("Make sure the IDs passed in is an array.");
+    }
+  };
+}
+
+export function ExtractDocFromID<T extends Service<any>>(Service: {
+  new (...arg: any): T;
+}) {
+  return class Pipe
+    implements PipeTransform<any, Promise<ReturnType<T["get"]>>> {
+    constructor(private readonly service: T) {}
+    public async transform(value: any, meta: ArgumentMetadata) {
+      if (typeof value !== "string")
+        throw new TypeError("Value is not a string");
+      return this.service.get(value);
     }
   };
 }

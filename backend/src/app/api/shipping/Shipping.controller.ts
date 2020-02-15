@@ -1,17 +1,17 @@
 import { Controller, Post, Body, Patch, Get, Next } from "@nestjs/common";
-import FormService from "src/service/Form.service";
-import { ShippingDOT } from "src/interface/Shipping.interface";
-import Shipping from "src/model/Shipping";
+import { ShippingDOT } from "./Shipping.interface";
+import Shipping from "./Shipping.model";
 import {
   ShippingValidationPipe,
   ShippingIDValidationPipe
-} from "src/pipe/Shipping.pipe";
+} from "./Shipping.pipe";
+import ShippingService from "./Shipping.service";
 
 export const prefix = "shipping";
 
 @Controller(prefix)
 class ShippingController {
-  constructor(private readonly form: FormService) {}
+  constructor(private readonly shipping: ShippingService) {}
   @Post("create")
   public create(
     @Body(prefix, ShippingValidationPipe) dot: ShippingDOT,
@@ -28,13 +28,12 @@ class ShippingController {
     @Next() next
   ) {
     const shipping = new Shipping(dot);
-    shipping.update();
+    shipping.update(dot);
     return next();
   }
-  @Get("detail")
-  public detail(@Body(prefix, ShippingIDValidationPipe) dot: { id: string }) {
-    const shipping = Shipping.getSelfByID(dot.id);
-    if (!shipping) throw new Error("Invalid Shipping ID passed in.");
+  @Get("fetch/:id")
+  public detail(@Body(prefix, ShippingIDValidationPipe) id: string) {
+    return this.shipping.get(id).then(cur => cur.toJSON());
   }
 }
 
