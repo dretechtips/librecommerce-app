@@ -61,26 +61,4 @@ declare module "mongoose" {
       ? MappedValue[ExtractPropsKey<MappedType, T[C]>]
       : never;
   };
-  // type TypedArraySchemaDefinition<
-  //   T extends { [C in keyof T]: ExtractAllProps<ArrayifyProps<MappedType>> },
-  //   C extends {
-  //     [P in keyof ArrayifyProps<MappedValue>]: ArrayifyProps<MappedType>[P];
-  //   } = ArrayifyProps<MappedType>,
-  //   U extends {
-  //     [P in keyof ArrayifyProps<MappedType>]: ArrayifyProps<MappedValue>[P];
-  //   } = ArrayifyProps<MappedValue>
-  // > = {
-  //   [C in keyof T]: T[C] extends { [x: string]: any }[]
-  //     ? ExtractAllProps<T[C]> extends ArrayifyProps<
-  //         MappedType
-  //       >[keyof MappedType]
-  //       ? TypedArraySchemaDefinition<T[C]>
-  //       : never
-  //     : ExtractPropsKey<ArrayifyProps<MappedType>, T[C]> extends String
-  //     ? ArrayifyProps<MappedValue>[ExtractPropsKey<
-  //         ArrayifyProps<MappedType>,
-  //         T[C]
-  //       >]
-  //     : never;
-  // };
 }

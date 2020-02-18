@@ -2,42 +2,48 @@ import { ProductDOT } from "./Product.interface";
 import ModelFactory from "src/app/common/model/Model.factory";
 import ProductReview from "./review/Review.model";
 import { Typegoose, prop, arrayProp } from "typegoose";
+import DimensionSchema from "src/app/common/model/schema/Dimension.schema";
+import WeightSchema from "src/app/common/model/schema/Weight.schema";
 
 class ProductSchema extends Typegoose implements ProductDOT {
   @prop({ required: true })
-  name: string;
+  public name: string;
   @arrayProp({ required: true })
-  features: string[];
+  public features: string[];
   @prop({ required: true })
-  SKU: string;
+  public SKU: string;
   @prop({ required: true })
-  UPC: string;
+  public UPC: string;
   @prop({ required: true })
-  categoryID: string;
+  public categoryID: string;
   @prop({ required: true })
-  description: string;
+  public description: string;
   @prop({ required: true })
-  brand: string;
+  public brand: string;
+  @arrayProp({ required: true, default: [] })
+  public directions: string[];
+  @prop({ required: true })
+  public warning: string;
   @arrayProp({ required: true })
-  directions: string[];
-  @prop({ required: true })
-  warning: string;
+  public ingredients: string[];
   @arrayProp({ required: true })
-  ingredients: string[];
-  @arrayProp({ required: true })
-  benefits: string[];
+  public benefits: string[];
   @prop({ required: true })
-  rating: number;
+  public rating: number;
   @prop({ required: true })
-  ratingAmount: number;
+  public ratingAmount: number;
   @prop({ required: true })
-  launchDate: string;
+  public launchDate: Date;
   @prop({ required: true })
-  releaseDate: string;
+  public releaseDate: Date;
   @prop({ required: true })
-  package: number;
+  public package: number;
   @prop({ required: true })
-  perPackage: number;
+  public perPackage: number;
+  @prop({ required: true })
+  public dimension: DimensionSchema;
+  @prop({ required: true })
+  public weight: WeightSchema;
 }
 
 export const Product = ModelFactory(ProductSchema);

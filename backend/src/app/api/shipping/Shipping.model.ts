@@ -7,18 +7,19 @@ import {
 } from "src/app/api/billing/transaction/Transaction.interface";
 import { Typegoose, prop } from "typegoose";
 import DimensionSchema from "src/app/common/model/schema/Dimension.schema";
+import WeightSchema from "src/app/common/model/schema/Weight.schema";
 
 class ShippingSchema extends Typegoose implements ShippingDOT {
   @prop({ required: true, enum: ShippingProvider })
-  provider: ShippingProvider;
+  public provider: ShippingProvider;
   @prop({ required: true })
-  cancelled: boolean;
+  public cancelled: boolean;
   @prop({ required: true })
-  days: number;
+  public days: number;
   @prop({ required: true })
-  public dimension: DimensionSchema;
+  public boxID: string;
   @prop({ required: true })
-  public weight: number;
+  public weight: WeightSchema;
 }
 
 export class Shipping extends ModelFactory(ShippingSchema) {}

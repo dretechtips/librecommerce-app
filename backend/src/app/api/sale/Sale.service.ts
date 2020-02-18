@@ -99,7 +99,7 @@ export class SaleService extends Service<typeof Sale> implements OnModuleInit {
             .filter(cur => cur)
         );
         // 5. Create a shipping and order
-        this.shipping.findCheapestProvider();
+        this.shipping.findCheapestProvider(shipping);
         // 6. Create a transaction
         // 7. If transaction fails, return
         // 8. Create Sales

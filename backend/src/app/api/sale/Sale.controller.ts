@@ -23,7 +23,6 @@ import { CartDOT } from "../cart/Cart.interface";
 import { GetShippingFromBody } from "../shipping/Shipping.decorator";
 import { ShippingDOT } from "../shipping/Shipping.interface";
 import Cart from "../cart/Cart.model";
-import { RestrictAccount, GetAccountType } from "../account/Account.decorator";
 import AccountService from "../account/Account.service";
 import { AccountType } from "../account/Account.interface";
 import { Sale } from "./Sale.model";

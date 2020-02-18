@@ -1,4 +1,6 @@
-export interface ProductDOT {
+import DimensionSchema from "src/app/common/model/schema/Dimension.schema";
+
+export interface ProductDOT extends BoxItem {
   name: string;
   features: string[];
   SKU: string;
@@ -12,8 +14,9 @@ export interface ProductDOT {
   benefits: string[];
   rating: number;
   ratingAmount: number;
-  launchDate: string;
-  releaseDate: string;
+  launchDate: Date;
+  releaseDate: Date;
   package: number;
   perPackage: number;
+  dimension: DimensionSchema;
 }

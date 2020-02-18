@@ -13,7 +13,8 @@
     "esModuleInterop": true,
     "strictNullChecks": true,
     "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "typeRoots": ["node_modules/*", "src/libs"]
   },
   "exclude": ["node_modules", "dist"]
 }

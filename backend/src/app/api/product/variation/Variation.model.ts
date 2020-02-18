@@ -2,6 +2,7 @@ import Mongoose from "mongoose";
 import { VariationDOT } from "./Variation.interface";
 import Model, { ModelFactory } from "src/app/common/model/Model.factory";
 import { Typegoose, prop, arrayProp } from "typegoose";
+import DimensionSchema from "src/app/common/model/schema/Dimension.schema";
 
 class VariationSchema extends Typegoose implements VariationDOT {
   @prop({ required: true })

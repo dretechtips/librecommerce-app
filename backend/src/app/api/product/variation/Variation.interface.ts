@@ -1,3 +1,5 @@
+import DimensionSchema from "src/app/common/model/schema/Dimension.schema";
+
 export interface VariationDOT {
   name: string;
   productID: string;

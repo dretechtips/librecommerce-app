@@ -1,19 +1,21 @@
 import DimensionSchema from "src/app/common/model/schema/Dimension.schema";
 import { Transactable } from "../billing/transaction/Transaction.interface";
 import Shipping from "./Shipping.model";
+import WeightSchema from "src/app/common/model/schema/Weight.schema";
 
 export interface ShippingDOT {
   provider: ShippingProvider;
   cancelled: boolean;
   days: number;
-  dimension: DimensionSchema;
-  weight: number;
+  boxID: string;
+  weight: WeightSchema;
 }
 
 export enum ShippingProvider {
   FEDEX,
   USPS,
-  UPS
+  UPS,
+  NONE
 }
 
 export interface ShippingProviderService extends Transactable<Shipping> {
