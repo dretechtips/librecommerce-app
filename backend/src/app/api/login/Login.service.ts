@@ -1,17 +1,20 @@
-import { Injectable } from "@nestjs/common";
-import { Request, Response } from "express";
+import { Injectable, OnModuleInit } from "@nestjs/common";
+import { ModuleRef } from "@nestjs/core";
 import crypto from "crypto";
-import uuid from "uuid/v4";
-import AccountService from "../account/Account.service";
-import { LoginDOT } from "./Login.interface";
-import { AccountType } from "../account/Account.interface";
-import { prefix } from "./Login.controller";
-import Account from "../account/Account.model";
+import { Request } from "express";
 import Service from "src/app/common/service/Service.factory";
+import uuid from "uuid/v4";
+import Account from "../account/Account.model";
+import AccountService from "../account/Account.service";
+import { AccountType } from "../account/type/Type.interface";
+import { prefix } from "./Login.controller";
+import { LoginDOT } from "./Login.interface";
 import { Login } from "./Login.model";
 
 @Injectable()
-export class LoginService extends Service<typeof Login> {
+export class LoginService extends Service<typeof Login>
+  implements OnModuleInit {
+  private account: AccountService;
   private store: Map<string, string> = new Map();
   private encryption: crypto.CipherCCMTypes | crypto.CipherGCMTypes =
     "aes-256-gcm";
@@ -19,8 +22,11 @@ export class LoginService extends Service<typeof Login> {
    * Preset 3 Hour
    */
   private timeoutMS: number = 1000 * 60 * 60 * 3;
-  constructor(private readonly account: AccountService) {
+  constructor(private readonly moduleRef: ModuleRef) {
     super(Login);
+  }
+  public onModuleInit() {
+    this.account = this.moduleRef.get(AccountService, { strict: false });
   }
   /**
    * @returns Client Token
@@ -63,6 +69,10 @@ export class LoginService extends Service<typeof Login> {
   }
   public async getOwnAccountType(req: Request): Promise<AccountType> {
     return this.account.getAccountType((await this.getOwnAccount(req))._id);
+  }
+  public async isOwnAccountBanned(req: Request): Promise<boolean> {
+    const account = await this.getOwnAccount(req);
+    return this.account.isBan(account._id);
   }
   private setClearToken(secret: string): void {
     setTimeout(() => this.store.delete(secret), this.timeoutMS);

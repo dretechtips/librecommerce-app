@@ -1,7 +1,8 @@
-import { Module, DynamicModule, Provider } from "@nestjs/common";
-import { AvaliableLocation } from "./Location.interface";
-import { LocationConnection } from "./Location.interface";
+import { DynamicModule, Module } from "@nestjs/common";
+import * as Sandbox from "src/config/databases/Sandbox";
+import * as US from "src/config/databases/US";
 import LocationFactory from "./Location.factory";
+import { AvaliableLocation, LocationConnection } from "./Location.interface";
 
 @Module({
   controllers: []
@@ -10,19 +11,13 @@ export class LocationModule {
   public static connect(location: AvaliableLocation): DynamicModule {
     switch (location) {
       case AvaliableLocation.SANDBOX:
-        return this.modularize(
-          import("src/config/databases/Sandbox").then(cur => cur.connection),
-          location
-        );
+        return this.modularize(Sandbox.connection, location);
       case AvaliableLocation.US:
-        return this.modularize(
-          import("src/config/databases/US").then(cur => cur.connection),
-          location
-        );
+        return this.modularize(US.connection, location);
     }
   }
   private static modularize(
-    config: Promise<LocationConnection>,
+    config: LocationConnection,
     location: AvaliableLocation
   ): DynamicModule {
     const service = LocationFactory(location, config);

@@ -1,9 +1,8 @@
-import {
-  ValidationPipeFactory,
-  IDsValidationPipeFactory
-} from "src/app/common/pipe/Pipe.factory";
-import { Alert } from "./Alert.model";
 import { ArgumentMetadata, Injectable } from "@nestjs/common";
+import {
+  IDsValidationPipeFactory,
+  ValidationPipeFactory
+} from "src/app/common/pipe/Pipe.factory";
 import { AlertDOT, AlertType } from "./Alert.interface";
 import AlertService from "./Alert.service";
 

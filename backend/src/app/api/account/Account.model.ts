@@ -1,7 +1,6 @@
-import { Typegoose, prop, arrayProp } from "typegoose";
-import { AccountDOT } from "./Account.interface";
 import ModelFactory from "src/app/common/model/Model.factory";
-import { ExtractSchema } from "src/app/common/model/Model.interface";
+import { arrayProp, prop, Typegoose } from "typegoose";
+import { AccountDOT } from "./Account.interface";
 
 class AccountSchema extends Typegoose implements AccountDOT {
   @prop({ required: true, maxlength: 32 })
@@ -20,11 +19,10 @@ class AccountSchema extends Typegoose implements AccountDOT {
   phoneNum: string;
   @prop({ required: true })
   address: string;
+  @prop({ required: true, default: true })
+  active: boolean;
   @prop({ required: true })
   alertIDs: string[];
-  public get fullName(): string {
-    return this.firstName + " " + this.lastName;
-  }
 }
 
 export class Account extends ModelFactory(AccountSchema) {}

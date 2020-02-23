@@ -8,7 +8,7 @@ import BankService from "./bank/Bank.service";
 import CardService from "./card/Card.service";
 
 @Injectable()
-class PaymentsService extends Service<Payments> {
+class PaymentsService extends Service<typeof Payments> {
   public constructor(
     private readonly bank: BankService,
     private readonly card: CardService

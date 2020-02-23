@@ -1,12 +1,10 @@
 import { FactoryProvider } from "@nestjs/common/interfaces";
-import { LocationConnection, AvaliableLocation } from "./Location.interface";
-import LocationService from "./Location.service";
-import { mongoose } from "src/app/common/factory/Model.factory";
-import { token } from "./Location.service";
+import { AvaliableLocation, LocationConnection } from "./Location.interface";
+import LocationService, { token } from "./Location.service";
 
 export const LocationFactory = function(
   location: AvaliableLocation,
-  imported: Promise<LocationConnection>
+  imported: LocationConnection
 ): FactoryProvider {
   return {
     provide: token,

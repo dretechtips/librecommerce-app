@@ -3,13 +3,13 @@ import { Request } from "express";
 import {
   TransactionDOT,
   Transactable,
-  SubCost,
   TransactionType
 } from "./Transaction.interface";
 import Service from "src/app/common/service/Service.factory";
 import Transaction from "./Transaction.model";
 import Payments from "../payments/Payments.model";
 import { PaymentOption } from "../payments/Payments.interface";
+import CostSchema from "./cost/Cost.schema";
 
 @Injectable()
 export class TransactionService extends Service<typeof Transaction> {
@@ -22,23 +22,21 @@ export class TransactionService extends Service<typeof Transaction> {
   }
   private async extractSubCosts(
     transactables: Transactable[]
-  ): Promise<SubCost[]> {
-    const costs = await Promise.all(
-      transactables.map(cur => cur.getSubCosts())
-    );
+  ): Promise<CostSchema[]> {
+    const costs = await Promise.all(transactables.map(cur => cur.getCosts()));
     const charges = costs.reduce((total, cur) => total.concat(cur));
     return charges;
   }
-  private getCost(costs: SubCost[]): number {
-    return costs.reduce((total, cur) => total + cur.cost, 0);
+  private getCost(costs: CostSchema[]): number {
+    return costs.reduce((total, cur) => total + cur.value, 0);
   }
-  private getTaxCost(costs: SubCost[]): number {
+  private getTaxCost(costs: CostSchema[]): number {
     return this.getCost(costs) * this.taxRate;
   }
   public async unpayed(
     transactable: Transactable[],
     type: TransactionType
-  ): Promise<string> {
+  ): Promise<Transaction> {
     const breakdown = await this.extractSubCosts(transactable);
     const tax = this.getTaxCost(breakdown);
     const subcost = this.getCost(breakdown);
@@ -49,11 +47,11 @@ export class TransactionService extends Service<typeof Transaction> {
       tax: tax,
       type: type
     };
-    return (await this.add(transactionDOT))._id;
+    return this.add(transactionDOT);
   }
   public async capture(
     transactionID: string,
-    payment: PaymentOption
+    paymentID: string
   ): Promise<void> {
     const transaction = await this.get(transactionID);
     transaction.amountPayed = transaction.amountPayed;

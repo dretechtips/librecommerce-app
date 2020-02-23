@@ -1,13 +1,12 @@
-import { NestMiddleware, Injectable } from "@nestjs/common";
+import { Injectable, NestMiddleware } from "@nestjs/common";
 import { Request, Response } from "express";
 import { prefix } from "./Account.controller";
-import Account, { AccountClass } from "./Account.model";
-import { IDOnly } from "src/util/Types";
+import { AccountDOT } from "./Account.interface";
+import Account from "./Account.model";
 import AccountService from "./Account.service";
-import { PreAccountDOT, AccountDOT } from "./Account.interface";
 
 /**
- * Adds Account into the database and updates the path to include the Account ID for use
+ * Adds account into the database and updates the path to include the :accountID for use
  */
 @Injectable()
 export class CreateAccountMiddleware implements NestMiddleware {

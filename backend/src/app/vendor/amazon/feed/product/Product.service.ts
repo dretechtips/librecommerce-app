@@ -1,10 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import xml from "xml";
-import Product from "src/app/api/product/Product.model";
-import ProductVariation from "src/app/api/product/variation/Variation.model";
-import { ProductInfo, ProductDescriptionData } from "./Product.interface";
-import { StandardProductIDType, ConditionType } from "../../core/base/Base.interface";
+import { ConditionType, StandardProductIDType } from "../../core/base/Base.interface";
 import FeedService from "../Feed.service";
+import { ProductDescriptionData, ProductInfo } from "./Product.interface";
 
 @Injectable()
 class ProductService {

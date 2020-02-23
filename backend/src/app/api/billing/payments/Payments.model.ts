@@ -1,8 +1,6 @@
-import Mongoose from "mongoose";
-import { PaymentsDOT } from "./Payments.interface";
+import { arrayProp, Typegoose } from "typegoose";
 import ModelFactory from "../../../common/model/Model.factory";
-import { PaymentOption } from "./Payments.interface";
-import { Typegoose, arrayProp } from "typegoose";
+import { PaymentsDOT } from "./Payments.interface";
 
 class PaymentsSchema extends Typegoose implements PaymentsDOT {
   @arrayProp({ required: true })

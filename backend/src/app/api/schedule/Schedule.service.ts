@@ -1,16 +1,14 @@
 import { Injectable, OnModuleInit } from "@nestjs/common";
-import Service from "src/app/common/service/Service.factory";
-import Schedule from "./Schedule.model";
 import { ModuleRef } from "@nestjs/core";
-import { CalendarService } from "../calendar/Calendar.service";
-import Event from "src/app/api/calendar/event/Event.model";
-import { EventDOT } from "../calendar/event/Event.interface";
+import Service from "src/app/common/service/Service.factory";
 import { CalendarDay, CalendarSpan } from "../calendar/Calendar.interface";
+import { EventDOT } from "../calendar/event/Event.interface";
 import { RecurringDOT } from "../calendar/event/recurring/Recurring.interface";
 import { RecurringService } from "../calendar/event/recurring/Recurring.service";
+import Schedule from "./Schedule.model";
 
 @Injectable()
-export class ScheduleService extends Service<Schedule> implements OnModuleInit {
+export class ScheduleService extends Service<typeof Schedule> implements OnModuleInit {
   private recurring: RecurringService;
   constructor(private readonly moduleRef: ModuleRef) {
     super(Schedule);

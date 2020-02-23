@@ -11,6 +11,6 @@ export enum AlertType {
   GOOGLE
 }
 
-export interface AlertContainer {
+export interface AlertDependentDOT {
   alertIDs: string[];
 }

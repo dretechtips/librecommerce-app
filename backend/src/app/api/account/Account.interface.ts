@@ -1,6 +1,6 @@
-import { AlertContainer } from "../alert/Alert.interface";
+import { AlertDependentDOT } from "../alert/Alert.interface";
 
-export interface AccountDOT extends AlertContainer {
+export interface AccountDOT extends AlertDependentDOT {
   firstName: string;
   lastName: string;
   username: string;
@@ -9,21 +9,11 @@ export interface AccountDOT extends AlertContainer {
   emailAddress: string;
   phoneNum: string;
   address: string;
-  alertIDs: string[];
+  active: boolean;
 }
 
 export type PreAccountDOT = Omit<AccountDOT, "alertIDs" | "fingerprints">;
 
-export interface AccountTypeService {
-  isAccountType(id: string): Promise<boolean>;
-}
-
-export enum AccountType {
-  CUSTOMER,
-  ADMIN,
-  NONE
-}
-
-export interface PaymentsContainer {
-  paymentsID: string;
+export interface AccountDependentDOT {
+  accountID: string;
 }

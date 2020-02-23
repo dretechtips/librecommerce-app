@@ -1,43 +1,44 @@
 import { Injectable, OnModuleInit } from "@nestjs/common";
-import { Request } from "express";
-import { SaleDOT } from "./Sale.interface";
-import CustomerService from "../account/customer/Customer.service";
-import OrderService from "../order/Order.service";
-import CartService from "../cart/Cart.service";
-import ShippingService from "../shipping/Shipping.service";
-import TransactionService from "../billing/transaction/Transaction.service";
-import { ShippingDOT, ShippingProvider } from "../shipping/Shipping.interface";
-import { OrderDOT } from "../order/Order.interface";
-import { CartDOT } from "../cart/Cart.interface";
-import Service from "src/app/common/service/Service.factory";
-import { Sale } from "./Sale.model";
-import PaymentsService from "../billing/payments/Payments.service";
 import { ModuleRef } from "@nestjs/core";
+import { Response } from "express";
+import Service from "src/app/common/service/Service.factory";
+import CustomerService from "../account/type/customer/Customer.service";
 import { TransactionType } from "../billing/transaction/Transaction.interface";
-import SubscriptionService from "../subscription/Subscription.service";
-import Cart from "../cart/Cart.model";
+import TransactionService from "../billing/transaction/Transaction.service";
+import { CartDOT } from "./cart/Cart.interface";
+import CartService from "./cart/Cart.service";
+import { OrderDOT } from "./order/Order.interface";
+import OrderService from "./order/Order.service";
+import Variation from "./product/variation/Variation.model";
+import VariationService from "./product/variation/Variation.service";
+import { SaleDOT } from "./Sale.interface";
+import { Sale } from "./Sale.model";
+import { ShippingDOT } from "./shipping/Shipping.interface";
+import ShippingService from "./shipping/Shipping.service";
+import SubscriptionService from "./subscription/Subscription.service";
 
 @Injectable()
 export class SaleService extends Service<typeof Sale> implements OnModuleInit {
   private customer: CustomerService;
-  private order: OrderService;
-  private cart: CartService;
-  private shipping: ShippingService;
   private transaction: TransactionService;
-  private subscription: SubscriptionService;
-  constructor(private readonly moduleRef: ModuleRef) {
+  constructor(
+    private readonly moduleRef: ModuleRef,
+    private readonly order: OrderService,
+    private readonly cart: CartService,
+    private readonly shipping: ShippingService,
+    private readonly subscription: SubscriptionService,
+    private readonly product: VariationService
+  ) {
     super(Sale);
   }
   public onModuleInit() {
-    this.customer = this.moduleRef.get(CustomerService);
-    this.order = this.moduleRef.get(OrderService);
-    this.cart = this.moduleRef.get(CartService);
-    this.shipping = this.moduleRef.get(ShippingService);
-    this.transaction = this.moduleRef.get(TransactionService);
-    this.subscription = this.moduleRef.get(SubscriptionService);
+    this.customer = this.moduleRef.get(CustomerService, { strict: false });
+    this.transaction = this.moduleRef.get(TransactionService, {
+      strict: false
+    });
   }
   public async unprocessed(
-    ip: string,
+    res: Response,
     customerID: string,
     orderDOT: OrderDOT,
     shippingDOT: ShippingDOT,
@@ -47,8 +48,9 @@ export class SaleService extends Service<typeof Sale> implements OnModuleInit {
     const order = await this.order.add(orderDOT);
     const shipping = await this.shipping.add(shippingDOT);
     const cart = await this.cart.add(cartDOT);
+    const products = await this.product.getAll(cart.productIDs);
     const transaction = await this.transaction.unpayed(
-      [cart, shipping],
+      [...products, shipping],
       TransactionType.SALE
     );
     const saleDOT: SaleDOT = {
@@ -58,6 +60,7 @@ export class SaleService extends Service<typeof Sale> implements OnModuleInit {
       orderID: shipping._id,
       transactionID: transaction._id
     };
+    this.cart.clearCookie(res);
     return new Sale(saleDOT);
   }
   public async pay(saleID: string, paymentID: string): Promise<void> {
@@ -69,42 +72,53 @@ export class SaleService extends Service<typeof Sale> implements OnModuleInit {
   public async repay() {
     // Prereq: Customer, Subscriptions, Products, Email, Shipping, Order, Transaction
     // 1. Iterate through the customers
-    const customers = await this.customer.findAll();
-    customers.forEach(async customer => {
+    this.customer.forAllWithSubscription(async customer => {
       try {
-        // 2. We need to find the subscriptions within it
-        // 3. Check subscription activity, if they are active continue
-        // otherwise send an email to the customer appologizing that the subscription is no longer avaliable
         const subscriptions = await this.subscription.findAllByLink(customer);
-        subscriptions
-          .filter(cur => !cur.active)
-          .forEach(cur => {
-            /** Email Customer */
-          });
-        // 4. Look through the subscription products, if all the products exist contine,
-        // otherwise send an email to the customer appologizing that the subscription product is not avaliable
-        // and send a recommendation list to select from
-        const activeSub = subscriptions.filter(cur => cur.active);
-        const cartDOTs = activeSub.map(cur => {
-          const cart: CartDOT = {
-            products: cur.products
-          };
-          return cart;
+        subscriptions.filter(sub => {
+          if (!sub.active) {
+            /** SEND EMAIL */
+            return false;
+          }
+          return true;
         });
-        const carts: Cart[] = await Promise.all(
-          cartDOTs
-            .map(cur =>
-              this.cart.add(carts).catch(/** Email Customer and return null */)
-            )
-            .filter(cur => cur)
-        );
-        // 5. Create a shipping and order
-        this.shipping.findCheapestProvider(shipping);
-        // 6. Create a transaction
-        // 7. If transaction fails, return
-        // 8. Create Sales
+        subscriptions.forEach(async sub => {
+          const products: Variation[] = await this.product.getAll(
+            sub.productIDs
+          );
+          const cart = await this.cart.add(products);
+          const shipping = await this.shipping.createLowestCost(products);
+          const order = await this.order.addDefault();
+          // 6. Create a transaction
+          const transaction = await this.transaction.unpayed(
+            [shipping],
+            TransactionType.SALE
+          );
+          // 8. Create Sales
+          const saleDOT: SaleDOT = {
+            orderID: order._id,
+            customerID: customer._id,
+            cartID: cart._id,
+            shippingID: shipping._id,
+            transactionID: transaction._id
+          };
+          this.add(saleDOT);
+        });
       } catch (e) {}
     });
+  }
+  public getCart() {
+    return this.cart;
+  }
+  public async cancel(saleID: string): Promise<void> {
+    const sale = await this.get(saleID);
+    const order = await this.order.get(sale.orderID);
+    order.cancelled = true;
+    order.save();
+    await this.shipping.cancel(sale.shippingID);
+    const transaction = await this.transaction.get(sale.transactionID);
+    // TODO: REFUND
+    if (transaction.amountOwed > 0) console.log("REFUND");
   }
 }
 

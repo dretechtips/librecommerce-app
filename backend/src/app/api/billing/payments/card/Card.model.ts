@@ -1,14 +1,6 @@
-import Mongoose from "mongoose";
-import { CardDOT, CardType, CardProvider } from "./Card.interface";
-import Model, { ModelFactory } from "src/app/common/model/Model.factory";
-import * as NumberUtil from "../../../../../util/NumberUtil";
-import { PaymentOption } from "../Payments.interface";
-import Transaction from "../../transaction/Transaction.model";
-import {
-  PayflowCorePayment,
-  PayflowTender
-} from "src/app/vendor/paypal/payflow/Payflow.interface";
-import { Typegoose, prop, Validator } from "typegoose";
+import { ModelFactory } from "src/app/common/model/Model.factory";
+import { prop, Typegoose } from "typegoose";
+import { CardDOT, CardProvider, CardType } from "./Card.interface";
 
 class CardSchema extends Typegoose implements CardDOT {
   @prop({ required: true })

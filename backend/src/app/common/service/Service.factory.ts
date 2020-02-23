@@ -1,18 +1,13 @@
-import { Model } from "mongoose";
+import Mongoose, { Document, Model } from "mongoose";
 import {
   ExtractSchema,
   ExtractSchemaData
 } from "src/app/common/model/Model.interface";
 import {
-  IDOnly,
+  ExtractArrayProp,
   ExtractArrayType,
-  ExtractPropsKey,
-  ExtractProps,
-  ExtractArrayProp
+  ExtractPropsKey
 } from "../../../util/Types";
-import Mongoose from "mongoose";
-import { Typegoose } from "typegoose";
-import { Document } from "mongoose";
 
 /**
  * Create service factory
@@ -40,6 +35,10 @@ export class Service<T extends Model<ExtractSchema<T> & Document>> {
       return false;
     }
   }
+  /**
+   * @override Override this in order to add additional verification before getting saved into database such as the add, update, etc methods
+   * @param dot Data Transfer Object
+   */
   public async validateDOT(dot: any): Promise<boolean> {
     try {
       const doc = new this.model(dot);
@@ -52,7 +51,7 @@ export class Service<T extends Model<ExtractSchema<T> & Document>> {
   public async validateDOTs(dots: any[]): Promise<boolean> {
     try {
       await Promise.all(
-        dots.map(cur => new this.model(cur)).map(cur => cur.validate())
+        dots.map(cur => new this.model(cur)).map(cur => this.validateDOT(cur))
       );
       return true;
     } catch (e) {
@@ -78,6 +77,11 @@ export class Service<T extends Model<ExtractSchema<T> & Document>> {
     await doc.update(dot);
     await doc.save();
   }
+  public async delete(id: string): Promise<void> {
+    const doc = await this.get(id);
+    await doc.remove();
+    await doc.save();
+  }
   public async get(id: string): Promise<ExtractSchema<T> & Document> {
     const doc = await this.model.findById(id);
     if (!doc) throw new Error("Invalid ID Value");
@@ -89,6 +93,13 @@ export class Service<T extends Model<ExtractSchema<T> & Document>> {
         $in: [ids.map(cur => Mongoose.Types.ObjectId(cur))]
       }
     });
+  }
+  public async getByProp<U extends keyof ExtractSchema<T>>(
+    id: string,
+    prop: U
+  ) {
+    const doc = await this.get(id);
+    return doc[prop];
   }
   public async findAll(): Promise<(ExtractSchema<T> & Document)[]> {
     return this.model.find({}).exec();
@@ -133,6 +144,39 @@ export class Service<T extends Model<ExtractSchema<T> & Document>> {
         $lt: end,
         $gt: start
       }
+    });
+  }
+  public async removeFromArrayProp<
+    U extends keyof ExtractArrayProp<ExtractSchemaData<T>>
+  >(
+    id: string,
+    key: U,
+    value:
+      | ExtractArrayType<ExtractArrayProp<ExtractSchemaData<T>>[U]>
+      | ExtractArrayProp<ExtractSchemaData<T>>[U]
+  ) {
+    const doc = await this.get(id);
+    let prop: any[] = doc[key];
+    if (Array.isArray(value)) {
+      (value as any[]).forEach(
+        cur => (prop = prop.filter(cur => cur !== value))
+      );
+    } else {
+      prop = prop.filter(cur => cur !== value);
+    }
+    await doc.save();
+  }
+  public async forEachArrayProp<
+    U extends keyof ExtractArrayProp<ExtractSchemaData<T>>
+  >(
+    id: string,
+    fn: (key: U, value: ExtractArrayProp<ExtractSchemaData<T>>[U]) => void
+  ) {
+    const doc = await this.get(id);
+    Object.keys(doc).forEach(key => {
+      if (!this.model.schema[key] && !Array.isArray(doc[key])) return;
+      const value: ExtractSchema<T>[U] = doc[key];
+      fn(key as U, value);
     });
   }
 }

@@ -1,12 +1,11 @@
-import { PipeTransform, ArgumentMetadata, Injectable } from "@nestjs/common";
-import { IDsOnly } from "src/util/Types";
+import { ArgumentMetadata, Injectable, PipeTransform } from "@nestjs/common";
 import {
+  ExtractDocFromID,
   IDsValidationPipeFactory,
   IDValidationPipeFactory,
-  ValidationPipeFactory,
-  ExtractDocFromID
+  ValidationPipeFactory
 } from "src/app/common/pipe/Pipe.factory";
-import Account from "./Account.model";
+import { AccountType } from "./Account.interface";
 import AccountService from "./Account.service";
 
 @Injectable()
@@ -24,3 +23,12 @@ export class ValidateAccount extends ValidationPipeFactory(AccountService) {}
 
 @Injectable()
 export class ExtractAccountDocFromID extends ExtractDocFromID(AccountService) {}
+
+@Injectable()
+export class ExtractAccountTypeFromID
+  implements PipeTransform<string, Promise<AccountType>> {
+  constructor(private account: AccountService) {}
+  public transform(value: any, meta: ArgumentMetadata) {
+    return this.account.getAccountType(value);
+  }
+}

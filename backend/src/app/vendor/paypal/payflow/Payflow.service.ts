@@ -1,12 +1,11 @@
 import { Injectable } from "@nestjs/common";
-import {
-  PayflowCredientals,
-  PayflowCorePayment,
-  PayflowTransactionType,
-  PayflowTender
-} from "./Payflow.interface";
-import Transaction from "src/app/api/billing/transaction/Transaction.model";
 import { TransactionType } from "src/app/api/billing/transaction/Transaction.interface";
+import Transaction from "src/app/api/billing/transaction/Transaction.model";
+import {
+  PayflowCorePayment,
+  PayflowCredientals,
+  PayflowTransactionType
+} from "./Payflow.interface";
 
 @Injectable()
 export class PayflowService {

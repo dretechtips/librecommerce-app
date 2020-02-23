@@ -1,88 +1,75 @@
+import { Controller, Get, Param, Patch, Post, Req, Res } from "@nestjs/common";
 import { Request, Response } from "express";
-import {
-  Controller,
-  Post,
-  Body,
-  Patch,
-  Get,
-  Ip,
-  Req,
-  Res
-} from "@nestjs/common";
 import path from "path";
-import { SaleService } from "./Sale.service";
-import { GetOrderFromBody } from "../order/Order.decorator";
-import { OrderDOT } from "../order/Order.interface";
 import { IDOnly } from "src/util/Types";
 import {
   GetCustomerIDFromBody,
   GetCustomerIDFromCookie
-} from "../account/customer/Customer.decorator";
-import { GetCartFromBody, GetCartIDFromCookie } from "../cart/Cart.decorator";
-import { CartDOT } from "../cart/Cart.interface";
-import { GetShippingFromBody } from "../shipping/Shipping.decorator";
-import { ShippingDOT } from "../shipping/Shipping.interface";
-import Cart from "../cart/Cart.model";
-import AccountService from "../account/Account.service";
-import { AccountType } from "../account/Account.interface";
-import { Sale } from "./Sale.model";
-import { SaleDOT } from "./Sale.interface";
+} from "../account/type/customer/Customer.decorator";
+import { AccountType } from "../account/type/Type.interface";
+import {
+  AccessLoginAccountType,
+  RestrictAccess
+} from "../login/Login.decorator";
+import { GetCartFromBody, GetCartIDFromCookie } from "./cart/Cart.decorator";
+import { CartDOT } from "./cart/Cart.interface";
+import { GetOrderFromBody } from "./order/Order.decorator";
+import { OrderDOT } from "./order/Order.interface";
+import { ValidateSaleIDPipe } from "./Sale.pipe";
+import { SaleService } from "./Sale.service";
+import { GetShippingFromBody } from "./shipping/Shipping.decorator";
+import { ShippingDOT } from "./shipping/Shipping.interface";
 
-@Controller("sale")
+export const prefix = "sale";
+
+@Controller(prefix)
 export class SaleController {
-  constructor(
-    private readonly sale: SaleService,
-    private readonly account: AccountService
-  ) {}
+  constructor(private readonly sale: SaleService) {}
   @Post("create")
   public async create(
     @Req() req: Request,
     @Res() res: Response,
-    @GetAccountType() accountType: AccountType
+    @AccessLoginAccountType() account: AccountType
   ) {
-    switch (accountType) {
-      case "admin":
+    switch (account) {
+      case AccountType.USER:
         res.redirect(307, path.join(req.path, "admin"));
-      case "customer":
+      case AccountType.CUSTOMER:
         res.redirect(307, path.join(req.path, "customer"));
     }
   }
   @Post("create/admin")
-  @RestrictAccount("admin")
+  @RestrictAccess(AccountType.USER)
   public async createByAdmin(
-    @Ip() ip: string,
+    @Res() res: Response,
     @GetOrderFromBody() orderDOT: OrderDOT,
-    @GetCustomerIDFromBody() customerIdDOT: IDOnly,
+    @GetCustomerIDFromBody() customerID: string,
     @GetCartFromBody() cartDOT: CartDOT,
     @GetShippingFromBody() shippingDOT: ShippingDOT
-  ): Promise<SaleDOT> {
+  ) {
     return (
-      await this.sale.create(
-        ip,
-        customerIdDOT.id,
+      await this.sale.unprocessed(
+        res,
+        customerID,
         orderDOT,
         shippingDOT,
         cartDOT
       )
-    ).data();
+    ).toJSON();
   }
   @Post("create/customer")
-  @RestrictAccount("customer")
+  @RestrictAccess(AccountType.CUSTOMER)
   public async createByCustomer(
-    @Ip() ip: string,
+    @Res() res: Response,
     @GetOrderFromBody() orderDOT: OrderDOT,
     @GetShippingFromBody() shippingDOT: ShippingDOT,
     @GetCustomerIDFromCookie() customerID: string,
     @GetCartIDFromCookie() cartID: string
-  ): Promise<SaleDOT> {
-    const cart = ((await Cart.getSelfByID(cartID)) as Cart) || null;
-    if (!cart)
-      throw new Error(
-        "Cart ID was validated, however database cannot find it."
-      );
+  ) {
+    const cart = await this.sale.getCart().get(cartID);
     return (
-      await this.sale.create(ip, customerID, orderDOT, shippingDOT, cart.data())
-    ).data();
+      await this.sale.unprocessed(res, customerID, orderDOT, shippingDOT, cart)
+    ).toJSON();
   }
   @Patch("pay")
   public async pay(
@@ -90,6 +77,14 @@ export class SaleController {
     paymentMethodIdDOT: IDOnly
   ): Promise<void> {
     await this.sale.pay(saleIdDOT.id, paymentMethodIdDOT.id);
+  }
+  @Patch("cancel/:saleID")
+  public async cancel(@Param("saleID", ValidateSaleIDPipe) saleID: string) {
+    await this.sale.cancel(saleID);
+  }
+  @Get("fetch/:saleID")
+  public async fetch(@Param("saleID", ValidateSaleIDPipe) saleID: string) {
+    return (await this.sale.get(saleID)).toJSON();
   }
 }
 

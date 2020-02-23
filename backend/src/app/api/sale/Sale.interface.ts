@@ -5,3 +5,7 @@ export interface SaleDOT {
   transactionID: string;
   customerID: string;
 }
+
+export interface SaleDependentDOT {
+  saleIDs: string[];
+}

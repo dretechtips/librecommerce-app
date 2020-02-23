@@ -1,9 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import Product from "../../../api/product/Product.model";
-import { Variation as ProductVariation } from "src/app/api/product/variation/Variation.model";
-import Order from "../../../api/order/Order.model";
 import { AmazonService } from "../Amazon.service";
-import { FeedType, FeedAction } from "./Feed.interface";
+import { FeedAction, FeedType } from "./Feed.interface";
 import { ProductInfo } from "./product/Product.interface";
 import xml = require("xml");
 

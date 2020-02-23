@@ -1,12 +1,6 @@
-import Mongoose from "mongoose";
-import { SaleDOT } from "./Sale.interface";
 import ModelFactory from "src/app/common/model/Model.factory";
-import { Typegoose, prop } from "typegoose";
-import Cart from "src/app/api/cart/Cart.model";
-import Shipping from "src/app/api/shipping/Shipping.model";
-import Order from "src/app/api/order/Order.model";
-import Transaction from "src/app/api/billing/transaction/Transaction.model";
-import { TransactionDOT } from "src/app/api/billing/transaction/Transaction.interface";
+import { prop, Typegoose } from "typegoose";
+import { SaleDOT } from "./Sale.interface";
 
 class SaleSchema extends Typegoose implements SaleDOT {
   @prop({ required: true })

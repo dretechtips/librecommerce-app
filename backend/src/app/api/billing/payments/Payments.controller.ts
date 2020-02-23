@@ -1,5 +1,4 @@
-import { Controller, Get, Post } from "@nestjs/common";
-import { RestrictAccount } from "../../account/Account.decorator";
+import { Controller } from "@nestjs/common";
 import PaymentsService from "./Payments.service";
 
 export const prefix = "payment";

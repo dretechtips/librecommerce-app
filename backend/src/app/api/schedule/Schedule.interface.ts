@@ -7,3 +7,7 @@ export interface ScheduleDOT {
   saturday: "event";
   sunday: "event";
 }
+
+export interface ScheduleDependentDOT {
+  scheduleID: string;
+}

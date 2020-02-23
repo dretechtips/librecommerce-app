@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { ShippingProviderService } from "src/app/api/shipping/Shipping.interface";
 import { SubCost } from "src/app/api/billing/transaction/Transaction.interface";
+import { ShippingProviderService } from "src/app/api/sale/shipping/Shipping.interface";
 
 @Injectable()
 export class USPSService implements ShippingProviderService {
