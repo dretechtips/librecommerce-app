@@ -12,8 +12,8 @@ class ShippingSchema extends Typegoose implements ShippingDOT {
   public days: number;
   @arrayProp({ required: true })
   public packageIDs: string[];
-  @prop({ required: true })
-  public cost: CostSchema;
+  @arrayProp({ required: true })
+  public costs: CostSchema[];
 }
 
 export class Shipping extends ModelFactory(ShippingSchema) {}

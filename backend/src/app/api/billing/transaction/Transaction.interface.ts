@@ -15,5 +15,5 @@ export enum TransactionType {
 }
 
 export interface Transactable {
-  cost: CostSchema;
+  costs: CostSchema[];
 }

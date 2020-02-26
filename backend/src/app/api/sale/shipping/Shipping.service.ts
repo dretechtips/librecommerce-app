@@ -4,7 +4,8 @@ import Service from "src/app/common/service/Service.factory";
 import FedexService from "src/app/vendor/fedex/Fedex.service";
 import UPSService from "src/app/vendor/ups/UPS.service";
 import USPSService from "src/app/vendor/usps/USPS.service";
-import { SubCost } from "../../billing/transaction/Transaction.interface";
+import Customer from "../../account/type/customer/Customer.model";
+import CustomerService from "../../account/type/customer/Customer.service";
 import Variation from "../product/variation/Variation.model";
 import BoxService from "./box/Box.service";
 import PackageService from "./package/Package.service";
@@ -22,6 +23,7 @@ export class ShippingService extends Service<typeof Shipping>
   private static MIN_DAY = 1;
   private static MAX_DAY = 4;
   private provider: Map<ShippingProvider, ShippingProviderService>;
+  private customer: CustomerService;
   constructor(
     private readonly moduleRef: ModuleRef,
     private readonly box: BoxService,
@@ -32,52 +34,67 @@ export class ShippingService extends Service<typeof Shipping>
     this.provider = new Map();
   }
   public onModuleInit() {
-    this.provider.set(ShippingProvider.FEDEX, this.moduleRef.get(FedexService));
-    this.provider.set(ShippingProvider.UPS, this.moduleRef.get(UPSService));
-    this.provider.set(ShippingProvider.USPS, this.moduleRef.get(USPSService));
+    this.provider.set(ShippingProvider.FEDEX, this.moduleRef.get(FedexService, {strict: false}));
+    this.provider.set(ShippingProvider.UPS, this.moduleRef.get(UPSService, {strict: false}));
+    this.provider.set(ShippingProvider.USPS, this.moduleRef.get(USPSService, {strict: false}));
+    this.customer = this.moduleRef.get(CustomerService, {strict: false});
   }
   public async create(
-    shippingNoPackage: Omit<ShippingDOT, "packageIDs" | "costs">,
-    products: Variation[]
+    provider: ShippingProvider,
+    days: number,
+    products: Variation[],
+    customer: Customer
   ): Promise<Shipping> {
     const packages = await this._package.create(products);
     const shippingDOT: ShippingDOT = {
-      ...shippingNoPackage,
+      provider: provider,
+      days: days,
+      cancelled: false,
       packageIDs: packages.map(cur => cur._id),
-      costs: /** */
+      costs: []
     };
     await this.add(shippingDOT);
-    return new Shipping(shippingDOT);
-  }
-  public async add(dot: any) {
-    if (!(await this.validateDOT(dot))) throw new Error("Invalid DOT");
-    const shippingDOT: ShippingDOT = dot;
-    switch (shippingDOT.provider) {
-      case ShippingProvider.NONE:
-        throw new Error("Cannot add shipping provider of NONE");
-      case ShippingProvider.FEDEX:
-        // Create Fedex
-        break;
-      case ShippingProvider.USPS:
-        // Create USPS
-        break;
+    const shipping = new Shipping(shippingDOT);
+    switch(provider) {
       case ShippingProvider.UPS:
-        // Create UPS
+        this.action(provider, service => service.create(shipping, customer))
         break;
+      default:
+        throw new Error("Only UPS shipping provider is supported for now.");
     }
-    return super.add(dot);
+    return shipping;
   }
-  public async cancel(shippingID: string) {
-    // FIND PROVIDER
-    // CANCEL FROM PROVIDER
-    // CANCEL
+  
+  public async cancel(shippingID: string): Promise<void> {
+    const shipping = await this.get(shippingID);
+    const provider = shipping.provider;
+    switch(provider) {
+      case ShippingProvider.UPS:
+        this.action(provider, service => service.cancel(shipping));
+        break;
+      default: 
+        throw new Error("Only UPS shipping provider is supported for now.");
+    }
+    shipping.cancelled = true;
+    await shipping.save();
   }
+
+  private async action(provider: ShippingProvider, fn: (service: ShippingProviderService) => Promise<void>): Promise<void> {
+    const name = ShippingProvider[provider];
+    const service = this.provider.get(provider);
+    if(!service)
+      throw new Error(name + " Service is missing from Shipping Service");
+    if(!(await service.isAvailable()))
+      throw new Error(name + " Servers are not avaliable.");
+    await fn(service);
+  }
+  
   public async findCheapestProvider(
     items: Variation[],
     days: number
   ): Promise<ShippingProvider> {
     if (items.length === 0) return ShippingProvider.NONE;
-    const packages = await this._package.getOptimial(items);
+    const packages = await this._package.getOptimal(items);
     const shippingDOT: ShippingDOT = {
       cancelled: false,
       days: days,

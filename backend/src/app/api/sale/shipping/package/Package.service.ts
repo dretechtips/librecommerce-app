@@ -24,11 +24,11 @@ export class PackageService extends Service<typeof Package>
     this.box = this.moduleRef.get(BoxService);
   }
   public async create(items: Variation[]): Promise<Package[]> {
-    const packages = await this.getOptimial(items);
+    const packages = await this.getOptimal(items);
     await Promise.all(packages.map(cur => cur.save()));
     return packages;
   }
-  public async getOptimial(items: Variation[]): Promise<Package[]> {
+  public async getOptimal(items: Variation[]): Promise<Package[]> {
     const variations: Variation[] = await this.variation.getAll(
       items.map(cur => cur.productID)
     );

@@ -10,3 +10,7 @@ export interface CustomerDOT
     PaymentsDependentDOT {
   lastOrderDate: Date;
 }
+
+export interface CustomerDependentDOT {
+  customerID: string;
+}
