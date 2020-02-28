@@ -1,28 +1,21 @@
 import ModelFactory from "src/app/common/model/Model.factory";
+import ContactSchema from "src/app/common/model/schema/Contact.schema";
 import { arrayProp, prop, Typegoose } from "typegoose";
 import { AccountDOT } from "./Account.interface";
 
 class AccountSchema extends Typegoose implements AccountDOT {
-  @prop({ required: true, maxlength: 32 })
-  public firstName: string;
-  @prop({ required: true, maxlength: 32 })
-  public lastName: string;
   @prop({ required: true })
   public username: string;
   @prop({ required: true })
   public password: string;
   @arrayProp({ required: true })
   public fingerprints: string[];
-  @prop({ required: true })
-  public emailAddress: string;
-  @prop({ required: true })
-  phoneNum: string;
-  @prop({ required: true })
-  address: string;
   @prop({ required: true, default: true })
-  active: boolean;
+  public active: boolean;
   @prop({ required: true })
-  alertIDs: string[];
+  public alertIDs: string[];
+  @prop({ required: true })
+  public contact: ContactSchema;
 }
 
 export class Account extends ModelFactory(AccountSchema) {}

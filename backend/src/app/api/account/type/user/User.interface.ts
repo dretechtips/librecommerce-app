@@ -1,4 +1,4 @@
-import { PayrollDependentDOT } from "../../../human_resource/payroll/Payroll.interface";
+import { PayrollDependentDOT } from "../../../company/human_resource/payroll/Payroll.interface";
 import { ScheduleDependentDOT } from "../../../schedule/Schedule.interface";
 import { AccountDependentDOT } from "../../Account.interface";
 

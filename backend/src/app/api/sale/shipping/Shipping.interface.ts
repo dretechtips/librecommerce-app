@@ -1,7 +1,10 @@
-import { AccountDOT } from "../../account/Account.interface";
-import { CustomerDOT } from "../../account/type/customer/Customer.interface";
+import Account from "src/app/api/account/Account.model";
+import AddressSchema from "src/app/common/model/schema/Address.schema";
+import { CardDOT } from "../../billing/payments/card/Card.interface";
 import CostSchema from "../../billing/transaction/cost/Cost.schema";
 import { Transactable } from "../../billing/transaction/Transaction.interface";
+import Company from "../../company/Company.model";
+import { PackageDOT } from "./package/Package.interface";
 
 export interface ShippingDOT extends Transactable {
   provider: ShippingProvider;
@@ -19,13 +22,22 @@ export enum ShippingProvider {
 
 export interface ShippingProviderService {
   isAvailable(): Promise<boolean>;
-  getCosts(obj: ShippingDOT): Promise<CostSchema[]>;
-  cancel(shiping: ShippingDOT): Promise<void>;
+  getCosts(packages: PackageDOT[], days: number): Promise<CostSchema[]>;
+  cancel(shipingID: string): Promise<void>;
   create(
-    shipping: ShippingDOT,
-    customer: CustomerDOT,
-    accountDOT: AccountDOT
-  ): Promise<void>;
+    days: number,
+    packages: PackageDOT[],
+    shipFromDOT: Account | Company,
+    shipToDOT: Account | Company,
+    card: CardDOT
+  ): Promise<ShippingDOT>;
+  return(
+    shippingDOT: ShippingDOT,
+    shipFromDOT: Account | Company,
+    card: CardDOT
+  ): Promise<ShippingDOT>;
+  track(shippingID: string): Promise<AddressSchema>;
+  addressValidation(address: AddressSchema): Promise<boolean>;
 }
 
 export interface ShippingDependentDOT {
@@ -34,4 +46,5 @@ export interface ShippingDependentDOT {
    * Vendor Shipping Identification
    */
   vShippingID: string;
+  tracking: string;
 }

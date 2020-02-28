@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import Service from "src/app/common/service/Service.factory";
+import Service from "../../../account/type/customer/node_modules/src/app/common/service/Service.factory";
 import Card from "./Card.model";
 
 @Injectable()

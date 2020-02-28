@@ -1,14 +1,10 @@
+import { ContactDependentDOT } from "src/app/common/model/schema/Contact.schema";
 import { AlertDependentDOT } from "../alert/Alert.interface";
 
-export interface AccountDOT extends AlertDependentDOT {
-  firstName: string;
-  lastName: string;
+export interface AccountDOT extends AlertDependentDOT, ContactDependentDOT {
   username: string;
   password: string;
   fingerprints: string[];
-  emailAddress: string;
-  phoneNum: string;
-  address: string;
   active: boolean;
 }
 

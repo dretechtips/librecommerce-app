@@ -6,6 +6,7 @@ import UPSService from "src/app/vendor/ups/UPS.service";
 import USPSService from "src/app/vendor/usps/USPS.service";
 import Customer from "../../account/type/customer/Customer.model";
 import CustomerService from "../../account/type/customer/Customer.service";
+import CompanyService from "../../company/Company.service";
 import Variation from "../product/variation/Variation.model";
 import BoxService from "./box/Box.service";
 import PackageService from "./package/Package.service";
@@ -24,6 +25,7 @@ export class ShippingService extends Service<typeof Shipping>
   private static MAX_DAY = 4;
   private provider: Map<ShippingProvider, ShippingProviderService>;
   private customer: CustomerService;
+  private company: CompanyService;
   constructor(
     private readonly moduleRef: ModuleRef,
     private readonly box: BoxService,
@@ -38,6 +40,7 @@ export class ShippingService extends Service<typeof Shipping>
     this.provider.set(ShippingProvider.UPS, this.moduleRef.get(UPSService, {strict: false}));
     this.provider.set(ShippingProvider.USPS, this.moduleRef.get(USPSService, {strict: false}));
     this.customer = this.moduleRef.get(CustomerService, {strict: false});
+    this.company = this.moduleRef.get(CompanyService, {strict: false});
   }
   public async create(
     provider: ShippingProvider,
