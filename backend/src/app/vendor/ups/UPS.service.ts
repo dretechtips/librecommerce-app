@@ -1,12 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import Account from "src/app/api/account/Account.model";
-import { CardDOT } from "src/app/api/billing/payments/card/Card.interface";
 import CostSchema from "src/app/api/billing/transaction/cost/Cost.schema";
 import Company from "src/app/api/company/Company.model";
 import { PackageDOT } from "src/app/api/sale/shipping/package/Package.interface";
 import {
-  ShippingDOT,
-  ShippingProvider,
+  ShippingParty,
   ShippingProviderService
 } from "src/app/api/sale/shipping/Shipping.interface";
 import Continent from "src/app/common/enum/continent/Continent";
@@ -19,11 +16,15 @@ import USConfig from "src/config/vendor/ups/US";
 import {
   AddressValidation,
   Default,
+  Packages,
   Party,
   Rating,
   Service as ShipmentService,
   ServiceCode,
-  ShipmentRate,
+  ShipAccept,
+  ShipConfirm,
+  Shipment,
+  TimeInTransit,
   Tracking,
   VoidShipment
 } from "ups_node";
@@ -33,6 +34,7 @@ import UPS from "./UPS.model";
 @Injectable()
 export class UPSService extends Service<typeof UPS>
   implements ShippingProviderService {
+  private accountID: string;
   private licenseID: string;
   private userID: string;
   private password: string;
@@ -70,14 +72,30 @@ export class UPSService extends Service<typeof UPS>
     instance.useSandbox(this.isSandbox);
     return instance;
   }
-  private validateShippingDOT(shipping: ShippingDOT) {
-    if (shipping.provider !== ShippingProvider.UPS)
-      throw new Error("Invalid Shipping DOT");
-  }
   public async isAvailable(): Promise<boolean> {
-    return false;
+    try {
+      const use = this.useAPI;
+      const av = use(AddressValidation);
+      const rating = use(Rating);
+      const sAccept = use(ShipAccept);
+      const sConfirm = use(ShipConfirm);
+      const timeIT = use(TimeInTransit);
+      const tracking = use(Tracking);
+      const result = await Promise.all(
+        [av, rating, sAccept, sConfirm, timeIT, tracking].map(cur => cur.test())
+      );
+      for (let i = 0; i < result.length; i++) {
+        if (result[i] === false) return false;
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
-  public async getCosts(packages: PackageDOT[]): Promise<CostSchema[]> {
+  public async getCosts(
+    packages: PackageDOT[],
+    days: number
+  ): Promise<CostSchema[]> {
     return [];
   }
   public async cancel(shippingID: string): Promise<void> {
@@ -91,77 +109,42 @@ export class UPSService extends Service<typeof UPS>
       console.log
     );
   }
-  public async create(
+  public async ship(
     days: number,
     packages: PackageDOT[],
-    shipFrom: Account | Company,
-    shipTo: Account | Company,
-    card: CardDOT
-  ): Promise<ShippingDOT> {
-    const service = await this.rate(days, packages, shipFrom, shipTo, card);
-  }
-  private buildShipmentRate(
-    shipFrom: Account | Company,
-    shipTo: Account | Company,
-    packages: PackageDOT[]
-  ): ShipmentRate {
-    const SFContact = shipFrom.contact;
-    const STContact = shipTo.contact;
-    return {
-      description: "Shipment",
-      name: SFContact.firstName + " " + SFContact.lastName,
-      shipper: {
-        address: {
-          addressLine: SFContact.address.street,
-          city: SFContact.address.city,
-          StateProvinceCode: "TODO",
-          PostalCode: "TODO",
-          countryCode: "US"
-        }
-      },
-      shipFrom: this.buildParty(shipFrom),
-      shipTo: this.buildParty(shipTo),
-      service: {},
-      payment: {},
-      package: packages.map(),
-      schedule: {}
-    };
-  }
-  private buildParty(party: Account | Company): Party {
-    const contact = party.contact;
-    return {
-      companyName: party instanceof Company ? party.name : "N/A",
-      attentionName: contact.firstName + " " + contact.lastName,
-      phoneNumber: contact.phone,
-      addressLine: contact.address.street,
-      city: contact.address.city,
-      stateProvinceCode: "TODO",
-      postalCode: "TODO",
-      countryCode: "US"
-    };
-  }
-  public async rate(
-    days: number,
-    packages: PackageDOT[],
-    shipFrom: Account | Company,
-    shipTo: Account | Company,
-    card: CardDOT
-  ): Promise<ShipmentService> {
-    const rating = this.useAPI(Rating);
-    rating.makeRequest(
+    shipFrom: ShippingParty,
+    shipTo: ShippingParty
+  ): Promise<void> {
+    const service = this.rateAsShip(days);
+    this.useAPI(ShipConfirm).makeRequest(
       {
-        customerContext: "",
-        pickUpType: {
-          code: "01",
-          description: "Standard Pickup"
-        },
-        shipment: this.buildShipment(shipFrom, shipTo)
+        validate: "TODO",
+        shipment: this.buildShipment(shipFrom, shipTo, packages, service, false)
       },
       console.log
     );
-    return {
-      code: ServiceCode.EXPRESS
-    };
+    // ADD SHIP ACCEPT TO CREATE SHIPPING
+  }
+  public async return(
+    packages: PackageDOT[],
+    shipFrom: ShippingParty,
+    shipTo: ShippingParty
+  ): Promise<void> {
+    const service = this.rateAsReturn();
+    this.useAPI(ShipConfirm).makeRequest(
+      {
+        validate: "TODO",
+        shipment: this.buildShipment(shipFrom, shipTo, packages, service, true)
+      },
+      console.log
+    );
+    // ADD SHIP ACCEPT
+  }
+  public rateAsShip(days: number): ShipmentService {
+    return this.bestService(days);
+  }
+  public rateAsReturn() {
+    return this.bestService(4);
   }
   public async track(shippingID: string): Promise<AddressSchema> {
     const shipping = (await this.findAllByProp("shippingID", shippingID))[0];
@@ -169,20 +152,12 @@ export class UPSService extends Service<typeof UPS>
     const tracking = this.useAPI(Tracking);
     tracking.makeRequest(
       {
-        customerContext: "",
+        customerContext: "Tracking Existing UPS Shipping",
         trackingNumber: shipping.tracking
       },
       console.log
     );
-    return new AddressSchema("1234 Test Street", "Dallas", State.TEXAS);
-  }
-  public async return(
-    shippingDOT: ShippingDOT,
-    shipFromDOT: Account | Company,
-    card: CardDOT
-  ): Promise<ShippingDOT> {
-    this.validateShippingDOT(shippingDOT);
-    return shippingDOT;
+    return new AddressSchema("1234 Test Street", "Dallas", State.TEXAS, 75056);
   }
   public async addressValidation(address: AddressSchema): Promise<boolean> {
     const validation = this.useAPI(AddressValidation);
@@ -195,6 +170,88 @@ export class UPSService extends Service<typeof UPS>
       console.log
     );
     return false;
+  }
+  private buildShipment(
+    shipFrom: ShippingParty,
+    shipTo: ShippingParty,
+    packages: PackageDOT[],
+    service: ShipmentService,
+    isReturn: boolean
+  ): Shipment {
+    let shipper = isReturn ? shipTo : shipFrom;
+    return {
+      description: "Shipment Rating",
+      shipper: {
+        name: shipper.company
+          ? shipper.company
+          : shipper.contact.firstName + " " + shipper.contact.lastName,
+        attentionName:
+          shipper.contact.firstName + " " + shipper.contact.lastName,
+        shipperNumber: this.accountID,
+        phone: shipper.contact.phone,
+        address: {
+          address1: shipper.contact.address.street,
+          city: shipper.contact.address.city,
+          state: shipper.contact.address.state,
+          zip: String(shipper.contact.address.zip),
+          country: "US"
+        }
+      },
+      shipFrom: this.buildParty(shipFrom),
+      shipTo: this.buildParty(shipTo),
+      service: service,
+      paymentInformation: {
+        accountNumber: this.accountID
+      },
+      package: this.buildPackages(packages)
+    };
+  }
+  private buildParty(party: ShippingParty): Party {
+    const contact = party.contact;
+    return {
+      companyName: party instanceof Company ? party.name : "N/A",
+      attentionName: contact.firstName + " " + contact.lastName,
+      phoneNumber: contact.phone,
+      addressLine: contact.address.street,
+      city: contact.address.city,
+      stateProvinceCode: "TODO",
+      postalCode: "TODO",
+      countryCode: "US"
+    };
+  }
+  private buildPackages(_packages: PackageDOT[]): Packages {
+    return _packages.map(cur => {
+      return {
+        code: "TODO",
+        description: "TODO",
+        weight: cur.totalWeight.value,
+        insurance: {}
+      };
+    });
+  }
+  private bestService(days: number): ShipmentService {
+    let code: ServiceCode;
+    switch (days) {
+      case 1:
+        code = ServiceCode.NEXTDAY_AIR_SAVER;
+        break;
+      case 2:
+        code = ServiceCode.SECONDDAY_AIR;
+        break;
+      case 3:
+        code = ServiceCode.THREEDAY;
+        break;
+      case 4:
+        code = ServiceCode.STANDARD;
+        break;
+      default:
+        throw new Error(
+          "No option can be generated for more than 4 days shipping for UPS."
+        );
+    }
+    return {
+      code: code
+    };
   }
 }
 

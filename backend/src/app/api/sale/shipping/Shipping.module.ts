@@ -1,13 +1,14 @@
-import { Module, NestModule, MiddlewareConsumer } from "@nestjs/common";
+import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
+import BoxModule from "./box/Box.module";
+import PackageModule from "./package/Package.module";
+import PalletModule from "./pallet/Pallet.module";
 import ShippingController from "./Shipping.controller";
 import ShippingService from "./Shipping.service";
-import BoxModule from "./box/Box.module";
-import PalletModule from "./pallet/Pallet.module";
-import PackageModule from "./package/Package.module";
+import { ShippingTask } from "./Shipping.task";
 
 @Module({
   controllers: [ShippingController],
-  providers: [ShippingService],
+  providers: [ShippingService, ShippingTask],
   exports: [BoxModule, PalletModule, PackageModule],
   imports: [BoxModule, PalletModule, PackageModule]
 })

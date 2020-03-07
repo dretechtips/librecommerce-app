@@ -4,4 +4,5 @@ export interface CompanyDOT extends ContactDependentDOT {
   taxID: string;
   active: boolean;
   name: string;
+  upsAccountID?: string;
 }

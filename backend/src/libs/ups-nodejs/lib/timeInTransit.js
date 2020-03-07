@@ -1,202 +1,249 @@
-var https = require('https');
-var qs = require('querystring');
+var https = require("https");
+var qs = require("querystring");
+const isAvailable = require("./availability");
 
-var SANDBOX_API = 'wwwcie.ups.com';
-var LIVE_API = 'onlinetools.ups.com';
+var SANDBOX_API = "wwwcie.ups.com";
+var LIVE_API = "onlinetools.ups.com";
 
 var USE_JSON = false;
 
-var TimeInTransit = function (licenseId, userId, password) {
-	this.licenseId = licenseId;
-	this.userId = userId;
-	this.password = password;
+var TimeInTransit = function(licenseId, userId, password) {
+  this.licenseId = licenseId;
+  this.userId = userId;
+  this.password = password;
 
-	this.sandbox = true;
+  this.sandbox = true;
 };
 
 //Use UPS sandbox
 TimeInTransit.prototype.useSandbox = function(bool) {
-  	this.sandbox = (bool == true);
+  this.sandbox = bool == true;
 };
 
 TimeInTransit.prototype.setJsonResponse = function(bool) {
-	USE_JSON = (bool == true);
+  USE_JSON = bool == true;
 };
+
+TimeInTransit.prototype.test = isAvailable({
+  host: this.sandbox ? SANDBOX_API : LIVE_API,
+  path: "/ups.app/xml/TimeInTransit",
+  method: "POST"
+});
 
 //Make a time in transit request
 TimeInTransit.prototype.makeRequest = function(options, callback) {
+  //set account credentials
+  options["licenseId"] = this.licenseId;
+  options["userId"] = this.userId;
+  options["password"] = this.password;
 
-	//set account credentials
-	options['licenseId'] = this.licenseId;
-	options['userId'] = this.userId;
-	options['password'] = this.password;
+  var req = https.request({
+    host: this.sandbox ? SANDBOX_API : LIVE_API,
+    path: "/ups.app/xml/TimeInTransit",
+    method: "POST"
+  });
 
-	var req = https.request({
-		host: (this.sandbox) ? SANDBOX_API : LIVE_API,
-		path: '/ups.app/xml/TimeInTransit',
-		method: 'POST'
-	});
-
-	/* build the request data for Time in Transit and write it to
+  /* build the request data for Time in Transit and write it to
 		the request body
 	*/
-	var requestData = buildRequestData(options);
-	var content = requestData.body;
-	req.write(content);
+  var requestData = buildRequestData(options);
+  var content = requestData.body;
+  req.write(content);
 
-	req.on('response', function(res) {
-	
-		var responseData = '';
-		var useJsonResponse = this.json;
-			
-		res.on('data', function(data) {
-			data = data.toString();
-			responseData += data;
-		});
+  req.on("response", function(res) {
+    var responseData = "";
+    var useJsonResponse = this.json;
 
-		res.on('end', function() {
+    res.on("data", function(data) {
+      data = data.toString();
+      responseData += data;
+    });
 
-			if (USE_JSON) {
-				var parseString = require('xml2js').parseString;
-				parseString(responseData, function (err, result) {
-					callback(result);	
-				});
-			} else {
-				// xml reponse
-				callback(responseData);
-			}
-		});
-	});
+    res.on("end", function() {
+      if (USE_JSON) {
+        var parseString = require("xml2js").parseString;
+        parseString(responseData, function(err, result) {
+          callback(result);
+        });
+      } else {
+        // xml reponse
+        callback(responseData);
+      }
+    });
+  });
 
-	req.end();
-
+  req.end();
 };
 
 function buildRequestData(data) {
+  var response = "";
 
-	var response = "";
+  response += "<?xml version='1.0' encoding='utf-8'?>";
+  response += "<AccessRequest xml:lang='en-US'>";
 
-    response += "<?xml version='1.0' encoding='utf-8'?>";
-    response += "<AccessRequest xml:lang='en-US'>";
-	
-    response += "<AccessLicenseNumber>" + data.licenseId + "</AccessLicenseNumber>";
-    response += "<UserId>" + data.userId + "</UserId>";
-    response += "<Password>" + data.password + "</Password>";
-    
-    response += "</AccessRequest>";
-	
-    response += "<?xml version='1.0' encoding='utf-8'?>"
-    response += "<TimeInTransitRequest xml:lang='en-US'>";
-    response += "<Request>";
-    response += "<TransactionReference>";
+  response +=
+    "<AccessLicenseNumber>" + data.licenseId + "</AccessLicenseNumber>";
+  response += "<UserId>" + data.userId + "</UserId>";
+  response += "<Password>" + data.password + "</Password>";
 
-	if(!data.customerContext) return { success: false, error: 'Missing Customer Context' };
+  response += "</AccessRequest>";
 
-    response += "<CustomerContext>"
-    response += data.customerContext;
-    response += "</CustomerContext>";
+  response += "<?xml version='1.0' encoding='utf-8'?>";
+  response += "<TimeInTransitRequest xml:lang='en-US'>";
+  response += "<Request>";
+  response += "<TransactionReference>";
 
-    response += "<XpciVersion>1.0002</XpciVersion>";
+  if (!data.customerContext)
+    return { success: false, error: "Missing Customer Context" };
 
-    response += "</TransactionReference>";
-    response += "<RequestAction>TimeInTransit</RequestAction>";
-    response += "</Request>";
+  response += "<CustomerContext>";
+  response += data.customerContext;
+  response += "</CustomerContext>";
 
-    response += "<TransitFrom>";
-    response += "<AddressArtifactFormat>";
+  response += "<XpciVersion>1.0002</XpciVersion>";
 
-	if (!data.transitFrom) return { success: false, error: 'Missing transitFrom' };
+  response += "</TransactionReference>";
+  response += "<RequestAction>TimeInTransit</RequestAction>";
+  response += "</Request>";
 
-	if (data.transitFrom.fromDivision3) {
-    	response += "<PoliticalDivision3>" + data.transitFrom.fromDivision3 + "</PoliticalDivision3>";
-	}
+  response += "<TransitFrom>";
+  response += "<AddressArtifactFormat>";
 
-	if (data.transitFrom.fromDivision2) {
-    	response += "<PoliticalDivision2>" + data.transitFrom.fromDivision2 + "</PoliticalDivision2>";
-	}
+  if (!data.transitFrom)
+    return { success: false, error: "Missing transitFrom" };
 
-	if (data.transitFrom.fromDivision1) {
-    	response += "<PoliticalDivision1>" + data.transitFrom.fromDivision1 + "</PoliticalDivision1>";
-	}
+  if (data.transitFrom.fromDivision3) {
+    response +=
+      "<PoliticalDivision3>" +
+      data.transitFrom.fromDivision3 +
+      "</PoliticalDivision3>";
+  }
 
-	if (!data.transitFrom.fromCountry) return { success: false, error: 'Missing Country' };
-    response += "<Country>" + data.transitFrom.fromCountry + "</Country>";
+  if (data.transitFrom.fromDivision2) {
+    response +=
+      "<PoliticalDivision2>" +
+      data.transitFrom.fromDivision2 +
+      "</PoliticalDivision2>";
+  }
 
-    if (!data.transitFrom.fromCountryCode) return { success: false, error : 'Missing Country Code' };
-    response += "<CountryCode>" + data.transitFrom.fromCountryCode + "</CountryCode>";
+  if (data.transitFrom.fromDivision1) {
+    response +=
+      "<PoliticalDivision1>" +
+      data.transitFrom.fromDivision1 +
+      "</PoliticalDivision1>";
+  }
 
-    response += "</AddressArtifactFormat>";
-    response += "</TransitFrom>";
+  if (!data.transitFrom.fromCountry)
+    return { success: false, error: "Missing Country" };
+  response += "<Country>" + data.transitFrom.fromCountry + "</Country>";
 
-    response += "<TransitTo>";
-    response += "<AddressArtifactFormat>";
+  if (!data.transitFrom.fromCountryCode)
+    return { success: false, error: "Missing Country Code" };
+  response +=
+    "<CountryCode>" + data.transitFrom.fromCountryCode + "</CountryCode>";
 
-    if (!data.transitTo) return { success: false, error: 'Missing transitTo' };
+  response += "</AddressArtifactFormat>";
+  response += "</TransitFrom>";
 
+  response += "<TransitTo>";
+  response += "<AddressArtifactFormat>";
 
-	if (data.transitTo.fromDivision3) {
-    	response += "<PoliticalDivision3>" + data.transitTo.fromDivision3 + "</PoliticalDivision3>";
-	}
+  if (!data.transitTo) return { success: false, error: "Missing transitTo" };
 
-	if (data.transitTo.fromDivision2) {
-    	response += "<PoliticalDivision2>" + data.transitTo.fromDivision2 + "</PoliticalDivision2>";
-	}
+  if (data.transitTo.fromDivision3) {
+    response +=
+      "<PoliticalDivision3>" +
+      data.transitTo.fromDivision3 +
+      "</PoliticalDivision3>";
+  }
 
-	if (data.transitTo.fromDivision1) {
-    	response += "<PoliticalDivision1>" + data.transitTo.fromDivision1 + "</PoliticalDivision1>";
-	}
+  if (data.transitTo.fromDivision2) {
+    response +=
+      "<PoliticalDivision2>" +
+      data.transitTo.fromDivision2 +
+      "</PoliticalDivision2>";
+  }
 
-	if (!data.transitTo.toCountryCode) return { success: false, error: 'Missing country code' };
-    response += "<CountryCode>" + data.transitTo.toCountryCode + "</CountryCode>";
+  if (data.transitTo.fromDivision1) {
+    response +=
+      "<PoliticalDivision1>" +
+      data.transitTo.fromDivision1 +
+      "</PoliticalDivision1>";
+  }
 
-    if (!data.transitTo.postCode) return { success: false, error: 'Missing post code' };
-    response += "<PostcodePrimaryLow>" + data.transitTo.postCode + "</PostcodePrimaryLow>";
+  if (!data.transitTo.toCountryCode)
+    return { success: false, error: "Missing country code" };
+  response += "<CountryCode>" + data.transitTo.toCountryCode + "</CountryCode>";
 
-    if (data.transitTo.addressIndicator) {
-    	response += "<ResidentialAddressIndicator>" + data.transitTo.addressIndicator + "</ResidentialAddressIndicator>";
-    }
+  if (!data.transitTo.postCode)
+    return { success: false, error: "Missing post code" };
+  response +=
+    "<PostcodePrimaryLow>" + data.transitTo.postCode + "</PostcodePrimaryLow>";
 
-	response += "</AddressArtifactFormat>";
-    response += "</TransitTo>";
+  if (data.transitTo.addressIndicator) {
+    response +=
+      "<ResidentialAddressIndicator>" +
+      data.transitTo.addressIndicator +
+      "</ResidentialAddressIndicator>";
+  }
 
-    if (!data.shipmentWeight) return { success: false, error: 'Missing shipmentWeight' };
+  response += "</AddressArtifactFormat>";
+  response += "</TransitTo>";
 
-	response +="<ShipmentWeight>";
-	response += "<UnitOfMeasurement>";
+  if (!data.shipmentWeight)
+    return { success: false, error: "Missing shipmentWeight" };
 
-	if (!data.shipmentWeight.code) return { success: false, error: 'Missing shipmentWeight code' };
-	response += "<Code>" + data.shipmentWeight.code + "</Code>";
+  response += "<ShipmentWeight>";
+  response += "<UnitOfMeasurement>";
 
-	if (!data.shipmentWeight.description) return { success: false, error: 'Missing shipmentWeight desc' };
-	response += "<Description>" + data.shipmentWeight.description + "</Description>";
-	response += "</UnitOfMeasurement>";
+  if (!data.shipmentWeight.code)
+    return { success: false, error: "Missing shipmentWeight code" };
+  response += "<Code>" + data.shipmentWeight.code + "</Code>";
 
-	if (!data.shipmentWeight.weight) return { success: false, error: 'Missing Shipment weight' };
-	response += "<Weight>" + data.shipmentWeight.weight + "</Weight>";
-	response +="</ShipmentWeight>";
+  if (!data.shipmentWeight.description)
+    return { success: false, error: "Missing shipmentWeight desc" };
+  response +=
+    "<Description>" + data.shipmentWeight.description + "</Description>";
+  response += "</UnitOfMeasurement>";
 
-	if (!data.totalPackageShipment) return { success: false, error: 'Missing totalPackageShipment' };
+  if (!data.shipmentWeight.weight)
+    return { success: false, error: "Missing Shipment weight" };
+  response += "<Weight>" + data.shipmentWeight.weight + "</Weight>";
+  response += "</ShipmentWeight>";
 
-	response += "<TotalPackagesInShipment>" + data.totalPackageShipment + "</TotalPackagesInShipment>";
+  if (!data.totalPackageShipment)
+    return { success: false, error: "Missing totalPackageShipment" };
 
-	if (!data.invoiceLineTotal) return { success: false, error: 'Missing invoiceLineTotal' };
+  response +=
+    "<TotalPackagesInShipment>" +
+    data.totalPackageShipment +
+    "</TotalPackagesInShipment>";
 
-	response +=  "<InvoiceLineTotal>";
+  if (!data.invoiceLineTotal)
+    return { success: false, error: "Missing invoiceLineTotal" };
 
-	if (!data.invoiceLineTotal.currencyCode) return { success: false, error: 'Missing currency Code' };
-    response +=  "<CurrencyCode>" + data.invoiceLineTotal.currencyCode + "</CurrencyCode>";
+  response += "<InvoiceLineTotal>";
 
-    if (!data.invoiceLineTotal.monetaryValue) return { success: false, error: 'Missing monetary value' };
-    response +=  "<MonetaryValue>" + data.invoiceLineTotal.monetaryValue + "</MonetaryValue>";
-    response += "</InvoiceLineTotal>";
+  if (!data.invoiceLineTotal.currencyCode)
+    return { success: false, error: "Missing currency Code" };
+  response +=
+    "<CurrencyCode>" + data.invoiceLineTotal.currencyCode + "</CurrencyCode>";
 
-    if (!data.pickupDate) return { success: false, error: 'Missing pick up date'};
-    response += "<PickupDate>" + data.pickupDate + "</PickupDate>";
-    response += "<DocumentsOnlyIndicator />";
-    response += "</TimeInTransitRequest>";
+  if (!data.invoiceLineTotal.monetaryValue)
+    return { success: false, error: "Missing monetary value" };
+  response +=
+    "<MonetaryValue>" +
+    data.invoiceLineTotal.monetaryValue +
+    "</MonetaryValue>";
+  response += "</InvoiceLineTotal>";
 
-   return { success: true, body: response };
-   
-};
+  if (!data.pickupDate)
+    return { success: false, error: "Missing pick up date" };
+  response += "<PickupDate>" + data.pickupDate + "</PickupDate>";
+  response += "<DocumentsOnlyIndicator />";
+  response += "</TimeInTransitRequest>";
+
+  return { success: true, body: response };
+}
 
 module.exports = TimeInTransit;

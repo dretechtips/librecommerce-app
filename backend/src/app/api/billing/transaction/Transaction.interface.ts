@@ -6,12 +6,26 @@ export interface TransactionDOT {
   tax: number;
   charges: CostSchema[];
   type: TransactionType;
+  paymentID?: string;
 }
 
 export enum TransactionType {
+  /**
+   * Places a hold on the payment method funds
+   */
+  AUTHORIZED,
+  /**
+   * Automatically deducts the fund if
+   */
   SALE,
+  /**
+   * Automatically adds back to the fund
+   */
   REFUND,
-  REBATE
+  /**
+   * Cancels the hold on the payment method
+   */
+  VOID
 }
 
 export interface Transactable {

@@ -1,3 +1,5 @@
+import "ups_node";
+
 declare module "ups_node" {
   export class Rating extends Default {
     makeRequest(options: RatingOptions, callback: (data: any) => void): void;
@@ -6,7 +8,7 @@ declare module "ups_node" {
   export interface RatingOptions {
     customerContext: string;
     pickUpType: PickupType;
-    shipment: Shipment;
+    shipment: ShipmentRate;
   }
 
   export interface PickupType {

@@ -3,6 +3,7 @@ import { ShippingDependentDOT } from "src/app/api/sale/shipping/Shipping.interfa
 export interface UPSDOT extends ShippingDependentDOT {}
 
 export interface UPSConfig {
+  accountID: string;
   licenseID: string;
   userID: string;
   password: string;

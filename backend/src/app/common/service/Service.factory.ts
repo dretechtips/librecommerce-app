@@ -110,6 +110,14 @@ export class Service<T extends Model<ExtractSchema<T> & Document>> {
   ): Promise<InstanceType<T>[]> {
     // TODO
   }
+  public async findOneByProp<U extends keyof ExtractSchemaData<T>>(
+    key: U,
+    value: ExtractSchemaData<T>[U]
+  ): Promise<InstanceType<T>> {
+    const val = await this.findAllByProp(key, value);
+    if (!val[0]) throw new Error("Cannot Find One By Prop");
+    return val[0];
+  }
   public async findAllByArrayValue<
     U extends keyof ExtractArrayProp<ExtractSchemaData<T>>
   >(

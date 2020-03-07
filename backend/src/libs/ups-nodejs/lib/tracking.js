@@ -1,109 +1,115 @@
-var https = require('https');
-var qs = require('querystring');
+var https = require("https");
+var qs = require("querystring");
+const isAvailable = require("./availability");
 
-var SANDBOX_API = 'wwwcie.ups.com';
-var LIVE_API = 'onlinetools.ups.com';
+var SANDBOX_API = "wwwcie.ups.com";
+var LIVE_API = "onlinetools.ups.com";
 
 var USE_JSON = false;
 
-var Tracking = function (licenseId, userId, password) {
-	this.licenseId = licenseId;
-	this.userId = userId;
-	this.password = password;
+var Tracking = function(licenseId, userId, password) {
+  this.licenseId = licenseId;
+  this.userId = userId;
+  this.password = password;
 
-	this.sandbox = true;
+  this.sandbox = true;
 };
 
 //Use UPS sandbox
 Tracking.prototype.useSandbox = function(bool) {
-  	this.sandbox = (bool == true);
+  this.sandbox = bool == true;
 };
 
 Tracking.prototype.setJsonResponse = function(bool) {
-	USE_JSON = (bool == true);
+  USE_JSON = bool == true;
 };
+
+Tracking.prototype.test = isAvailable({
+  host: this.sandbox ? SANDBOX_API : LIVE_API,
+  path: "/ups.app/xml/Track",
+  method: "POST"
+});
 
 //Make a tracking request
 Tracking.prototype.makeRequest = function(options, callback) {
+  //set account credentials
+  options["licenseId"] = this.licenseId;
+  options["userId"] = this.userId;
+  options["password"] = this.password;
 
-	//set account credentials
-	options['licenseId'] = this.licenseId;
-	options['userId'] = this.userId;
-	options['password'] = this.password;
+  var req = https.request({
+    host: this.sandbox ? SANDBOX_API : LIVE_API,
+    path: "/ups.app/xml/Track",
+    method: "POST"
+  });
 
-	var req = https.request({
-		host: (this.sandbox) ? SANDBOX_API : LIVE_API,
-		path: '/ups.app/xml/Track',
-		method: 'POST'
-	});
-
-	/* build the request data for tracking and write it to
+  /* build the request data for tracking and write it to
 		the request body
 	*/
-	var requestData = buildRequestData(options);
-	var content = requestData.body;
-	req.write(content);
+  var requestData = buildRequestData(options);
+  var content = requestData.body;
+  req.write(content);
 
-	req.on('response', function(res) {
-	
-		var responseData = '';
-		var useJsonResponse = this.json;
-			
-		res.on('data', function(data) {
-			data = data.toString();
-			responseData += data;
-		});
+  req.on("response", function(res) {
+    var responseData = "";
+    var useJsonResponse = this.json;
 
-		res.on('end', function() {
+    res.on("data", function(data) {
+      data = data.toString();
+      responseData += data;
+    });
 
-			if (USE_JSON) {
-				var parseString = require('xml2js').parseString;
-				parseString(responseData, function (err, result) {
-					callback(result);	
-				});
-			} else {
-				// xml reponse
-				callback(responseData);
-			}
-		});
-	});
+    res.on("end", function() {
+      if (USE_JSON) {
+        var parseString = require("xml2js").parseString;
+        parseString(responseData, function(err, result) {
+          callback(result);
+        });
+      } else {
+        // xml reponse
+        callback(responseData);
+      }
+    });
+  });
 
-	req.end();
-
+  req.end();
 };
 
 function buildRequestData(data) {
+  var response = "",
+    err = false;
 
-	var response = "", err = false;
+  response += "<?xml version='1.0' encoding='utf-8'?>";
+  response += "<AccessRequest xml:lang='en-US'>";
+  response +=
+    "<AccessLicenseNumber>" + data.licenseId + "</AccessLicenseNumber>";
+  response += "<UserId>" + data.userId + "</UserId>";
+  response += "<Password>" + data.password + "</Password>";
+  response += "</AccessRequest>";
 
-    response += "<?xml version='1.0' encoding='utf-8'?>";
-    response += "<AccessRequest xml:lang='en-US'>";
-    response += "<AccessLicenseNumber>" + data.licenseId + "</AccessLicenseNumber>";
-    response += "<UserId>" + data.userId + "</UserId>";
-    response += "<Password>" + data.password + "</Password>";
-    response += "</AccessRequest>";
+  response += "<?xml version='1.0' encoding='utf-8'?>";
+  response += "	<TrackRequest xml:lang='en-US'>";
+  response += "	  <Request>";
+  response += "	    <TransactionReference>";
 
-	response += "<?xml version='1.0' encoding='utf-8'?>";
-	response += "	<TrackRequest xml:lang='en-US'>";
-	response += "	  <Request>";
-	response += "	    <TransactionReference>";
+  if (!data.customerContext)
+    return { success: false, error: "Missing Customer Context" };
+  response +=
+    "	      <CustomerContext>" + data.customerContext + "</CustomerContext>";
 
-	if(!data.customerContext) return { success: false, error: 'Missing Customer Context' };
-	response += "	      <CustomerContext>" + data.customerContext + "</CustomerContext>";
+  response += "	       <XpciVersion>1.0</XpciVersion>";
+  response += "	    </TransactionReference>";
+  response += "	    <RequestAction>Track</RequestAction>";
+  response += "	    <RequestOption>activity</RequestOption>";
+  response += "	  </Request>";
 
-	response += "	       <XpciVersion>1.0</XpciVersion>";
-	response += "	    </TransactionReference>";
-	response += "	    <RequestAction>Track</RequestAction>";
-	response += "	    <RequestOption>activity</RequestOption>";
-	response += "	  </Request>";
+  if (!data.trackingNumber)
+    return { success: false, error: "Missing Tracking Number" };
+  response += "	  <TrackingNumber>" + data.trackingNumber + "</TrackingNumber>";
 
-	if(!data.trackingNumber) return { success: false, error: 'Missing Tracking Number' };
-	response += "	  <TrackingNumber>" + data.trackingNumber + "</TrackingNumber>";
+  response += "	</TrackRequest>";
 
-	response += "	</TrackRequest>";
-
-	return { success: true, body: response };
-
-};
+  return { success: true, body: response };
+}
 
 module.exports = Tracking;

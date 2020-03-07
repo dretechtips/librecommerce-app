@@ -25,6 +25,11 @@ export class AlertService extends Service<typeof Alert> {
     target.forEach(cur => cur.alertIDs.push(alerts.id));
     return target.forEach(cur => cur.save());
   }
+  /**
+   * @todo
+   * @param alertDOT AlertDOT
+   */
+  public async broadcastToAll(alertDOT: AlertDOT): Promise<void> {}
   public async dismiss(
     container: AlertDependentDOT & Document,
     alertID: string

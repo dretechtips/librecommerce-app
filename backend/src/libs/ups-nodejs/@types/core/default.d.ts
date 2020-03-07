@@ -8,5 +8,6 @@ declare module "ups_node" {
     useSandbox(val: boolean): void;
     setJsonResponse(val: boolean): void;
     makeRequest(options: any, callback: (data: any) => void): void;
+    test(): Promise<boolean>;
   }
 }

@@ -11,7 +11,7 @@ class VariationSchema extends Typegoose implements VariationDOT {
   @prop({ required: true })
   public productID: string;
   @prop({ required: true })
-  public cost: CostSchema;
+  public costs: CostSchema[];
   @arrayProp({ required: true })
   public images: string[];
   @prop({ required: true })
