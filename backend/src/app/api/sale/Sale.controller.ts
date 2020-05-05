@@ -3,14 +3,14 @@ import { Request, Response } from "express";
 import path from "path";
 import { IDOnly } from "src/util/Types";
 import {
-  GetCustomerIDFromBody,
-  GetCustomerIDFromCookie
-} from "../account/type/customer/Customer.decorator";
-import { AccountType } from "../account/type/Type.interface";
-import {
   AccessLoginAccountType,
   RestrictAccess
-} from "../login/Login.decorator";
+} from "../account/util/login/Login.decorator";
+import {
+  GetCustomerIDFromBody,
+  GetCustomerIDFromCookie
+} from "../account/customer/Customer.decorator";
+import { AccountType } from "../account/type/Type.interface";
 import { GetCartFromBody, GetCartIDFromCookie } from "./cart/Cart.decorator";
 import { CartDOT } from "./cart/Cart.interface";
 import { GetOrderFromBody } from "./order/Order.decorator";
@@ -23,6 +23,7 @@ import { ShippingDOT } from "./shipping/Shipping.interface";
 export const prefix = "sale";
 
 @Controller(prefix)
+@RestrictAccess(AccountType.EMPLOYEE, AccountType.COMPANY, AccountType.STORE)
 export class SaleController {
   constructor(private readonly sale: SaleService) {}
   @Post("create")
@@ -32,14 +33,13 @@ export class SaleController {
     @AccessLoginAccountType() account: AccountType
   ) {
     switch (account) {
-      case AccountType.USER:
+      case AccountType.EMPLOYEE:
         res.redirect(307, path.join(req.path, "admin"));
       case AccountType.CUSTOMER:
         res.redirect(307, path.join(req.path, "customer"));
     }
   }
   @Post("create/admin")
-  @RestrictAccess(AccountType.USER)
   public async createByAdmin(
     @Res() res: Response,
     @GetOrderFromBody() orderDOT: OrderDOT,
@@ -48,13 +48,7 @@ export class SaleController {
     @GetShippingFromBody() shippingDOT: ShippingDOT
   ) {
     return (
-      await this.sale.unprocessed(
-        res,
-        customerID,
-        orderDOT,
-        shippingDOT,
-        cartDOT
-      )
+      await this.sale.authorize(res, customerID, orderDOT, shippingDOT, cartDOT)
     ).toJSON();
   }
   @Post("create/customer")
@@ -66,9 +60,8 @@ export class SaleController {
     @GetCustomerIDFromCookie() customerID: string,
     @GetCartIDFromCookie() cartID: string
   ) {
-    const cart = await this.sale.getCart().get(cartID);
     return (
-      await this.sale.unprocessed(res, customerID, orderDOT, shippingDOT, cart)
+      await this.sale.authorize(res, customerID, orderDOT, shippingDOT, cartID)
     ).toJSON();
   }
   @Patch("pay")
@@ -76,7 +69,7 @@ export class SaleController {
     saleIdDOT: IDOnly,
     paymentMethodIdDOT: IDOnly
   ): Promise<void> {
-    await this.sale.pay(saleIdDOT.id, paymentMethodIdDOT.id);
+    await this.sale.process(saleIdDOT.id, paymentMethodIdDOT.id);
   }
   @Patch("cancel/:saleID")
   public async cancel(@Param("saleID", ValidateSaleIDPipe) saleID: string) {

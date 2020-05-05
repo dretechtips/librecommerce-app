@@ -19,12 +19,6 @@ class Transaction extends Class<TransactionModel> {
   public getCharges() {
     return this.doc().charges;
   }
-  public getRefundableCharges() {
-    return this.doc().charges;
-  }
-  public getNonRefundableCharges() {
-    return this.doc().charges;
-  }
 }
 
 export class FulfilledTransaction extends Transaction {
@@ -38,13 +32,19 @@ export class FulfilledTransaction extends Transaction {
 }
 
 export class AuthorizedTransaction extends Transaction {
-  public static fromData(pretax: number, tax: number, costs: CostSchema[]) {
+  public static fromData(
+    pretax: number,
+    tax: number,
+    costs: CostSchema[],
+    isRefundable: boolean
+  ) {
     const dot: TransactionDOT = {
       type: TransactionType.AUTHORIZED,
       amountOwed: pretax + tax,
       amountPayed: 0,
       tax: tax,
-      charges: costs
+      charges: costs,
+      isRefundable: isRefundable
     };
     return new this(new TransactionModel(dot));
   }

@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Patch, Post } from "@nestjs/common";
-import { AccountType } from "src/app/api/account/type/Type.interface";
-import { RestrictAccess } from "src/app/api/login/Login.decorator";
+import { RestrictAccess } from "src/app/api/account/util/login/Login.decorator";
+import { AccountsType } from "src/app/api/account/type/Type.interface";
 import { BoxDOT } from "./Box.interface";
 import { ValidateBoxIDPipe, ValidateBoxPipe } from "./Box.pipe";
 import BoxService from "./Box.service";

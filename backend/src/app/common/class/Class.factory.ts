@@ -1,6 +1,6 @@
-import { Document, Model } from "mongoose";
+import { Typegoose } from "typegoose";
 
-export class Class<T extends InstanceType<Model<Document>>> {
+export class Class<T extends Typegoose> {
   constructor(private readonly _doc: T) {}
   public doc() {
     return this._doc;

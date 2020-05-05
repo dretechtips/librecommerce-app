@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ModuleRef } from "@nestjs/core";
 import { Document } from "mongoose";
-import Service from "src/app/common/service/Service.factory";
+import Service from "../sale/shipping/node_modules/src/app/common/service/Service.factory";
 import { AlertDependentDOT, AlertDOT } from "./Alert.interface";
 import Alert from "./Alert.model";
 

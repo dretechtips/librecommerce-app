@@ -5,6 +5,7 @@ export interface TransactionDOT {
   amountPayed: number;
   tax: number;
   charges: CostSchema[];
+  isRefundable: boolean;
   type: TransactionType;
   paymentID?: string;
 }
@@ -29,5 +30,5 @@ export enum TransactionType {
 }
 
 export interface Transactable {
-  costs: CostSchema[];
+  cost: CostSchema;
 }

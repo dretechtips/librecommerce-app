@@ -1,0 +1,31 @@
+import { ModelFactory } from "src/app/common/model/Model.factory";
+import DimensionSchema from "src/app/common/model/schema/Dimension.schema";
+import WeightSchema from "src/app/common/model/schema/Weight.schema";
+import { arrayProp, prop } from "@typegoose/typegoose";
+import CostSchema from "../../../billing/transaction/cost/Cost.schema";
+import { VariationDOT } from "./Variation.interface";
+
+class VariationSchema implements VariationDOT {
+  @prop({ required: true })
+  public name: string;
+  @prop({ required: true })
+  public productID: string;
+  @prop({ required: true })
+  public cost: CostSchema;
+  @arrayProp({ required: true })
+  public images: string[];
+  @prop({ required: true })
+  public size: string;
+  @prop({ required: true })
+  public color: string;
+  @prop({ required: true })
+  public stock: number;
+  @prop({ required: true })
+  public dimensions: DimensionSchema;
+  @prop({ required: true })
+  public weight: WeightSchema;
+}
+
+export class Variation extends ModelFactory(VariationSchema) {}
+
+export default Variation;

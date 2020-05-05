@@ -1,15 +1,22 @@
-import { ContactDependentDOT } from "src/app/common/model/schema/Contact.schema";
 import { AlertDependentDOT } from "../alert/Alert.interface";
+import { PaymentsDependentDOT } from "../billing/payments/Payments.interface";
+import { SubscriptionDependentDOT } from "../sale/subscription/Subscription.interface";
 
-export interface AccountDOT extends AlertDependentDOT, ContactDependentDOT {
+export interface AccountDOT extends AlertDependentDOT, PaymentsDependentDOT, SubscriptionDependentDOT {
+  lastOrderDate: Date;
   username: string;
   password: string;
   fingerprints: string[];
   active: boolean;
 }
 
-export type PreAccountDOT = Omit<AccountDOT, "alertIDs" | "fingerprints">;
-
-export interface AccountDependentDOT {
-  accountID: string;
+/**
+ * 2 - 3 Letter Code
+ */
+export enum AccountType {
+  CUSTOMER = "CS",
+  COMPANY = "CO",
+  STORE = "ST",
+  EMPLOYEE = "EM",
+  NONE = "NO"
 }

@@ -1,12 +1,19 @@
-import { arrayProp, Typegoose } from "typegoose";
+import { arrayProp, prop } from "@typegoose/typegoose";
 import ModelFactory from "../../../common/model/Model.factory";
 import { PaymentsDOT } from "./Payments.interface";
 
-class PaymentsSchema extends Typegoose implements PaymentsDOT {
+class PaymentsSchema implements PaymentsDOT {
   @arrayProp({ required: true })
-  bankIDs: string[];
+  public bankIDs: string[];
   @arrayProp({ required: true })
-  ccIDs: string[];
+  public ccIDs: string[];
+  @prop({required: true, default: 0})
+  public dIndex: number;
+  
+  public getPaymentID(index?: number): string {
+    const a = [...this.bankIDs, ...this.ccIDs];
+    return index ? a[index] : a[this.dIndex];
+  }
 }
 
 export class Payments extends ModelFactory(PaymentsSchema) {}

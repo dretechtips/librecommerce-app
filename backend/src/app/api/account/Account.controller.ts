@@ -1,14 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Patch } from "@nestjs/common";
-import { RestrictAccess } from "../login/Login.decorator";
-import { AccountDOT } from "./Account.interface";
-import AccountModule from "./Account.module";
-import { ValidateAccount } from "./Account.pipe";
+import { Controller, Delete, Get, Param } from "@nestjs/common";
 import AccountService from "./Account.service";
+import { RestrictAccess } from "./util/login/Login.decorator";
+import { AccountType } from "./type/Type.interface";
 
 export const prefix = "account";
 
 @Controller(prefix)
-@RestrictAccess(...AccountModule.ALLOW_ACCESS)
+@RestrictAccess(AccountType.CUSTOMER, AccountType.USER)
 export class AccountController {
   constructor(private readonly account: AccountService) {}
   @Get("fetch/:id")
@@ -17,14 +15,7 @@ export class AccountController {
   }
   @Delete("disable/:id")
   public async disable(@Param("id") id: string) {
-    await this.disable(id);
-  }
-  @Patch("update/:id")
-  public async update(
-    @Param("id") id: string,
-    @Body(prefix, ValidateAccount) account: AccountDOT
-  ) {
-    await this.account.update(id, account);
+    await this.account.disable(id);
   }
 }
 

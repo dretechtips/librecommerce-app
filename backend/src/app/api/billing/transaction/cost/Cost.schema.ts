@@ -1,9 +1,7 @@
-import { Typegoose } from "typegoose";
-import { prop } from "typegoose/lib/prop";
+import { prop } from "@typegoose/typegoose";
 
-export class CostSchema extends Typegoose {
+export class CostSchema {
   constructor(name: string, value: number) {
-    super();
     this.name = name;
     this.value = value;
   }
@@ -11,12 +9,6 @@ export class CostSchema extends Typegoose {
   public name: string;
   @prop({ required: true })
   public value: number;
-
-  public refund(): this {
-    this.name = "Refund To " + this.name;
-    this.value = -this.value;
-    return this;
-  }
 }
 
 export default CostSchema;

@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post } from "@nestjs/common";
 import { AccountType } from "../account/Account.interface";
-import { RestrictAccess } from "../login/Login.decorator";
+import { RestrictAccess } from "../account/util/login/Login.decorator";
 import { AlertDOT } from "./Alert.interface";
 import { ValidateAlertFromAdmin } from "./Alert.pipe";
 import AlertService from "./Alert.service";

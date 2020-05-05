@@ -1,8 +1,8 @@
 import ModelFactory from "src/app/common/model/Model.factory";
-import { arrayProp, Typegoose } from "typegoose";
+import { arrayProp } from "@typegoose/typegoose";
 import { CartDOT } from "./Cart.interface";
 
-class CartSchema extends Typegoose implements CartDOT {
+class CartSchema implements CartDOT {
   @arrayProp({ required: true })
   public productIDs: string[];
 }

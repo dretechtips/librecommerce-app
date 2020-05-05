@@ -3,3 +3,7 @@ export interface OrderDOT {
   isHeld: boolean;
   complete: boolean;
 }
+
+export interface OrderDependentDOT {
+  orderID: string;
+}

@@ -1,10 +1,14 @@
 import ModelFactory from "src/app/common/model/Model.factory";
 import DimensionSchema from "src/app/common/model/schema/Dimension.schema";
 import WeightSchema from "src/app/common/model/schema/Weight.schema";
-import { arrayProp, prop, Typegoose } from "typegoose";
+import { arrayProp, prop } from "@typegoose/typegoose";
 import { ProductDOT } from "./Product.interface";
+import CostSchema from "../../billing/transaction/cost/Cost.schema";
 
-class ProductSchema extends Typegoose implements ProductDOT {
+class ProductSchema implements ProductDOT {
+  @prop({required: true})
+  public cost: CostSchema;
+
   @prop({ required: true })
   public name: string;
   @arrayProp({ required: true })
@@ -13,8 +17,8 @@ class ProductSchema extends Typegoose implements ProductDOT {
   public SKU: string;
   @prop({ required: true })
   public UPC: string;
-  @prop({ required: true })
-  public categoryID: string;
+  @arrayProp({ required: true })
+  public categoryIDs: string[];
   @prop({ required: true })
   public description: string;
   @prop({ required: true })

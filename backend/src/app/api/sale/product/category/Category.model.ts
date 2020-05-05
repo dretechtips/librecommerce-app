@@ -7,6 +7,6 @@ export class CategorySchema extends Typegoose implements CategoryDOT {
   name: string;
 }
 
-export const Category = ModelFactory(CategorySchema);
+export class Category extends ModelFactory(CategorySchema) {}
 
 export default ProductCategory;

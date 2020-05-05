@@ -3,7 +3,7 @@ import { ModuleRef } from "@nestjs/core";
 import { Request } from "express";
 import Service from "src/app/common/service/Service.factory";
 import { AccountType } from "../../account/Account.interface";
-import LoginService from "../../login/Login.service";
+import LoginService from "../../account/util/login/Login.service";
 import { SubscriptionDOT, SubscriptionLink } from "./Subscription.interface";
 import Subscription from "./Subscription.model";
 

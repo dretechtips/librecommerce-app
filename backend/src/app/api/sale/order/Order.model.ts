@@ -1,8 +1,8 @@
 import ModelFactory from "src/app/common/model/Model.factory";
-import { prop, Typegoose } from "typegoose";
+import { prop } from "@typegoose/typegoose";
 import { OrderDOT } from "./Order.interface";
 
-class OrderSchema extends Typegoose implements OrderDOT {
+class OrderSchema implements OrderDOT {
   @prop({ required: true })
   public cancelled: boolean;
   @prop({ required: true })

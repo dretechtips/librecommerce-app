@@ -1,8 +1,8 @@
 import { Injectable, OnModuleInit } from "@nestjs/common";
 import { ModuleRef } from "@nestjs/core";
 import Service from "src/app/common/service/Service.factory";
-import Variation from "../../product/variation/Variation.model";
-import VariationService from "../../product/variation/Variation.service";
+import Variation from "../../product/variation/Variation.model.txt";
+import VariationService from "../../product/variation/Variation.service.txt";
 import Box from "../box/Box.model";
 import BoxService from "../box/Box.service";
 import Bin from "../packer/Bin";

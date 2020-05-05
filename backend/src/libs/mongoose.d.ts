@@ -2,10 +2,17 @@ import {
   ExtractAllProps,
   ArrayifyProps,
   ExtractArrayType,
-  ExtractPropsKey
+  ExtractPropsKey,
 } from "../util/Types";
 
 declare module "mongoose" {
+  interface Document {
+    /**
+     * Mongoose Discriminator Key
+     */
+    __t: string;
+  }
+
   interface Schema<T = any> {
     new (
       definition?: TypedSchemaDefinition<T>,

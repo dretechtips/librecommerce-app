@@ -1,8 +1,8 @@
 import ModelFactory from "src/app/common/model/Model.factory";
-import { prop, Typegoose } from "typegoose";
+import { prop } from "@typegoose/typegoose";
 import { SaleDOT } from "./Sale.interface";
 
-class SaleSchema extends Typegoose implements SaleDOT {
+class SaleSchema implements SaleDOT {
   @prop({ required: true })
   orderID: string;
   @prop({ required: true })
@@ -12,7 +12,7 @@ class SaleSchema extends Typegoose implements SaleDOT {
   @prop({ required: true })
   transactionID: string;
   @prop({ required: true })
-  customerID: string;
+  accountID: string;
 }
 
 export class Sale extends ModelFactory(SaleSchema) {}

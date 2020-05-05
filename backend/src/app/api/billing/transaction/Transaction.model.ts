@@ -1,9 +1,9 @@
 import ModelFactory from "src/app/common/model/Model.factory";
-import { prop, Typegoose } from "typegoose";
+import { prop } from "@typegoose/typegoose";
 import CostSchema from "./cost/Cost.schema";
 import { TransactionDOT, TransactionType } from "./Transaction.interface";
 
-export class TransactionSchema extends Typegoose implements TransactionDOT {
+export class TransactionSchema implements TransactionDOT {
   @prop({ required: true })
   public amountOwed: number;
   @prop({ required: true })
@@ -12,6 +12,8 @@ export class TransactionSchema extends Typegoose implements TransactionDOT {
   public tax: number;
   @prop({ required: true })
   public charges: CostSchema[];
+  @prop({ required: true })
+  public isRefundable: boolean;
   @prop({ required: true, enum: TransactionType })
   public type: TransactionType;
   @prop({ required: false })

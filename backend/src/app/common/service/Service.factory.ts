@@ -1,12 +1,12 @@
 import Mongoose, { Document, Model } from "mongoose";
 import {
   ExtractSchema,
-  ExtractSchemaData
+  ExtractSchemaData,
 } from "src/app/common/model/Model.interface";
 import {
   ExtractArrayProp,
   ExtractArrayType,
-  ExtractPropsKey
+  ExtractPropsKey,
 } from "../../../util/Types";
 
 /**
@@ -15,7 +15,7 @@ import {
  * @param model Model Type
  */
 export class Service<T extends Model<ExtractSchema<T> & Document>> {
-  private model: Model<ExtractSchema<T> & Document>;
+  protected model: Model<ExtractSchema<T> & Document>;
   constructor(model: Model<ExtractSchema<T> & Document>) {
     this.model = model;
   }
@@ -51,7 +51,9 @@ export class Service<T extends Model<ExtractSchema<T> & Document>> {
   public async validateDOTs(dots: any[]): Promise<boolean> {
     try {
       await Promise.all(
-        dots.map(cur => new this.model(cur)).map(cur => this.validateDOT(cur))
+        dots
+          .map((cur) => new this.model(cur))
+          .map((cur) => this.validateDOT(cur))
       );
       return true;
     } catch (e) {
@@ -65,10 +67,10 @@ export class Service<T extends Model<ExtractSchema<T> & Document>> {
     return doc;
   }
   public async addAll(dots: any[]): Promise<(ExtractSchema<T> & Document)[]> {
-    const docs = dots.map(dot => new this.model(dot));
-    const mapped = docs.map(doc => doc.validate());
+    const docs = dots.map((dot) => new this.model(dot));
+    const mapped = docs.map((doc) => doc.validate());
     await Promise.all(mapped);
-    docs.forEach(doc => doc.save());
+    docs.forEach((doc) => doc.save());
     return docs;
   }
   public async update(id: string, dot: any): Promise<void> {
@@ -90,8 +92,8 @@ export class Service<T extends Model<ExtractSchema<T> & Document>> {
   public async getAll(ids: string[]): Promise<(ExtractSchema<T> & Document)[]> {
     return this.model.find({
       _id: {
-        $in: [ids.map(cur => Mongoose.Types.ObjectId(cur))]
-      }
+        $in: [ids.map((cur) => Mongoose.Types.ObjectId(cur))],
+      },
     });
   }
   public async getByProp<U extends keyof ExtractSchema<T>>(
@@ -110,6 +112,9 @@ export class Service<T extends Model<ExtractSchema<T> & Document>> {
   ): Promise<InstanceType<T>[]> {
     // TODO
   }
+  public async findOneByQuery(query: Object) {
+    return this.model.findOne(query).exec();
+  }
   public async findOneByProp<U extends keyof ExtractSchemaData<T>>(
     key: U,
     value: ExtractSchemaData<T>[U]
@@ -126,7 +131,7 @@ export class Service<T extends Model<ExtractSchema<T> & Document>> {
   ) {
     return this.model
       .find({
-        [key]: value
+        [key]: value,
       })
       .exec();
   }
@@ -138,8 +143,8 @@ export class Service<T extends Model<ExtractSchema<T> & Document>> {
     return this.model.find({
       [key]: {
         $lt: end,
-        $gt: start
-      }
+        $gt: start,
+      },
     });
   }
   public async findAllAtNumberRange<U extends ExtractPropsKey<T, number>>(
@@ -150,8 +155,8 @@ export class Service<T extends Model<ExtractSchema<T> & Document>> {
     return this.model.find({
       [key]: {
         $lt: end,
-        $gt: start
-      }
+        $gt: start,
+      },
     });
   }
   public async removeFromArrayProp<
@@ -167,10 +172,10 @@ export class Service<T extends Model<ExtractSchema<T> & Document>> {
     let prop: any[] = doc[key];
     if (Array.isArray(value)) {
       (value as any[]).forEach(
-        cur => (prop = prop.filter(cur => cur !== value))
+        (cur) => (prop = prop.filter((cur) => cur !== value))
       );
     } else {
-      prop = prop.filter(cur => cur !== value);
+      prop = prop.filter((cur) => cur !== value);
     }
     await doc.save();
   }
@@ -181,7 +186,7 @@ export class Service<T extends Model<ExtractSchema<T> & Document>> {
     fn: (key: U, value: ExtractArrayProp<ExtractSchemaData<T>>[U]) => void
   ) {
     const doc = await this.get(id);
-    Object.keys(doc).forEach(key => {
+    Object.keys(doc).forEach((key) => {
       if (!this.model.schema[key] && !Array.isArray(doc[key])) return;
       const value: ExtractSchema<T>[U] = doc[key];
       fn(key as U, value);

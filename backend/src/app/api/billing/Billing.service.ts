@@ -9,13 +9,14 @@ import {
 } from "./transaction/Transaction.interface";
 
 @Injectable()
-export class BillingService extends Service<Billing> {
+export class BillingService extends Service<typeof Billing> {
   constructor(
     private readonly transaction: TransactionService,
     private readonly payments: PaymentsService
   ) {
     super(Billing);
   }
+  
   public async unprocess(
     transactable: Transactable[],
     type: TransactionType

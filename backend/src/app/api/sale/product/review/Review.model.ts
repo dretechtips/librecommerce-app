@@ -1,8 +1,8 @@
 import ModelFactory from "src/app/common/model/Model.factory";
-import { prop, Typegoose } from "typegoose";
+import { prop } from "@typegoose/typegoose";
 import { ReviewDOT } from "./Review.interface";
 
-class ReviewSchema extends Typegoose implements ReviewDOT {
+class ReviewSchema implements ReviewDOT {
   @prop({ required: true })
   productID: string;
   @prop({ required: true })
@@ -11,7 +11,7 @@ class ReviewSchema extends Typegoose implements ReviewDOT {
   stars: number;
 }
 
-export const Review = ModelFactory(ReviewSchema);
+export class Review extends ModelFactory(ReviewSchema) {};
 
 // private async updateProductRating() {
 //   const productID = this.data().productID;

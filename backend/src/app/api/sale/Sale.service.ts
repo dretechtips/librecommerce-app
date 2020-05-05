@@ -2,79 +2,81 @@ import { Injectable, OnModuleInit } from "@nestjs/common";
 import { ModuleRef } from "@nestjs/core";
 import { Response } from "express";
 import Service from "src/app/common/service/Service.factory";
-import AccountService from "../account/Account.service";
-import CustomerService from "../account/type/customer/Customer.service";
+import Store from "../account/company/store/Store.model";
 import CostSchema from "../billing/transaction/cost/Cost.schema";
-import {
-  RefundedTransaction,
-  SaleTransaction
-} from "../billing/transaction/Transaction.class";
+import { RefundedTransaction } from "../billing/transaction/Transaction.class";
 import TransactionService from "../billing/transaction/Transaction.service";
-import Store from "../company/store/Store.model";
 import { CartDOT } from "./cart/Cart.interface";
 import CartService from "./cart/Cart.service";
 import { OrderDOT } from "./order/Order.interface";
 import OrderService from "./order/Order.service";
-import Variation from "./product/variation/Variation.model";
-import VariationService from "./product/variation/Variation.service";
 import { SaleDOT } from "./Sale.interface";
 import { Sale } from "./Sale.model";
 import { ShippingDOT } from "./shipping/Shipping.interface";
 import ShippingService from "./shipping/Shipping.service";
 import SubscriptionService from "./subscription/Subscription.service";
+import AccountService from "../account/Account.service";
+import PromoService from "./promo/Promo.service";
+import ProductService from "./product/Product.service";
 
 @Injectable()
 export class SaleService extends Service<typeof Sale> implements OnModuleInit {
-  private account: AccountService;
-  private customer: CustomerService;
   private transaction: TransactionService;
+  private account: AccountService;
   constructor(
     private readonly moduleRef: ModuleRef,
     private readonly order: OrderService,
     private readonly cart: CartService,
     private readonly shipping: ShippingService,
     private readonly subscription: SubscriptionService,
-    private readonly product: VariationService
+    private readonly product: ProductService,
+    private readonly promo: PromoService
   ) {
     super(Sale);
   }
 
   public onModuleInit() {
-    this.customer = this.moduleRef.get(CustomerService, { strict: false });
-    this.account = this.moduleRef.get(AccountService, { strict: false });
     this.transaction = this.moduleRef.get(TransactionService, {
       strict: false
+    });
+    this.account = this.moduleRef.get(AccountService, {
+      strict: false,
     });
   }
   /**
    * This creates an unprocessed sales to be processed in the future. This should only be used if a sale is going to be
-   * created in the future, however, the information is required for the view.
-   * @param res Controller Response
-   * @param customerID Database Customer ID
-   * @param orderDOT Database Order ID
-   * @param shippingDOT Database Shipping ID
-   * @param cartDOT Cart Data of Tranfer Object
+   * created in the future.
+   * @param res Express Response
+   * @param customerID Customer ID
+   * @param orderDOT Order ID
+   * @param pcde Promo Code
+   * @param shippingDOT Shipping ID
+   * @param cartDOT Cart DOT Object | Cart ID
+   * @returns Sale for view
    */
   public async authorize(
     res: Response,
-    customerID: string,
+    accountID: string,
     orderDOT: OrderDOT,
     shippingDOT: ShippingDOT,
-    cartDOT: CartDOT
+    pcde: string[],
+    cartDOT: CartDOT | string,
   ): Promise<Sale> {
-    const customer = await this.customer.get(customerID);
+    const account = await this.account.get(accountID);
     const order = await this.order.add(orderDOT);
     const shipping = await this.shipping.add(shippingDOT);
-    const cart = await this.cart.add(cartDOT);
-    const products = await this.product.getAll(cart.productIDs);
-    const transaction = await this.transaction.authorizeT([
+    const cart = await this.cart.add(typeof cartDOT === "string" ? (await this.get(cartDOT)) : cartDOT);
+    const products = await Promise.all(cart.productIDs.map(id => this.product.get(id)));
+    const discounts = pcde.map(code => await this.promo.apply(code, products)).reduce((total, cur) => total.concat(cur));
+    const transaction = await this.transaction.authorize([
       ...products,
-      shipping
+      shipping,
+      ...discounts
     ]);
     const saleDOT: SaleDOT = {
       cartID: cart._id,
       shippingID: shipping._id,
-      customerID: customer._id,
+      accountID: account._id,
       orderID: order._id,
       transactionID: transaction._id
     };
@@ -83,15 +85,15 @@ export class SaleService extends Service<typeof Sale> implements OnModuleInit {
   }
   /**
    * The converts an unprocessed sales into a processed sales that is payed by the payment ID. Payment must be a valid
-   * payment registered in the customer payment options.
-   * @param saleID Database Sale ID
-   * @param paymentID Database Payment ID
+   * payment registered in the account payment options.
+   * @param saleID Sale ID
+   * @param pIndex Account Payment Index
    */
-  public async process(saleID: string, paymentID: string): Promise<void> {
+  public async process(saleID: string, pIndex?: number): Promise<void> {
     const sale = await this.get(saleID);
     if (!sale) throw new Error("Invalid Sale ID");
-    const customer = await this.customer.get(sale.cartID);
-    await this.transaction.capture(sale.transactionID, paymentID);
+    const account = await this.account.get(sale.accountID);
+    await this.transaction.capture(sale.transactionID, account.paymentsID, pIndex);
   }
   /**
    * Loops through all customers that have an active subscriptions and pays for it if the product is still in the
@@ -103,7 +105,6 @@ export class SaleService extends Service<typeof Sale> implements OnModuleInit {
     this.customer.forAllWithSubscription(async customer => {
       try {
         const subscriptions = await this.subscription.findAllByLink(customer);
-        const account = await this.account.get(customer.accountID);
         subscriptions.filter(sub => {
           if (!sub.active) {
             /** SEND EMAIL */
@@ -124,7 +125,7 @@ export class SaleService extends Service<typeof Sale> implements OnModuleInit {
             products,
             // Find closest store to decrease shipping fee
             new Store(),
-            account
+            customer
           );
           const order = await this.order.addDefault();
           // 6. Create a transaction
@@ -176,13 +177,11 @@ export class SaleService extends Service<typeof Sale> implements OnModuleInit {
   public async return(saleID: string) {
     const sale = await this.get(saleID);
     const cart = await this.cart.get(sale.cartID);
-    const account = await this.account.get(
-      (await this.customer.get(sale.customerID)).accountID
-    );
+    const customer = await this.customer.get(sale.customerID);
     const products = await this.product.getAll(cart.productIDs);
     const shipping = await this.shipping.return(
       sale.shippingID,
-      account,
+      customer,
       new Store()
     );
     // Create Order
@@ -214,23 +213,22 @@ export class SaleService extends Service<typeof Sale> implements OnModuleInit {
     return new Sale();
   }
   /**
-   * Refunds Product Only
+   * Refunds a transaction that has already been authorized
    * @param saleID Database Sale ID
    * @param paymentID Database PaymentID associated to the customer sales.
    */
   public async refund(saleID: string) {
     const sale = await this.get(saleID);
-    const transaction = new SaleTransaction(
-      await this.transaction.get(sale.transactionID)
-    );
+    const customer = 
+    this.transaction.capture(sale.transactionID)
     const inverse: CostSchema[] = transaction
       .getRefundableCharges()
-      .map(cur => cur.refund());
+      .map(cur => cur.refund().doc());
     const refund = await this.transaction.authorizeC(inverse);
-  }
-
-  public getCart() {
-    return this.cart;
+    const saleDOT: SaleDOT = {
+      cartID: sale.cartID,
+      customerID: 
+    }
   }
 }
 

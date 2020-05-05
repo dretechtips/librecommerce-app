@@ -1,8 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import Service from "src/app/common/service/Service.factory";
-import BankService from "./bank/Bank.service";
-import CardService from "./card/Card.service";
-import { PaymentOption } from "./Payments.interface";
+import BankService from "./payment/bank/Bank.service";
+import CardService from "./payment/card/Card.service";
 import Payments from "./Payments.model";
 
 @Injectable()
@@ -13,7 +12,6 @@ class PaymentsService extends Service<typeof Payments> {
   ) {
     super(Payments);
   }
-  public getMethod(methodID: string): PaymentOption {}
 }
 
 export default PaymentsService;
