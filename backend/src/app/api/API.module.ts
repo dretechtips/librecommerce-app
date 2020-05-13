@@ -3,7 +3,7 @@ import { CartTrackerMiddleware } from "src/app/api/sale/cart/Cart.middleware";
 import AccountModule from "./account/Account.module";
 import BanModule from "./account/util/ban/Ban.module";
 import LoginModule from "./account/util/login/Login.module";
-import PayrollModule from "./account/company/store/human_resource/employee/payroll/Payroll.module";
+import PayrollModule from "./account/store/human_resource/employee/payroll/Payroll.module";
 import AlertModule from "./alert/Alert.module";
 import APIController from "./API.controller";
 import { APILoggerMiddleware } from "./API.middleware";

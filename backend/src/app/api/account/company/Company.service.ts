@@ -1,13 +1,21 @@
-import { Injectable, OnModuleInit } from "@nestjs/common";
 import Service from "src/app/common/service/Service.factory";
-import { AccountType } from "../Type.interface";
-import Company from "./Company.model";
-
-class CompanyService extends Service<typeof Company> {}
+import Company from "../company/Company.model";
+import { Injectable } from "@nestjs/common";
+import { InjectModel } from "src/app/common/model/Model.decorator";
+import InternalService from "./internal/Internal.service";
+import {  } from "./external/External.service";
 
 @Injectable()
-export default class
-  extends AccountServiceFactory(CompanyService, Company, AccountType.COMPANY)
-  implements OnModuleInit {
-  private self: Company;
+@InjectModel(Company)
+export class CompanyService extends Service<Company> {
+  
+  constructor(
+    private readonly internal: InternalService,
+    private readonly external: ExternalService,
+  ) {
+    super();
+  }
+
 }
+
+export default CompanyService

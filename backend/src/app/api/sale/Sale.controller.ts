@@ -9,7 +9,7 @@ import {
 import {
   GetCustomerIDFromBody,
   GetCustomerIDFromCookie
-} from "../account/customer/Customer.decorator";
+} from "../account/external/customer/Customer.decorator";
 import { AccountType } from "../account/type/Type.interface";
 import { GetCartFromBody, GetCartIDFromCookie } from "./cart/Cart.decorator";
 import { CartDOT } from "./cart/Cart.interface";

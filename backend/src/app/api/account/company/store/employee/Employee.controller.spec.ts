@@ -1,3 +1,0 @@
-describe("EmployeeController", () => {
-  beforeEach(async () => {});
-});

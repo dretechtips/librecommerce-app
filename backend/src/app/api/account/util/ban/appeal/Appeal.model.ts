@@ -1,14 +1,14 @@
 import ModelFactory from "src/app/common/model/Model.factory";
-import { prop, Typegoose } from "typegoose";
-import { AppealDOT, AppealResolution } from "./Appeal.interface";
+import { prop, Ref } from "@typegoose/typegoose";
+import { AppealDOT, AppealStatus } from "./Appeal.interface";
 
-class AppealSchema extends Typegoose implements AppealDOT {
+class AppealSchema implements AppealDOT {
   @prop({ required: true })
-  message: string;
-  @prop({ required: true })
-  banID: string;
-  @prop({ required: true, enum: AppealResolution })
-  resolution: AppealResolution;
+  public message: string;
+  @prop({required: true, default: ""})
+  public reviewedBy: string
+  @prop({required: true, enum: AppealStatus, default: AppealStatus.PROCESSING})
+  public status: AppealStatus;
 }
 
 export class Appeal extends ModelFactory(AppealSchema) {}

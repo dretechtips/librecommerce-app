@@ -1,17 +1,17 @@
-import { AccountDependentDOT } from "../../Account.interface";
+import { AppealDependentDOT } from "./appeal/Appeal.interface";
 
-export interface BanDOT extends AccountDependentDOT {
-  date: Date;
+export interface BanDOT extends AppealDependentDOT {
   reason: string;
   revoke: boolean;
   lifetime: BanLifetime;
 }
 
 export interface BanDependentDOT {
-  banID: string;
+  banIDs: string[];
 }
 
 export enum BanLifetime {
+  NONE,
   TEMPORARY,
   PERMANENT
 }

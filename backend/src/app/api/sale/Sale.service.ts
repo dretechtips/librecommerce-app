@@ -2,7 +2,7 @@ import { Injectable, OnModuleInit } from "@nestjs/common";
 import { ModuleRef } from "@nestjs/core";
 import { Response } from "express";
 import Service from "src/app/common/service/Service.factory";
-import Store from "../account/company/store/Store.model";
+import Store from "../account/store/Store.model";
 import CostSchema from "../billing/transaction/cost/Cost.schema";
 import { RefundedTransaction } from "../billing/transaction/Transaction.class";
 import TransactionService from "../billing/transaction/Transaction.service";

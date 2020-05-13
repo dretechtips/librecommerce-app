@@ -1,4 +1,5 @@
 import { ArgumentMetadata, PipeTransform } from "@nestjs/common";
+import { NotNumberTypeError } from "@typegoose/typegoose/lib/internal/errors";
 
 export class ToDatePipe implements PipeTransform<any, Date> {
   public transform(value: any, meta: ArgumentMetadata): Date {
@@ -24,6 +25,18 @@ export class ToArrayPipe implements PipeTransform<string, string[]> {
 
 export class ToNumberPipe implements PipeTransform<string, number> {
   public transform(value: string, meta: ArgumentMetadata): number {
-    return Number(value);
+    const num = Number(value);
+    if(Number.isNaN(num))
+      throw new Error("NaN");
+    return num;
+  }
+}
+
+export class ToIntPipe extends ToNumberPipe {
+  public transform(value: string, meta: ArgumentMetadata): number {
+    const num = super.transform(value, meta);
+    if(!Number.isInteger(num))
+      throw new Error("Not an Integer");
+    return num;
   }
 }

@@ -1,16 +1,15 @@
-import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
-import CompanyController from "./Company.controller";
-import CompanyService from "./Company.service";
-import StoreModule from "./store/Store.module";
+import { Module } from "@nestjs/common";
+import ExternalModule from "./external/External.module";
+import InternalModule from "./internal/Internal.module";
 
 @Module({
-  controllers: [CompanyController],
-  providers: [CompanyService],
-  exports: [StoreModule],
-  imports: [StoreModule]
+  controllers: [],
+  providers: [],
+  imports: [ExternalModule, InternalModule],
+  exports: [ExternalModule, InternalModule],
 })
-export class CompanyModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {}
+export class CompanyModule {
+  
 }
 
 export default CompanyModule;

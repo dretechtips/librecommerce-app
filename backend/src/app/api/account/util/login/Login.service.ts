@@ -1,77 +1,73 @@
-import { Injectable, OnModuleInit } from "@nestjs/common";
-import { ModuleRef } from "@nestjs/core";
-import crypto from "crypto";
-import { Request } from "express";
+import { Injectable, } from "@nestjs/common";
 import uuid from "uuid/v4";
-import AccountService from "../../Account.service";
-import { prefix } from "./Login.controller";
-import { LoginDOT } from "./Login.interface";
+import Account from "../../Account.model";
 import { Login } from "./Login.model";
 import Service from "src/app/common/service/Service.factory";
+import { prefix } from "./Login.controller";
+import { Request, Response } from "express";
+import { InjectModel } from "src/app/common/model/Model.decorator";
 
 @Injectable()
-export class LoginService extends Service<typeof Login>
-  implements OnModuleInit {
-  private account: AccountService;
+@InjectModel(Login)
+export class LoginService extends Service<Login> {
+  /**
+   * <LoginID, AccountID>
+   */
   private store: Map<string, string> = new Map();
-  private encryption: crypto.CipherCCMTypes | crypto.CipherGCMTypes =
-    "aes-256-gcm";
   /**
    * Preset 3 Hour
    */
   private timeoutMS: number = 1000 * 60 * 60 * 3;
-  constructor(private readonly moduleRef: ModuleRef) {
-    super(Login);
+
+  constructor() {
+    super();
+    this.store = new Map();
   }
-  public onModuleInit() {
-    this.account = this.moduleRef.get(AccountService, { strict: false });
+
+  /**
+   * 
+   * @param token Login Token { Base64(username + ":" + password) | Fingerprint ID }
+   * @returns [Username, Password]
+   */
+  public getInfo(token: string): [string, string] {
+    const decoded = Buffer.from(token, 'base64').toString();
+    const [ username, password ] = decoded.split(":");
+    return [username, password];
+  }
+
+  /**
+   * This saves the account and give out a login token
+   * @returns Login Token
+   * @param account Account
+   */
+  public auth(account: Account): string {
+    const token = uuid();
+    this.store.set(token, account._id);
+    this.setClearToken(token);
+    return token;
+  }
+  
+  /**
+   * Set a token in the cookie for future use
+   * @param res Express Response
+   * @param token Login Token
+   */
+  public setToken(res: Response, token: string): void {
+    res.cookie(prefix, token);
+  }
+
+  public getAccountIDByReq(req: Request): string | undefined {
+    const loginID = req.cookies[prefix];
+    return this.getAccountID(loginID);
+  }
+
+  public getAccountID(loginID: string): string | undefined {
+    return this.store.get(loginID);
   }
   /**
-   * @returns Client Token
-   * @param ip IP Address
-   * @param credientals Login Credientals
+   * Util Function: Clears the token
+   * @param secret Login Token
    */
-  public async addToken(ip: string, credientals: LoginDOT): Promise<string> {
-    const account = await this.account.get(credientals.accountID);
-    if (!account) throw new Error("Invalid Login Credientals");
-    const clientToken = uuid();
-    const serverToken = this.hash(ip, clientToken);
-    this.store.set(serverToken, account.id());
-    this.setClearToken(serverToken);
-    return clientToken;
-  }
-  public verifyToken(ip: string, loginID: string): boolean {
-    return this.getAccountID(ip, loginID) ? true : false;
-  }
-  public getAccountID(ip: string, loginID: string): string | undefined {
-    const serverToken = this.hash(ip, loginID);
-    const accountID = this.store.get(serverToken);
-    return accountID;
-  }
-  public async getAccount(ip: string, loginID: string): Promise<Account> {
-    const accountID = this.getAccountID(ip, loginID);
-    if (!accountID) throw new Error("Invalid Login ID");
-    return this.account.get(accountID);
-  }
-  private hash(ip: string, clientToken: string): string {
-    const secret: string = crypto
-      .createCipheriv(this.encryption, ip, null)
-      .update(clientToken, "utf8", "hex");
-    return secret;
-  }
-  public async getOwnAccount(req: Request): Promise<Account> {
-    const ip = req.ip;
-    const loginID = req.cookies[prefix];
-    if (typeof loginID === "string") return this.getAccount(ip, loginID);
-    throw new TypeError("Login ID is not a string");
-  }
-  public async getOwnAccountType(req: Request): Promise<AccountType> {
-    return this.account.getType((await this.getOwnAccount(req))._id);
-  }
-  public async isOwnAccountBanned(req: Request): Promise<boolean> {
-    const account = await this.getOwnAccount(req);
-    return this.account.isBan(account._id);
-  }
   private setClearToken(secret: string): void {
     setTimeout(() => this.store.delete(secret), this.timeoutMS);
   }

@@ -5,7 +5,7 @@ import AddressSchema from "src/app/common/model/schema/Address.schema";
 import Service from "src/app/common/service/Service.factory";
 import UPSService from "src/app/vendor/ups/UPS.service";
 import { AccountDependentDOT } from "../../account/Account.interface";
-import Store from "../../account/company/store/Store.model";
+import Store from "../../account/store/Store.model";
 import { AlertType } from "../../alert/Alert.interface";
 import AlertService from "../../alert/Alert.service";
 import CostSchema from "../../billing/transaction/cost/Cost.schema";

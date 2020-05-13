@@ -2,11 +2,10 @@ import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import AccountController from "./Account.controller";
 import AccountService from "./Account.service";
 import BanModule from "./util/ban/Ban.module";
-import TypeModule from "./type/Type.module";
 
 @Module({
   controllers: [AccountController],
-  imports: [TypeModule, BanModule],
+  imports: [BanModule],
   providers: [AccountService]
 })
 export class AccountModule implements NestModule {

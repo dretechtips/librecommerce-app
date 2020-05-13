@@ -1,5 +1,4 @@
 import { Document, Model } from "mongoose";
-import { Typegoose } from "typegoose";
 
 type Storable =
   | boolean
@@ -29,7 +28,7 @@ export type ExtractSchema<T extends Model<Document>> = T extends Model<
   ? D
   : never;
 
-export type ExtractSchemaData<T extends Model<Document>> = Omit<
-  ExtractSchema<T>,
-  keyof Typegoose
->;
+// export type ExtractSchemaData<T extends Model<Document>> = Omit<
+//   ExtractSchema<T>,
+//   keyof Typegoose
+// >;

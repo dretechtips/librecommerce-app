@@ -19,6 +19,10 @@ export type ExtractPropsKey<T, TProps> = {
     : never;
 }[keyof T];
 
+export type ExtractMethodKeys<T> = {
+  [P in keyof T]: T[P] extends Function ? P : never
+}[keyof T]; 
+
 export type ArrayifyProps<T extends {}> = {
   [C in keyof T]: T[C][];
 };

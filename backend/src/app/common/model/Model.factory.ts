@@ -5,7 +5,7 @@ import {
 import { Model, Document } from "mongoose";
 import { AnyParamConstructor } from "@typegoose/typegoose/lib/types";
 
-export function ModelFactory<T>(schema: { new (): T }) {
+export function ModelFactory<T>(schema: { new (...args: any[]): T }) {
   return getModelForClass(schema) as Model<T & Document>;
 }
 
@@ -18,7 +18,7 @@ export function ExtendedModelFactory<T, K extends AnyParamConstructor<T>>(
     extend,
     schema,
     discriminator
-  ) as Model<K & Document & T>;
+  ) as unknown as Model<Document & InstanceType<K>>;
 }
 
 export default ModelFactory;
