@@ -12,8 +12,10 @@ export class BanService extends Service<Ban> {
 
   private static allowReviewablePermaBan: boolean = false;
 
-  constructor(private readonly appeal: AppealService) {
-    super(Ban);
+  constructor(
+    private readonly appeal: AppealService
+  ) {
+    super();
   }
 
   /**

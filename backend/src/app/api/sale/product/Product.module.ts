@@ -1,15 +1,16 @@
 import { Module } from "@nestjs/common";
 import ProductController from "./Product.controller";
 import ProductService from "./Product.service";
-import VariationModule from "./variation/Variation.module";
-import CategoryModule from "./category/Category.module";
-import ReviewModule from "./review/Review.module";
+import ProductCategoryModule from "./product_category/ProductCategory.module";
+import ProductReviewModule from "./product_review/ProductReview.module";
 
 @Module({
   controllers: [ProductController],
   providers: [ProductService],
-  exports: [VariationModule, CategoryModule, ReviewModule]
+  exports: [ProductCategoryModule, ProductReviewModule]
 })
-export class ProductModule {}
+export class ProductModule {
+  
+}
 
 export default ProductModule;

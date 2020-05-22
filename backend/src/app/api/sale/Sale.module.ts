@@ -8,12 +8,12 @@ import SaleService from "./Sale.service";
 import SaleTask from "./Sale.task";
 import ShippingModule from "./shipping/Shipping.module";
 import SubscriptionModule from "./subscription/Subscription.module";
-import AccountModule from "../account/Account.module";
+import TransactionModule from "../billing/transaction/Transaction.module";
 
 @Module({
   controllers: [SaleController],
   providers: [SaleService, SaleTask],
-  exports: [SaleService],
+  exports: [],
   imports: [
     CartModule,
     OrderModule,
@@ -21,7 +21,6 @@ import AccountModule from "../account/Account.module";
     PromoModule,
     ShippingModule,
     SubscriptionModule,
-    AccountModule
   ]
 })
 export class SaleModule implements NestModule {

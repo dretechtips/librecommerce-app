@@ -3,6 +3,7 @@ import { prop } from "@typegoose/typegoose";
 import { SaleDOT } from "./Sale.interface";
 
 class SaleSchema implements SaleDOT {
+
   @prop({ required: true })
   orderID: string;
   @prop({ required: true })

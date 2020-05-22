@@ -1,6 +1,6 @@
 import { Controller, Delete, Get, Param, Patch, Body } from "@nestjs/common";
 import AccountService from "./Account.service";
-import { RestrictAccess, LoginID } from "./util/login/Login.decorator";
+import { RestrictAccess, LoginID } from "./user/login/Login.decorator";
 import { AccountType } from "./Account.interface";
 import { prefix as sPrefix } from "../sale/subscription/Subscription.controller";
 import { SubscriptionDOT } from "../sale/subscription/Subscription.interface";

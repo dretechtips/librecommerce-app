@@ -5,6 +5,7 @@ export const prefix = "customer";
 
 @Controller(prefix)
 export class CustomerController {
+  
   constructor(private readonly customer: CompanyService) {}
 
 }

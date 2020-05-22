@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import CostSchema from "src/app/api/billing/transaction/cost/Cost.schema";
+import CostSchema from "src/app/api/billing/cost/Cost.schema";
 import { ShippingProviderService } from "src/app/api/sale/shipping/Shipping.interface";
 import Shipping from "src/app/api/sale/shipping/Shipping.model";
 

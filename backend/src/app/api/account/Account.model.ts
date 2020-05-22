@@ -27,6 +27,8 @@ export class AccountSchema
   public lastOrderDate: Date;
   @arrayProp({required: true, default: []})
   public subscriptionIDs: string[];
+  @arrayProp({required: true, default: []})
+  public pReviewIDs: string[]
 
 }
 

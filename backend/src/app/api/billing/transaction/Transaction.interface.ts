@@ -1,32 +1,50 @@
-import CostSchema from "./cost/Cost.schema";
+import CostSchema from "../cost/Cost.schema";
 
 export interface TransactionDOT {
+  /**
+   * Money owed
+   */
   amountOwed: number;
+  /**
+   * Money payed
+   */
   amountPayed: number;
+  /**
+   * Subtotal Tax
+   */
   tax: number;
+  /**
+   * Subtotal Tax Rate
+   */
+  taxRate: number;
+  /**
+   * Purchasable items and service.
+   */
   charges: CostSchema[];
-  isRefundable: boolean;
-  type: TransactionType;
+  /**
+   * Is captured
+   */
+  captured: boolean;
+  /**
+   * Payment ID
+   * Note: This is the individual payment not the payments.
+   */
   paymentID?: string;
 }
 
 export enum TransactionType {
   /**
-   * Places a hold on the payment method funds
-   */
-  AUTHORIZED,
-  /**
-   * Automatically deducts the fund if
+   * Sale based transaction
    */
   SALE,
   /**
-   * Automatically adds back to the fund
+   * Refund based transaction
    */
   REFUND,
   /**
-   * Cancels the hold on the payment method
+   * Nullifies the transaction.
    */
-  VOID
+  VOID,
 }
 
 export interface Transactable {

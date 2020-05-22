@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post } from "@nestjs/common";
-import { RestrictAccess } from "../login/Login.decorator";
+import { RestrictAccess } from "../../user/login/Login.decorator";
 import { BanDOT } from "./Ban.interface";
 import { ValidateBanPipe } from "./Ban.pipe";
 import BanService from "./Ban.service";

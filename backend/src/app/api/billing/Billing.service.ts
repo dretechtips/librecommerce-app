@@ -2,19 +2,21 @@ import { Injectable } from "@nestjs/common";
 import Service from "src/app/common/service/Service.factory";
 import Billing from "./Billing.model";
 import TransactionService from "./transaction/Transaction.service";
-import PaymentsService from "./payments/Payments.service";
+import PaymentsService from "./transaction/payments/Payments.service";
 import {
   Transactable,
   TransactionType
 } from "./transaction/Transaction.interface";
+import { InjectModel } from "src/app/common/model/Model.decorator";
 
 @Injectable()
-export class BillingService extends Service<typeof Billing> {
+@InjectModel(Billing)
+export class BillingService extends Service<Billing> {
   constructor(
     private readonly transaction: TransactionService,
     private readonly payments: PaymentsService
   ) {
-    super(Billing);
+    super();
   }
   
   public async unprocess(

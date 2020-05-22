@@ -1,7 +1,7 @@
 export interface OrderDOT {
   cancelled: boolean;
   isHeld: boolean;
-  complete: boolean;
+  isComplete: boolean;
 }
 
 export interface OrderDependentDOT {

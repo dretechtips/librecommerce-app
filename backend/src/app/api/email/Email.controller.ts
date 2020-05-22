@@ -6,7 +6,7 @@ import {
   Post,
   UseInterceptors
 } from "@nestjs/common";
-import { RestrictAccess } from "../account/util/login/Login.decorator";
+import { RestrictAccess } from "../account/user/login/Login.decorator";
 import { AccountType } from "../account/type/Type.interface";
 import { ValidateEmailInterceptor } from "./Email.interceptor";
 import { EmailDOT } from "./Email.interface";

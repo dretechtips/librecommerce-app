@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post } from "@nestjs/common";
-import { RestrictAccess } from "../../login/Login.decorator";
+import { RestrictAccess } from "../../../user/login/Login.decorator";
 import { AppealDOT } from "./Appeal.interface";
 import { ValidateAppealIDPipe, ValidateAppealPipe } from "./Appeal.pipe";
 import AppealService from "./Appeal.service";

@@ -4,14 +4,10 @@ import Account from "src/app/api/account/Account.model";
 import AddressSchema from "src/app/common/model/schema/Address.schema";
 import Service from "src/app/common/service/Service.factory";
 import UPSService from "src/app/vendor/ups/UPS.service";
-import { AccountDependentDOT } from "../../account/Account.interface";
 import Store from "../../account/store/Store.model";
 import { AlertType } from "../../alert/Alert.interface";
 import AlertService from "../../alert/Alert.service";
-import CostSchema from "../../billing/transaction/cost/Cost.schema";
-import Company from "../../company/Company.model";
-import { VariationDOT } from "../product/variation/Variation.interface";
-import Variation from "../product/variation/Variation.model.txt";
+import CostSchema from "../../billing/cost/Cost.schema";
 import BoxService from "./box/Box.service";
 import PackageService from "./package/Package.service";
 import PalletService from "./pallet/Pallet.service";
@@ -21,12 +17,16 @@ import {
   ShippingProviderService
 } from "./Shipping.interface";
 import Shipping from "./Shipping.model";
+import { InjectModel } from "src/app/common/model/Model.decorator";
+import Product from "../product/Product.model";
+import { ProductDOT } from "../product/Product.interface";
 
 /**
  * FUTURE: UPDATE PALLET
  */
 @Injectable()
-export class ShippingService extends Service<typeof Shipping>
+@InjectModel(Shipping)
+export class ShippingService extends Service<Shipping>
   implements OnModuleInit {
   private static MIN_DAY = 1;
   private static MAX_DAY = 4;
@@ -39,7 +39,7 @@ export class ShippingService extends Service<typeof Shipping>
     private readonly _package: PackageService,
     private readonly pallet: PalletService
   ) {
-    super(Shipping);
+    super();
     this.provider = new Map();
     this.options = new Map();
   }
@@ -88,10 +88,14 @@ export class ShippingService extends Service<typeof Shipping>
     }
     return shipping;
   }
-
+  /**
+   * Cancels shipping if the shipping can be cancelled
+   * @param shippingID Shipping ID
+   */
   public async cancel(shippingID: string): Promise<void> {
     const shipping = await this.get(shippingID);
     const provider = shipping.provider;
+    if(await this.canCancel(shippingID))
     switch (provider) {
       case ShippingProvider.UPS:
         this.action(provider, service => service.cancel(shippingID));
@@ -105,8 +109,8 @@ export class ShippingService extends Service<typeof Shipping>
 
   public async return(
     shippingID: string,
-    shipFrom: AccountDependentDOT,
-    shipTo: Store
+    shipFrom: Account,
+    shipTo: Account
   ): Promise<Shipping> {
     const prev = await this.get(shippingID);
     const provider = this.getBestProviderWithPackages(prev.packageIDs);
@@ -131,10 +135,10 @@ export class ShippingService extends Service<typeof Shipping>
 
   public async getCosts(
     provider: ShippingProvider,
-    products: Variation[],
+    products: Product[],
     days: number,
-    shipFrom: Store | Company | Account,
-    shipTo: Store | Company | Account
+    shipFrom: Account,
+    shipTo: Account
   ): Promise<CostSchema[]> {
     return new Promise(async (res, rej) => {
       const packages = await this._package.create(products);
@@ -216,7 +220,7 @@ export class ShippingService extends Service<typeof Shipping>
    * @todo
    */
   public async getBestProvider(
-    products: VariationDOT[]
+    products: ProductDOT[]
   ): Promise<ShippingProvider> {
     return ShippingProvider.UPS;
   }

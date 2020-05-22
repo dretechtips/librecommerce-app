@@ -1,10 +1,11 @@
 import { AlertDependentDOT } from "../alert/Alert.interface";
-import { PaymentsDependentDOT } from "../billing/payments/Payments.interface";
+import { PaymentsDependentDOT } from "../billing/transaction/payments/Payments.interface";
 import { SubscriptionDependentDOT } from "../sale/subscription/Subscription.interface";
 import { prop } from "@typegoose/typegoose";
 import { DisableableDOT } from "src/app/common/disableable/Disableable.interface";
+import { ProductReviewDependentDOT } from "../sale/product/product_review/ProductReview.interface";
 
-export interface AccountDOT extends AlertDependentDOT, PaymentsDependentDOT, SubscriptionDependentDOT, DisableableDOT {
+export interface AccountDOT extends AlertDependentDOT, PaymentsDependentDOT, SubscriptionDependentDOT, DisableableDOT, ProductReviewDependentDOT {
   /**
    * Last date an order was created
    * @default 1/1/1970

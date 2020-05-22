@@ -1,12 +1,13 @@
 import { Module } from "@nestjs/common";
-import ExternalModule from "./external/External.module";
-import InternalModule from "./internal/Internal.module";
+import ExternalCompanyModule from "./external_company/ExternalCompany.module";
+import InternalCompanyModule from "./internal_company/InternalCompany.module";
+import CompanyService from "./Company.service";
 
 @Module({
   controllers: [],
-  providers: [],
-  imports: [ExternalModule, InternalModule],
-  exports: [ExternalModule, InternalModule],
+  providers: [CompanyService],
+  imports: [ExternalCompanyModule, InternalCompanyModule],
+  exports: [ExternalCompanyModule, InternalCompanyModule],
 })
 export class CompanyModule {
   

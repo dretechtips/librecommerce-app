@@ -1,38 +1,33 @@
-import { Injectable, NotFoundException, OnModuleInit } from "@nestjs/common";
+import { Injectable, NotFoundException, Inject } from "@nestjs/common";
 import { ModuleRef } from "@nestjs/core";
 import { Response } from "express";
 import Service from "src/app/common/service/Service.factory";
-import Variation from "../product/variation/Variation.model.txt";
-import { VariationService } from "../product/variation/Variation.service.txt";
 import { prefix } from "./Cart.controller";
 import { CartDOT } from "./Cart.interface";
 import Cart from "./Cart.model";
+import { InjectModel } from "src/app/common/model/Model.decorator";
+import Product from "../product/Product.model";
 
 @Injectable()
-export class CartService extends Service<typeof Cart> implements OnModuleInit {
-  private product: VariationService;
-  constructor(private readonly moduleRef: ModuleRef) {
-    super(Cart);
+export class CartService extends Service<Cart> {
+
+  constructor(
+    @InjectModel(Cart) public readonly cart: Cart,
+  ) {
+    super();
   }
-  public onModuleInit() {
-    this.product = this.moduleRef.get(VariationService, { strict: false });
-  }
-  public async create(products: Variation[]): Promise<Cart> {
+  /**
+   * Creates a cart based off the products
+   * @param products Products
+   */
+  public async create(products: Product[]): Promise<Cart> {
     const cartDOT: CartDOT = {
       productIDs: products.map(cur => cur._id)
     };
     return this.add(cartDOT);
   }
-  public async validateDOT(dot: any): Promise<boolean> {
-    try {
-      await super.validateDOT(dot);
-      const cartDOT: CartDOT = dot;
-      await this.product.getAll(cartDOT.productIDs);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
+
+  
   public async quantity(
     cartID: string,
     productID: string,

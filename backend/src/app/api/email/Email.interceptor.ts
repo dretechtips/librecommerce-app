@@ -6,7 +6,7 @@ import {
 } from "@nestjs/common";
 import { Request } from "express";
 import { Observable } from "rxjs";
-import LoginService from "../account/util/login/Login.service";
+import LoginService from "../account/user/login/Login.service";
 import { prefix } from "./Email.controller";
 import EmailService from "./Email.service";
 

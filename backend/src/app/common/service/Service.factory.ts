@@ -1,7 +1,5 @@
 import Mongoose, { Document, Model } from "mongoose";
-import {
-  ExtractSchema
-} from "src/app/common/model/Model.interface";
+import { ExtractSchema } from "src/app/common/model/Model.interface";
 import {
   ExtractArrayProp,
   ExtractArrayType,
@@ -14,17 +12,13 @@ import ModelNotBoundError from "../error/ModelNotBound.error";
  * @typedef D Data of Transfer
  * @param model Model Type
  */
-export  class Service<T extends Document> {
+export abstract class Service<T extends Document> {
+  public abstract readonly model: Model<T>;
 
-  protected model: Model<T>;
-
-  public getModel = (): Model<T> => this.model;
-
-  constructor() {
-    if(!this.model)
-      throw new ModelNotBoundError(this);
-  }
-  public async validateID(id: string | Mongoose.Types.ObjectId ): Promise<boolean> {
+  constructor() {}
+  public async validateID(
+    id: string | Mongoose.Types.ObjectId
+  ): Promise<boolean> {
     try {
       await this.get(id);
       return true;
@@ -32,7 +26,9 @@ export  class Service<T extends Document> {
       return false;
     }
   }
-  public async validateIDs(id: (string | Mongoose.Types.ObjectId)[]): Promise<boolean> {
+  public async validateIDs(
+    id: (string | Mongoose.Types.ObjectId)[]
+  ): Promise<boolean> {
     try {
       await this.getAll(id);
       return true;
@@ -66,19 +62,22 @@ export  class Service<T extends Document> {
     }
   }
   public async add(dot: any): Promise<T> {
-    const doc = new this.model(dot);
+    const doc = dot instanceof this.model ? dot : new this.model(dot);
     await doc.validate();
     doc.save();
     return doc;
   }
-  public async addAll(dots: any[]): Promise<(T)[]> {
+  public async addAll(dots: any[]): Promise<T[]> {
     const docs = dots.map((dot) => new this.model(dot));
     const mapped = docs.map((doc) => doc.validate());
     await Promise.all(mapped);
     docs.forEach((doc) => doc.save());
     return docs;
   }
-  public async update(id: string | Mongoose.Types.ObjectId, dot: any): Promise<T> {
+  public async update(
+    id: string | Mongoose.Types.ObjectId,
+    dot: any
+  ): Promise<T> {
     const doc = await this.get(id);
     await this.validateDOT(dot);
     await doc.update(dot);
@@ -95,10 +94,14 @@ export  class Service<T extends Document> {
     if (!doc) throw new Error("Invalid ID Value");
     return doc;
   }
-  public async getAll(ids: (string | Mongoose.Types.ObjectId)[]): Promise<(ExtractSchema<T> & Document)[]> {
+  public async getAll(ids: (string | Mongoose.Types.ObjectId)[]): Promise<T[]> {
     return this.model.find({
       _id: {
-        $in: [ids.map((cur) => typeof cur === "string" ? new Mongoose.Types.ObjectId(cur) : cur)],
+        $in: [
+          ids.map((cur) =>
+            typeof cur === "string" ? new Mongoose.Types.ObjectId(cur) : cur
+          ),
+        ],
       },
     });
   }
@@ -109,7 +112,7 @@ export  class Service<T extends Document> {
     const doc = await this.get(id);
     return doc[prop];
   }
-  public async findAll(): Promise<(T)[]> {
+  public async findAll(): Promise<T[]> {
     return this.model.find({}).exec();
   }
   public async findAllByProp<U extends keyof T>(
@@ -129,9 +132,7 @@ export  class Service<T extends Document> {
     if (!val[0]) throw new Error("Cannot Find One By Prop");
     return val[0];
   }
-  public async findAllByArrayValue<
-    U extends keyof ExtractArrayProp<T>
-  >(
+  public async findAllByArrayValue<U extends keyof ExtractArrayProp<T>>(
     key: U,
     value: ExtractArrayType<ExtractArrayProp<T>[U]>
   ) {
@@ -197,6 +198,15 @@ export  class Service<T extends Document> {
       const value: ExtractSchema<T>[U] = doc[key];
       fn(key as U, value);
     });
+  }
+  /**
+   * Adds to the save validation pipeline. If inherit is toggled then any service injected with an inherited model
+   * will automatically be saved.
+   * @param fn Validation Function
+   * @param inherit Should Inherit Apply
+   */
+  public beforeSave(fn: (dot: T) => Promise<boolean>, inherit: boolean) {
+    // Iterate through this field and if it is a service has model that this model then mark it for saving.
   }
 }
 

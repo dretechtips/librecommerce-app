@@ -3,7 +3,7 @@ import DimensionSchema from "src/app/common/model/schema/Dimension.schema";
 import WeightSchema from "src/app/common/model/schema/Weight.schema";
 import { arrayProp, prop } from "@typegoose/typegoose";
 import { ProductDOT } from "./Product.interface";
-import CostSchema from "../../billing/transaction/cost/Cost.schema";
+import CostSchema from "../../billing/cost/Cost.schema";
 
 class ProductSchema implements ProductDOT {
   @prop({required: true})

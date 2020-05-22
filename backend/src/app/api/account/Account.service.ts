@@ -3,7 +3,6 @@ import { Document } from "mongoose";
 import BanService from "./util/ban/Ban.service";
 import Service from "src/app/common/service/Service.factory";
 import Account from "./Account.model";
-import LoginService from "./util/login/Login.service";
 import { Request, Response } from "express";
 import { AccountDOT } from "./Account.interface";
 import DisableableService from "src/app/common/disableable/Disableable.service";
@@ -19,20 +18,19 @@ import UserService from "./user/User.service";
  * @todo Move login based stuff to user's module {this.getByCredentails & this.auth}
  */
 @Injectable()
-@InjectModel(Account)
 export class AccountService extends Service<Account> implements OnModuleInit,
   SubscriptionDependentService<Account>  {
   
   private subscription: SubscriptionService;
 
   constructor (
+    @InjectModel(Account) public readonly model: Account,
     private readonly moduleRef: ModuleRef,
     private readonly disableable: DisableableService, 
     private readonly company: CompanyService,
     private readonly store: StoreService,
     private readonly user: UserService,
-    private readonly ban: BanService, 
-    private readonly login: LoginService
+    private readonly ban: BanService,
   ) {
     super();
   }
@@ -47,7 +45,7 @@ export class AccountService extends Service<Account> implements OnModuleInit,
    * @param index Subscription Index
    */
   public async unsubscribe(id: string, sID: string): Promise<Account> {
-    return this.subscription.unsubscribe(await this.getLoginedAccount(id), sID);
+    return this.subscription.unsubscribe(await this.get(id), sID);
   }
   /**
    * 
@@ -55,24 +53,7 @@ export class AccountService extends Service<Account> implements OnModuleInit,
    * @param subscription Subscription DOT 
    */
   public async subscribe(id: string, subscription: SubscriptionDOT): Promise<Account> {
-    return this.subscription.subscribe(await this.getLoginedAccount(id), subscription);
-  }
-
-  /**
-   * Authenticates any user with or w/o a credientals. If the user doesn't have any ciredientals (aka a new user)
-   * then this will automatically create a fingerprint based account
-   * @param ip IP Address
-   * @param credientals Login Credientals
-   */
-  public async auth(token: string, res: Response): Promise<void> {
-    const [username, password] = this.login.getInfo(token);
-    const account = await this.getByCredentials(username, password);
-    const loginToken = this.login.auth(account);
-    if(this.isBan(account._id))
-      throw new Error("This account is banned from using our service!");
-    if(this.disableable.isDisable(account))
-      throw new Error("This account was closed and thus cannot be used.");
-    this.login.setToken(res, loginToken);
+    return this.subscription.subscribe(await this.get(id), subscription);
   }
 
   /**
@@ -95,30 +76,27 @@ export class AccountService extends Service<Account> implements OnModuleInit,
     const account = await this.get(accountID);
     this.disableable.disable(account);
   }
-  /**
-   * Gets the account if the username and password are valid
-   * @param username Account Username
-   * @param password Account Password
+
+   /**
+   * Authenticates any user with or w/o a credientals. If the user doesn't have any ciredientals (aka a new user)
+   * then this will automatically create a fingerprint based account
+   * @param cToken Credientals Token
+   * @param credientals Login Credientals
    */
-  private async getByCredentials(username: string, password: string): Promise<Account> {
-    const account = (await this.findAllByProp("username", username))[0];
-    if(account.password == password)
-      return account;
-    throw new Error("Invalid Credentials");
+  public async auth(token: string, res: Response): Promise<void> {
+    return this.user.auth(token, res, this.isBan);
   }
 
   /**
-   * Helper method to extract account ID from login token
-   * @param token Login Token | Request with a login token
+   * Finds the closest internal store to the account
+   * @param account Account
    */
-  private async getLoginedAccount(token: string | Request): Promise<Account> {
-    let accountID = typeof token === "string" 
-      ? this.login.getAccountID(token) 
-      : this.login.getAccountIDByReq(token);
-    if(accountID === undefined)
-      throw new Error("Account ID is invalid");
-    return this.get(accountID);
+  public async getClosestStore(account: Account | string): Promise<> {
+    if(account instanceof string) {
+      
+    }
   }
+
 }
 
 export default AccountService;

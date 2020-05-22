@@ -1,7 +1,7 @@
 import { Controller, UseGuards } from "@nestjs/common";
 import { AccountType } from "./account/Account.interface";
-import { RestrictAccess } from "./account/util/login/Login.decorator";
-import { LoginAccessGuard } from "./account/util/login/Login.guard";
+import { RestrictAccess } from "./account/user/login/Login.decorator";
+import { LoginAccessGuard } from "./account/user/login/Login.guard";
 
 export const prefix = "api";
 

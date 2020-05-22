@@ -1,33 +1,40 @@
 import { Injectable } from "@nestjs/common";
 import Service from "src/app/common/service/Service.factory";
 import Product from "./Product.model";
-import VariationService from "./variation/Variation.service.txt";
-import ReviewService from "./review/Review.service";
-import CategoryService from "./category/Category.service";
-import { ProductWithVariationDOT } from "./Product.interface";
+import ProductReviewService from "./product_review/ProductReview.service";
+import ProductCategoryService from "./product_category/ProductCategory.service";
+import { InjectModel } from "src/app/common/model/Model.decorator";
+import ProductCategory from "./product_category/ProductCategory.model";
+import { ProductReviewDOT, ProductReviewDependentDOT } from "./product_review/ProductReview.interface";
 
 @Injectable()
-export class ProductService extends Service<typeof Product> {
-  constructor(
-    private readonly variation: VariationService, 
-    private readonly review: ReviewService, 
-    private readonly category: CategoryService) {
-      super(Product);
+export class ProductService extends Service<Product> {
+
+  constructor( 
+    @InjectModel(Product) public readonly model: Product,
+    private readonly review: ProductReviewService, 
+    private readonly category: ProductCategoryService) {
+      super();
   }
 
   /**
-   * 
-   * @deprecated
+   * Grabs all the categories associated with the product.
+   * @param product Product
    */
-  public async getProductWithVariation(vID: string) {
-    const vari = await this.variation.get(vID);
-    const product = await this.get(vari.productID);
-    const pwv: ProductWithVariationDOT = {
-      product: product,
-      variation: vari,
-    }
-    return pwv;
+  public async getCategories(product: Product | string): Promise<ProductCategory[]> {
+    return this.category.findByProduct(product);
   }
+
+  /**
+   * Adds a review for a product
+   * @param reviewer Reviewer
+   * @param review Review
+   */
+  public async addReview(reviewer: ProductReviewDependentDOT, review: ProductReviewDOT) {
+    await this.get(review.productID);
+    return this.review.add(review);
+  }
+  
 }
 
 export default ProductService;

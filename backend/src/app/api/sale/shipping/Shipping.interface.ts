@@ -1,16 +1,37 @@
 import AddressSchema from "src/app/common/model/schema/Address.schema";
-import ContactSchema from "src/app/common/model/schema/Contact.schema";
-import CostSchema from "../../billing/transaction/cost/Cost.schema";
+import CostSchema from "../../billing/cost/Cost.schema";
 import { Transactable } from "../../billing/transaction/Transaction.interface";
 import { PackageDOT } from "./package/Package.interface";
 
 export interface ShippingDOT extends Transactable {
+  /**
+   * Shipping Vendor
+   */
   provider: ShippingProvider;
+  /**
+   * Is Cancelled
+   */
   cancelled: boolean;
+  /**
+   * Amount of Days
+   */
   days: number;
+  /**
+   * Package IDs
+   */
   packageIDs: string[];
-  shipFrom: AddressSchema;
-  shipTo: AddressSchema;
+  /**
+   * Ship From Account ID 
+   */
+  shipFromID: string;
+  /**
+   * Ship To Account ID
+   */
+  shipToID: string;
+  /**
+   * Has been shipped?
+   */
+  hasShipped: boolean;
 }
 
 export interface ShippingParty {

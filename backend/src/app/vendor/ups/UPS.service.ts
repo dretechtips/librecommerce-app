@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import CostSchema from "src/app/api/billing/transaction/cost/Cost.schema";
+import CostSchema from "src/app/api/billing/cost/Cost.schema";
 import Company from "src/app/api/company/Company.model";
 import { PackageDOT } from "src/app/api/sale/shipping/package/Package.interface";
 import {

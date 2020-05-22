@@ -6,7 +6,8 @@ import AppealModule from "./appeal/Appeal.module";
 @Module({
   controllers: [BanController],
   providers: [BanService],
-  exports: [AppealModule]
+  exports: [AppealModule],
+  imports: [AppealModule]
 })
 export class BanModule {}
 

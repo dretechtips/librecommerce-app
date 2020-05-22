@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import Service from "src/app/common/service/Service.factory";
 import Promo from "./Promo.model";
-import CostSchema from "../../billing/transaction/cost/Cost.schema";
+import CostSchema from "../../billing/cost/Cost.schema";
 import Product from "../product/Product.model";
 import { ProductDOT } from "../product/Product.interface";
 

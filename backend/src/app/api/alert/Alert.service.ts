@@ -1,14 +1,16 @@
 import { Injectable } from "@nestjs/common";
 import { ModuleRef } from "@nestjs/core";
 import { Document } from "mongoose";
-import Service from "../sale/shipping/node_modules/src/app/common/service/Service.factory";
 import { AlertDependentDOT, AlertDOT } from "./Alert.interface";
 import Alert from "./Alert.model";
+import Service from "src/app/common/service/Service.factory";
+import { InjectModel } from "src/app/common/model/Model.decorator";
 
 @Injectable()
-export class AlertService extends Service<typeof Alert> {
+@InjectModel(Alert)
+export class AlertService extends Service<Alert> {
   constructor(private readonly moduleRef: ModuleRef) {
-    super(Alert);
+    super();
   }
   public async getAlerts(
     container: AlertDependentDOT
