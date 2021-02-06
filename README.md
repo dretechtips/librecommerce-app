@@ -1,4 +1,4 @@
-# Librecommerce App
+# Librecommerce App[WIP]
 
 A free and open source federated commerce platform build on NodeJS and the Matrix real-time communication Protocol.
 
