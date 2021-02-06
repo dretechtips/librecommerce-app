@@ -1,6 +1,0 @@
-1. Landing Page
-2. About Page
-3. Products Page
-4. Contact Page
-5. Cart Page
-6. Admin Page

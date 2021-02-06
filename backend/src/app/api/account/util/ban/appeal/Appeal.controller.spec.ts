@@ -1,3 +1,0 @@
-describe("AppealController", () => {
-  beforeEach(async () => {});
-});
